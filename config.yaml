@@ -1,0 +1,47 @@
+name: "Yll Kryeziu"
+description: "Computer Science student at TUM and Software Engineer Working Student at Porsche Informatik."
+
+social_links:
+  - url: "https://www.linkedin.com/in/yll-kryeziu/"
+    type: "linkedin"
+  - url: "mailto:yllkry@gmail.com"
+    type: "email"
+  - url: "https://yllias.github.io/"
+    type: "github"
+
+highlights:
+  - year: "[2024-25]"
+    content: "Software Engineering Intern at **Quartett Mobile** via iPraktikum @ TUM, developing iOS and visionOS applications"
+  - year: "[2023-24]"
+    content: "Teaching Assistant at **TUM** for Software Engineering and Computer Architecture courses"
+  - year: "[2022]"
+    content: "Began working at **Porsche Informatik** as Software Engineer Working Student"
+  - year: "[2022]"
+    content: "Started Computer Science studies at **Technical University of Munich**"
+
+education:
+  - title: "BSc. Computer Science"
+    institution: "Technical University of Munich"
+    period: "Oct 2022 - Present"
+    details: "Software Engineering, Database Systems, Data Structures and Algorithms, Operating Systems, Computer Architecture"
+
+experience:
+  - title: "Software Engineer Working Student"
+    company: "Porsche Informatik"
+    period: "Oct 2022 - Present"
+    details: "Developed enterprise-grade sales applications using Java and Springboot. Created a native C++ module to optimize vehicle data processing pipelines, reducing processing time for large datasets. Automated CI/CD pipelines for testing workflows."
+  - title: "Software Engineering Intern"
+    company: "Quartett Mobile (via iPraktikum @ TUM)"
+    period: "Oct 2024 - Feb 2025"
+    details: "Collaborated in development team to design iOS and visionOS applications. Set up project infrastructure and CI/CD pipelines. Managed deployment using Fastlane, TestFlight and Docker."
+  - title: "Teaching Assistant"
+    company: "Technical University of Munich"
+    period: "Oct 2023 - Oct 2024"
+    details: "Conducted weekly tutorials for 20-30 students in Software Engineering and Computer Architecture. Taught system design, AWS Lambda, gRPC, RISC-V, and memory hierarchy concepts."
+
+projects:
+  - title: "Deep Learning for Depression Detection"
+    period: "April 2025 - Present"
+    role: "Clinical Application Project"
+    description: "Developed a hybrid CNN-GRU architecture using transfer learning (VGG16, DenseNet, EfficientNet) to classify depression severity from speech. Built data pipeline converting audio to mel spectrograms."
+    tags: ["Deep Learning", "CNN-GRU", "Transfer Learning", "Speech Analysis"] 
