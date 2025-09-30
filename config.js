@@ -4,6 +4,7 @@ function parseYAML(yamlText) {
     const result = {};
     let currentSection = null;
     let currentItem = null;
+    let currentLink = null;
     let inArray = false;
 
     for (let line of lines) {
@@ -22,31 +23,63 @@ function parseYAML(yamlText) {
                 currentSection = key;
                 inArray = true;
             }
+            currentItem = null;
+            currentLink = null;
         }
-        // Array items
-        else if (trimmed.startsWith('- ') && currentSection) {
+        // Array items at level 1
+        else if (trimmed.startsWith('- ') && indent === 2) {
             const itemContent = trimmed.substring(2).trim();
 
             if (itemContent.includes(':')) {
                 // Object in array
                 currentItem = {};
-                const [key, value] = itemContent.split(':').map(s => s.trim());
+                const colonIndex = itemContent.indexOf(':');
+                const key = itemContent.substring(0, colonIndex).trim();
+                const value = itemContent.substring(colonIndex + 1).trim();
                 currentItem[key] = value.replace(/^["']|["']$/g, '');
                 result[currentSection].push(currentItem);
             } else {
                 // Simple string in array
                 result[currentSection].push(itemContent.replace(/^["']|["']$/g, ''));
+                currentItem = null;
             }
+            currentLink = null;
         }
-        // Properties of current object
-        else if (indent > 0 && trimmed.includes(':') && currentItem) {
-            const [key, value] = trimmed.split(':').map(s => s.trim());
+        // Properties of current object (level 2)
+        else if (indent === 4 && trimmed.includes(':') && currentItem) {
+            const colonIndex = trimmed.indexOf(':');
+            const key = trimmed.substring(0, colonIndex).trim();
+            const value = trimmed.substring(colonIndex + 1).trim();
+
             if (key === 'tags') {
                 // Handle tags array
                 currentItem[key] = value.replace(/[\[\]"]/g, '').split(',').map(s => s.trim());
+            } else if (key === 'links') {
+                // Initialize links array
+                currentItem[key] = [];
             } else {
                 currentItem[key] = value.replace(/^["']|["']$/g, '');
             }
+            currentLink = null;
+        }
+        // Link array items (level 3)
+        else if (trimmed.startsWith('- ') && indent === 6 && currentItem && currentItem.links) {
+            currentLink = {};
+            const itemContent = trimmed.substring(2).trim();
+            if (itemContent.includes(':')) {
+                const colonIndex = itemContent.indexOf(':');
+                const key = itemContent.substring(0, colonIndex).trim();
+                const value = itemContent.substring(colonIndex + 1).trim();
+                currentLink[key] = value.replace(/^["']|["']$/g, '');
+            }
+            currentItem.links.push(currentLink);
+        }
+        // Link properties (level 4)
+        else if (indent === 8 && trimmed.includes(':') && currentLink) {
+            const colonIndex = trimmed.indexOf(':');
+            const key = trimmed.substring(0, colonIndex).trim();
+            const value = trimmed.substring(colonIndex + 1).trim();
+            currentLink[key] = value.replace(/^["']|["']$/g, '');
         }
     }
 
@@ -170,6 +203,9 @@ function renderPage(config) {
                 </div>
                 <p class="project-role">${item.role}</p>
                 <p>${item.description}</p>
+                ${item.links ? `<div class="project-links">
+                    ${item.links.map(link => `<a href="${link.url}" target="_blank" class="project-link">${link.text}</a>`).join('')}
+                </div>` : ''}
                 <div class="project-tags">
                     ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                 </div>
