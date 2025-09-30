@@ -10,6 +10,10 @@ social_links:
     type: "github"
 
 highlights:
+  - year: "[2025]"
+    content: "Bachelor's thesis on adaptive compute in reasoning LLMs under **Prof. Stefan Bauer** in collaboration with **pdoom.org**"
+  - year: "[2025]"
+    content: "Clinical application project at **Chair of Health Informatics** in Munich, developing deep learning framework for depression detection from speech"
   - year: "[2024-25]"
     content: "Software Engineering Intern at **Quartett Mobile** via iPraktikum @ TUM, developing iOS and visionOS applications"
   - year: "[2023-24]"
@@ -55,7 +59,7 @@ projects:
         url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
       - text: "Paper"
         url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning/blob/main/report-kryeziu.pdf"
-  - title: "ALULA AI-powered Educational Platform"
+  - title: "AULA AI-powered Educational Platform"
     period: "Anthropic Hackathon 2025"
     role: "Team of 3"
     description: "Built an AI-powered educational platform using FastAPI, SQLAlchemy, ChromaDB, and Claude-4 that transforms PDF course materials into interactive video lessons through a 6-stage AI pipeline with mathematical animations and ElevenLabs text-to-speech integration. Implemented hybrid RAG (Retrieval-Augmented Generation) system combining vector embeddings, BM25 sparse retrieval, and cross-encoder reranking."
