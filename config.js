@@ -197,11 +197,9 @@ function renderPage(config) {
     if (config.projects && projectsContainer) {
         projectsContainer.innerHTML = config.projects.map(item =>
             `<div class="project-item">
-                <div class="project-header">
-                    <h3>${item.title}</h3>
-                    <span class="project-date">${item.period}</span>
-                </div>
+                <h3>${item.title}</h3>
                 <p class="project-role">${item.role}</p>
+                <p class="period">${item.period}</p>
                 <p>${item.description}</p>
                 ${item.links ? `<div class="project-links">
                     ${item.links.map(link => `<a href="${link.url}" target="_blank" class="project-link">${link.text}</a>`).join('')}
