@@ -40,8 +40,28 @@ experience:
     details: "Conducted weekly tutorials for 20-30 students in Software Engineering and Computer Architecture. Taught system design, AWS Lambda, gRPC, RISC-V, and memory hierarchy concepts."
 
 projects:
-  - title: "Deep Learning for Depression Detection"
-    period: "April 2025 - Present"
+  - title: "Thesis: Adaptive Compute in Reasoning LLMs"
+    period: "ongoing"
+    role: "Bachelor's Thesis"
+    description: "Investigating an adaptive compute strategy for LLMs to dynamically modulate the detail of their reasoning process in response to problem complexity under Prof. Stefan Bauer and in collaboration with pdoom.org."
+    tags: ["LLMs", "Adaptive Compute", "Reasoning", "Research"]
+  - title: "Deep Learning Framework for Depression Detection from Speech"
+    period: "April 2025"
     role: "Clinical Application Project"
-    description: "Developed a hybrid CNN-GRU architecture using transfer learning (VGG16, DenseNet, EfficientNet) to classify depression severity from speech. Built data pipeline converting audio to mel spectrograms."
-    tags: ["Deep Learning", "CNN-GRU", "Transfer Learning", "Speech Analysis"] 
+    description: "Developed a hybrid CNN-LSTM architecture using transfer learning by finetuning existing CNN architectures to classify depression severity from speech. Built a data pipeline to convert audio into mel spectrograms and achieved binary classification of depression (PHQ-8 scores) and evaluated the model with comprehensive metrics."
+    tags: ["Deep Learning", "CNN-LSTM", "Transfer Learning", "Speech Analysis"]
+    links:
+      - text: "Github"
+        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
+      - text: "Paper"
+        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning/blob/main/report-kryeziu.pdf"
+  - title: "ALULA AI-powered Educational Platform"
+    period: "Anthropic Hackathon 2025"
+    role: "Team of 3"
+    description: "Built an AI-powered educational platform using FastAPI, SQLAlchemy, ChromaDB, and Claude-4 that transforms PDF course materials into interactive video lessons through a 6-stage AI pipeline with mathematical animations and ElevenLabs text-to-speech integration. Implemented hybrid RAG (Retrieval-Augmented Generation) system combining vector embeddings, BM25 sparse retrieval, and cross-encoder reranking."
+    tags: ["FastAPI", "RAG", "Claude-4", "ChromaDB", "SQLAlchemy", "ElevenLabs"]
+    links:
+      - text: "Demo"
+        url: "https://youtu.be/FFNIY6vhThM"
+      - text: "Results"
+        url: "https://www.youtube.com/@yllias/videos" 

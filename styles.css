@@ -126,7 +126,7 @@ body {
 
 .name {
     font-size: 3.5rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 8px;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -169,7 +169,7 @@ section {
 
 h2 {
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 32px;
     color: var(--text-primary);
     position: relative;
@@ -381,6 +381,30 @@ h2::after {
     color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 20px;
+}
+
+.project-links {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.project-link {
+    padding: 6px 16px;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.project-link:hover {
+    background: var(--primary-gradient);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 
 .project-tags {
