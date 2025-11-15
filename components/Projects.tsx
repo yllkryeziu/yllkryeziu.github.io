@@ -18,14 +18,14 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
           <img src={item.imageUrl} alt={item.title} className="w-full rounded-xl object-cover aspect-[16/10]" />
         )}
 
-        <div className="flex justify-between items-baseline">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 min-w-0 flex-1">
             {item.title}
           </h3>
-          <span className="text-sm text-gray-500 font-mono">{item.date}</span>
+          <span className="text-xs sm:text-sm text-gray-500 font-mono whitespace-nowrap">{item.date}</span>
         </div>
 
-        <p className="text-gray-700 leading-relaxed">{item.description}</p>
+        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">{item.description}</p>
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
           {item.links && item.links.map(link => (

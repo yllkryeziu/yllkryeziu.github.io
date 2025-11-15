@@ -23,7 +23,7 @@ const LinkRenderer: React.FC<{ text: string }> = ({ text }) => {
 
 const About: React.FC<AboutProps> = ({ about }) => {
   return (
-    <section className="space-y-4 text-gray-700 leading-relaxed">
+    <section className="space-y-4 text-sm sm:text-base text-gray-700 leading-relaxed">
       {about.paragraphs.map((p, index) => (
         <p key={index}>
           <LinkRenderer text={p} />

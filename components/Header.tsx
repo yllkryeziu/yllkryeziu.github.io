@@ -22,7 +22,7 @@ const NavButton: React.FC<{
   return (
     <button
       onClick={() => onClick(label)}
-      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+      className={`px-2 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
         isActive
           ? 'bg-gray-100 text-gray-900'
           : 'bg-transparent text-gray-600 hover:bg-gray-100/70 hover:text-gray-900'
@@ -37,12 +37,12 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView, name, bio, a
   const navItems: View[] = ['Highlights', 'About', 'Experience', 'Education', 'Projects'];
   return (
     <header>
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-4">
-          <img src={avatarUrl} alt={name} className="w-16 h-16 rounded-full" />
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{name}</h1>
-            <p className="text-gray-600 mt-1 max-w-sm">{bio}</p>
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+          <img src={avatarUrl} alt={name} className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">{name}</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">{bio}</p>
           </div>
         </div>
         <div className="hidden sm:flex flex-col items-end gap-2 text-sm font-medium text-gray-600">
@@ -60,8 +60,8 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView, name, bio, a
             </a>
         </div>
       </div>
-      <nav className="mt-8 border-t border-gray-200 pt-6">
-        <div className="flex items-center gap-2">
+      <nav className="mt-6 sm:mt-8 border-t border-gray-200 pt-4 sm:pt-6">
+        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {navItems.map((item) => (
             <NavButton
               key={item}
