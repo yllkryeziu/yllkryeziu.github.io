@@ -1,0 +1,97 @@
+name: "Yll Kryeziu"
+bio: "Computer Science student at TUM and Software Engineer Working Student at Porsche Informatik."
+avatarUrl: "/profile.jpg"
+email: "mailto:yllkry@gmail.com"
+linkedinUrl: "https://www.linkedin.com/in/yll-kryeziu/"
+githubUrl: "https://github.com/yllias"
+
+about:
+  paragraphs:
+    - "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    - "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    - "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+
+highlights:
+  - year: "[2025]"
+    description: "Bachelor's thesis on adaptive compute in reasoning LLMs under <b>Prof. Stefan Bauer</b> in collaboration with <b>pdoom.org</b>"
+  - year: "[2025]"
+    description: "Clinical application project at <b>Chair of Health Informatics</b> in Munich, developing deep learning framework for depression detection from speech"
+  - year: "[2024-25]"
+    description: "Software Engineering Intern at <b>Quartett Mobile</b> via iPraktikum @ TUM, developing iOS and visionOS applications"
+  - year: "[2023-24]"
+    description: "Teaching Assistant at <b>TUM</b> for Software Engineering and Computer Architecture courses"
+  - year: "[2022]"
+    description: "Began working at <b>Porsche Informatik</b> as Software Engineer Working Student"
+  - year: "[2022]"
+    description: "Started Computer Science studies at <b>Technical University of Munich</b>"
+
+cv:
+  experience:
+    title: "Experience"
+    items:
+      - period: "Oct 2022 - Present"
+        role: "Software Engineer Working Student"
+        company: "Porsche Informatik"
+        companyUrl: "https://www.porscheinformatik.com/"
+        details: "Developed enterprise-grade sales applications using Java and Springboot. Created a native C++ module to optimize vehicle data processing pipelines, reducing processing time for large datasets. Automated CI/CD pipelines for testing workflows."
+      - period: "Oct 2024 - Feb 2025"
+        role: "Software Engineering Intern"
+        company: "Quartett Mobile (via iPraktikum @ TUM)"
+        companyUrl: "https://www.quartett.com/"
+        details: "Collaborated in development team to design iOS and visionOS applications. Set up project infrastructure and CI/CD pipelines. Managed deployment using Fastlane, TestFlight and Docker."
+      - period: "Oct 2023 - Oct 2024"
+        role: "Teaching Assistant"
+        company: "Technical University of Munich"
+        companyUrl: "https://www.tum.de/"
+        details: "Conducted weekly tutorials for 20-30 students in Software Engineering and Computer Architecture. Taught system design, AWS Lambda, gRPC, RISC-V, and memory hierarchy concepts."
+
+  volunteering:
+    title: "Volunteering"
+    items:
+      - period: "2024 - present"
+        role: "Volunteer"
+        company: "Placeholder Organization"
+        companyUrl: "#"
+        details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+
+  education:
+    title: "Education"
+    items:
+      - period: "Oct 2022 - Present"
+        degree: "BSc. Computer Science"
+        institution: "Technical University of Munich"
+        institutionUrl: "https://www.tum.de/"
+        details: "Software Engineering, Database Systems, Data Structures and Algorithms, Operating Systems, Computer Architecture"
+
+projects:
+  - id: 1
+    title: "Thesis: Adaptive Compute in Reasoning LLMs"
+    date: "ongoing"
+    description: "Investigating an adaptive compute strategy for LLMs to dynamically modulate the detail of their reasoning process in response to problem complexity under Prof. Stefan Bauer and in collaboration with pdoom.org."
+    imageUrl: ""
+    tags: ["#llms", "#adaptive-compute", "#reasoning", "#research"]
+    links: []
+
+  - id: 2
+    title: "Deep Learning Framework for Depression Detection from Speech"
+    date: "April 2025"
+    description: "Developed a hybrid CNN-LSTM architecture using transfer learning by finetuning existing CNN architectures to classify depression severity from speech. Built a data pipeline to convert audio into mel spectrograms and achieved binary classification of depression (PHQ-8 scores) and evaluated the model with comprehensive metrics."
+    imageUrl: ""
+    tags: ["#deep-learning", "#cnn-lstm", "#transfer-learning", "#speech-analysis"]
+    links:
+      - name: "GitHub"
+        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
+      - name: "Paper"
+        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning/blob/main/report-kryeziu.pdf"
+
+  - id: 3
+    title: "AULA AI-powered Educational Platform"
+    date: "Anthropic Hackathon 2025"
+    description: "Built an AI-powered educational platform using FastAPI, SQLAlchemy, ChromaDB, and Claude-4 that transforms PDF course materials into interactive video lessons through a 6-stage AI pipeline with mathematical animations and ElevenLabs text-to-speech integration. Implemented hybrid RAG (Retrieval-Augmented Generation) system combining vector embeddings, BM25 sparse retrieval, and cross-encoder reranking."
+    imageUrl: ""
+    tags: ["#fastapi", "#rag", "#claude-4", "#chromadb", "#sqlalchemy", "#elevenlabs"]
+    links:
+      - name: "Demo"
+        url: "https://youtu.be/FFNIY6vhThM"
+      - name: "Results"
+        url: "https://www.youtube.com/@yllias/videos"
