@@ -106,8 +106,8 @@ const Experience: React.FC<{ cv: CVData }> = ({ cv }) => {
   };
 
   return (
-    <div className="space-y-16">
-      <CVSection title={cv.experience.title} items={cv.experience.items} renderItem={renderExperienceItem} />
+    <div className="space-y-6 sm:space-y-8">
+      {cv.experience.items.map((item, index) => renderExperienceItem(item, index))}
     </div>
   );
 };
