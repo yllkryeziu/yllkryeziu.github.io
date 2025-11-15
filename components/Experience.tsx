@@ -10,8 +10,8 @@ interface CVSectionProps<T> {
 
 const CVSection = <T,>({ title, items, renderItem }: CVSectionProps<T>) => (
   <section>
-    <h2 className="text-2xl font-bold text-gray-900 mb-8">{title}</h2>
-    <div className="space-y-8">
+    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">{title}</h2>
+    <div className="space-y-6 sm:space-y-8">
       {items.map((item, index) => renderItem(item, index))}
     </div>
   </section>
@@ -32,29 +32,29 @@ const Experience: React.FC<{ cv: CVData }> = ({ cv }) => {
     return (
       <div key={id}>
         <div
-          className={`flex justify-between items-start ${item.details ? 'cursor-pointer' : ''}`}
+          className={`flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 ${item.details ? 'cursor-pointer' : ''}`}
           onClick={() => item.details && toggleItem(id)}
           role="button"
           aria-expanded={isExpanded}
           aria-controls={`details-${id}`}
         >
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
               {item.company ? (
                 <a href={item.companyUrl} onClick={(e) => e.stopPropagation()} className="hover:underline inline-flex items-center">
                   {item.company}
-                  <ArrowUpRightIcon className="w-4 h-4" />
+                  <ArrowUpRightIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                 </a>
               ) : (
                 item.role
               )}
             </h3>
-            {item.company && <p className="text-lg text-gray-800 mt-1">{item.role}</p>}
+            {item.company && <p className="text-sm sm:text-lg text-gray-800 mt-1">{item.role}</p>}
           </div>
-          <div className="flex items-start gap-4 ml-4">
-            <p className="text-gray-500 text-sm text-right whitespace-nowrap pt-1">{item.period}</p>
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <p className="text-gray-500 text-xs sm:text-sm whitespace-nowrap">{item.period}</p>
             {item.details && (
-              <ChevronDownIcon className={`w-5 h-5 text-gray-400 mt-1 transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
             )}
           </div>
         </div>
@@ -74,25 +74,25 @@ const Experience: React.FC<{ cv: CVData }> = ({ cv }) => {
      return (
        <div key={id}>
          <div
-           className={`flex justify-between items-start ${item.details ? 'cursor-pointer' : ''}`}
+           className={`flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 ${item.details ? 'cursor-pointer' : ''}`}
            onClick={() => item.details && toggleItem(id)}
            role="button"
            aria-expanded={isExpanded}
            aria-controls={`details-${id}`}
          >
-           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+           <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                <a href={item.institutionUrl} onClick={(e) => e.stopPropagation()} className="hover:underline inline-flex items-center">
                    {item.institution}
-                   <ArrowUpRightIcon className="w-4 h-4" />
+                   <ArrowUpRightIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                </a>
             </h3>
-            <p className="text-lg text-gray-800 mt-1">{item.degree}</p>
+            <p className="text-sm sm:text-lg text-gray-800 mt-1">{item.degree}</p>
           </div>
-           <div className="flex items-start gap-4 ml-4">
-            <p className="text-gray-500 text-sm text-right whitespace-nowrap pt-1">{item.period}</p>
+           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <p className="text-gray-500 text-xs sm:text-sm whitespace-nowrap">{item.period}</p>
             {item.details && (
-              <ChevronDownIcon className={`w-5 h-5 text-gray-400 mt-1 transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
             )}
           </div>
          </div>
