@@ -51,7 +51,7 @@ cv:
     items:
       - period: "Aug 2025 - Present"
         role: "Founder & Technical Lead"
-        company: "Advanced Resilience & Computing Mission (ARC-M)"
+        company: "Advanced Resilience & Computing Mission"
         companyUrl: "https://arc-mission.github.io"
         details: "Launched student research initiative exploring civilian and dual-use technologies for system resilience and autonomous operations. Engineering flagship Embodied AI project using NVIDIA Isaac Sim, ROS 2 and Reasoning LLMs."
       - period: "Jan 2025 - Present"
