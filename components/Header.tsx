@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView, name, bio, a
         </div>
       </div>
       <nav className="mt-6 sm:mt-8 border-t border-gray-200 pt-4 sm:pt-6">
-        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center justify-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {navItems.map((item) => (
             <NavButton
               key={item}

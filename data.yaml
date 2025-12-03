@@ -7,17 +7,18 @@ githubUrl: "https://github.com/yllkryeziu"
 
 about:
   paragraphs:
-    - "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-    - "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    - "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+    - "Computer Science student at TUM with focus on Software Engineering, Algorithms, and Machine Learning. Currently researching adaptive compute in reasoning LLMs and developing embodied AI systems."
+    - "Experience spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
 
 highlights:
   - year: "[2025]"
-    description: "Bachelor's thesis on adaptive compute in reasoning LLMs under <b>Prof. Stefan Bauer</b> in collaboration with <b>pdoom.org</b>"
+    description: "Founded <b>Advanced Resilience & Computing Mission (ARC-M)</b>, student research initiative on system resilience and autonomous operations"
   - year: "[2025]"
-    description: "Clinical application project at <b>Chair of Health Informatics</b> in Munich, developing deep learning framework for depression detection from speech"
-  - year: "[2024-25]"
-    description: "Software Engineering Intern at <b>Quartett Mobile</b> via iPraktikum @ TUM, developing iOS and visionOS applications"
+    description: "Researching on <b>Adaptive Compute in Reasoning LLMs</b> under Prof. Stefan Bauer and in collaboration with pdoom.org"
+  - year: "[2025]"
+    description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
+  - year: "[2025]"
+    description: "Researching on <b>Depression Detection from Speech</b> using deep learning at Chair of Health Informatics"
   - year: "[2023-24]"
     description: "Teaching Assistant at <b>TUM</b> for Software Engineering and Computer Architecture courses"
   - year: "[2022]"
@@ -33,35 +34,40 @@ cv:
         role: "Software Engineer Working Student"
         company: "Porsche Informatik"
         companyUrl: "https://www.porscheinformatik.com/"
-        details: "Developed enterprise-grade sales applications using Java and Springboot. Created a native C++ module to optimize vehicle data processing pipelines, reducing processing time for large datasets. Automated CI/CD pipelines for testing workflows."
-      - period: "Oct 2024 - Feb 2025"
-        role: "Software Engineering Intern"
-        company: "Quartett Mobile (via iPraktikum @ TUM)"
-        companyUrl: "https://www.quartett.com/"
-        details: "Collaborated in development team to design iOS and visionOS applications. Set up project infrastructure and CI/CD pipelines. Managed deployment using Fastlane, TestFlight and Docker."
+        details: "Collaborated on engineering of Java enterprise sales platform used across Volkswagen Group brands. Developed high-performance native C++ module to optimize critical vehicle data processing pipelines, integrating via JNI."
+      - period: "Apr 2025 - Sep 2025"
+        role: "Student Researcher"
+        company: "Chair of Health Informatics, TU Munich"
+        companyUrl: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
+        details: "Designed hybrid CNN-LSTM architecture utilizing transfer learning to process acoustic signals and classify depression severity, achieving SOTA performance metrics on the target benchmark."
       - period: "Oct 2023 - Oct 2024"
         role: "Teaching Assistant"
         company: "Technical University of Munich"
         companyUrl: "https://www.tum.de/"
-        details: "Conducted weekly tutorials for 20-30 students in Software Engineering and Computer Architecture. Taught system design, AWS Lambda, gRPC, RISC-V, and memory hierarchy concepts."
+        details: "Held weekly tutorial sessions for Software Engineering and Computer Architecture courses. Taught concepts from object-oriented design and cloud-native architectures to RISC-V assembly and memory hierarchies."
 
-  volunteering:
-    title: "Volunteering"
+  initiatives:
+    title: "Initiatives & Leadership"
     items:
-      - period: "2024 - present"
-        role: "Volunteer"
-        company: "Placeholder Organization"
-        companyUrl: "#"
-        details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      - period: "Aug 2025 - Present"
+        role: "Founder & Technical Lead"
+        company: "Advanced Resilience & Computing Mission (ARC-M)"
+        companyUrl: "https://arc-mission.github.io"
+        details: "Launched student research initiative exploring civilian and dual-use technologies for system resilience and autonomous operations. Engineering flagship Embodied AI project using NVIDIA Isaac Sim, ROS 2 and Reasoning LLMs."
+      - period: "Jan 2025 - Present"
+        role: "Founder & President"
+        company: "TUM Albanian Student Society"
+        companyUrl: "https://tum-albanian-students.github.io/#/"
+        details: "Established and led student community to foster academic exchange and cultural integration at TU Munich."
 
   education:
     title: "Education"
     items:
       - period: "Oct 2022 - Present"
-        degree: "BSc. Computer Science"
+        degree: "Bachelor of Science, Computer Science"
         institution: "Technical University of Munich"
         institutionUrl: "https://www.tum.de/"
-        details: "Software Engineering, Database Systems, Data Structures and Algorithms, Operating Systems, Computer Architecture"
+        details: "Focus on Software Engineering, Databases, and Machine Learning"
 
 projects:
   - id: 1
