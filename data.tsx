@@ -75,9 +75,9 @@ export const cvData: CVData = {
       details: item.details
     }))
   },
-  volunteering: data.cv.volunteering ? {
-    title: data.cv.volunteering.title,
-    items: data.cv.volunteering.items.map((item: any) => ({
+  initiatives: data.cv.initiatives ? {
+    title: data.cv.initiatives.title,
+    items: data.cv.initiatives.items.map((item: any) => ({
       period: item.period,
       role: item.role,
       company: item.company,

@@ -107,8 +107,8 @@ const Education: React.FC<{ cv: CVData }> = ({ cv }) => {
   return (
     <div className="space-y-16">
       <CVSection title={cv.education.title} items={cv.education.items} renderItem={renderEducationItem} />
-      {cv.volunteering && (
-        <CVSection title={cv.volunteering.title} items={cv.volunteering.items} renderItem={renderExperienceItem} />
+      {cv.initiatives && (
+        <CVSection title={cv.initiatives.title} items={cv.initiatives.items} renderItem={renderExperienceItem} />
       )}
     </div>
   );

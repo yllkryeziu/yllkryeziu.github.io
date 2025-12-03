@@ -36,7 +36,7 @@ export interface CVData {
     title: string;
     items: CVItem[];
   };
-  volunteering?: {
+  initiatives?: {
     title: string;
     items: CVItem[];
   };
