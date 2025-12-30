@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import About from './components/About';
 import Highlights from './components/Highlights';
@@ -10,9 +10,22 @@ import { aboutData, highlightsData, cvData, projectsData } from './data';
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('Highlights');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [displayedView, setDisplayedView] = useState<View>('Highlights');
+
+  useEffect(() => {
+    if (activeView !== displayedView) {
+      setIsTransitioning(true);
+      const timer = setTimeout(() => {
+        setDisplayedView(activeView);
+        setIsTransitioning(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [activeView, displayedView]);
 
   const renderContent = () => {
-    switch (activeView) {
+    switch (displayedView) {
       case 'Highlights':
         return <Highlights highlights={highlightsData} />;
       case 'Experience':
@@ -29,20 +42,28 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-20">
-      <Header
-        activeView={activeView}
-        setActiveView={setActiveView}
-        name={aboutData.name}
-        bio={aboutData.bio}
-        avatarUrl={aboutData.avatarUrl}
-        email={aboutData.email}
-        linkedinUrl={aboutData.linkedinUrl}
-        githubUrl={aboutData.githubUrl}
-      />
-      <main className="mt-8 sm:mt-12">
-        {renderContent()}
-      </main>
+    <div className="min-h-screen bg-stone-50 font-body">
+      <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24">
+        <Header
+          activeView={activeView}
+          setActiveView={setActiveView}
+          name={aboutData.name}
+          bio={aboutData.bio}
+          avatarUrl={aboutData.avatarUrl}
+          email={aboutData.email}
+          linkedinUrl={aboutData.linkedinUrl}
+          githubUrl={aboutData.githubUrl}
+        />
+        <main
+          className={`mt-10 sm:mt-12 transition-all duration-200 ease-out ${
+            isTransitioning
+              ? 'opacity-0 translate-y-2'
+              : 'opacity-100 translate-y-0'
+          }`}
+        >
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 };
