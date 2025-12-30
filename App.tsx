@@ -12,6 +12,25 @@ const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('Highlights');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displayedView, setDisplayedView] = useState<View>('Highlights');
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+
+    if (newIsDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
+    }
+  };
 
   useEffect(() => {
     if (activeView !== displayedView) {
@@ -42,7 +61,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 font-body">
+    <div className="min-h-screen bg-stone-50 dark:bg-black transition-colors duration-300">
       <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24">
         <Header
           activeView={activeView}
@@ -53,6 +72,8 @@ const App: React.FC = () => {
           email={aboutData.email}
           linkedinUrl={aboutData.linkedinUrl}
           githubUrl={aboutData.githubUrl}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
         />
         <main
           className={`mt-10 sm:mt-12 transition-all duration-200 ease-out ${

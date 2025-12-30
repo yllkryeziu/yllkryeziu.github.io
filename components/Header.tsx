@@ -1,6 +1,6 @@
 import React from 'react';
 import type { View } from '../types';
-import { MailIcon, LinkedInIcon, GitHubIcon } from '../data';
+import { MailIcon, LinkedInIcon, GitHubIcon, SunIcon, MoonIcon } from '../data';
 
 interface HeaderProps {
   activeView: View;
@@ -11,6 +11,8 @@ interface HeaderProps {
   email: string;
   linkedinUrl: string;
   githubUrl: string;
+  isDark: boolean;
+  toggleTheme: () => void;
 }
 
 const NavLink: React.FC<{
@@ -22,15 +24,15 @@ const NavLink: React.FC<{
   return (
     <button
       onClick={() => onClick(label)}
-      className={`relative pb-1 text-sm font-medium transition-colors duration-200 ${
+      className={`relative pb-1 text-sm font-medium transition-all duration-200 hover:scale-[1.02] ${
         isActive
-          ? 'text-stone-900'
-          : 'text-stone-500 hover:text-stone-900'
+          ? 'text-stone-900 dark:text-stone-100'
+          : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-100'
       }`}
     >
       {label}
       <span
-        className={`absolute bottom-0 left-0 h-0.5 bg-accent transition-all duration-200 ${
+        className={`absolute bottom-0 left-0 h-0.5 bg-accent transition-all duration-300 ease-out ${
           isActive ? 'w-full' : 'w-0'
         }`}
       />
@@ -48,10 +50,10 @@ const SocialLink: React.FC<{
     href={href}
     target={external ? "_blank" : undefined}
     rel={external ? "noopener noreferrer" : undefined}
-    className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-accent transition-colors duration-150"
+    className="group flex items-center gap-1.5 text-sm text-stone-500 hover:text-accent transition-colors duration-150"
   >
-    <Icon className="w-4 h-4" />
-    <span>{label}</span>
+    <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+    <span className="link-underline">{label}</span>
   </a>
 );
 
@@ -63,7 +65,9 @@ const Header: React.FC<HeaderProps> = ({
   avatarUrl,
   email,
   linkedinUrl,
-  githubUrl
+  githubUrl,
+  isDark,
+  toggleTheme
 }) => {
   const navItems: View[] = ['Highlights', 'About', 'Experience', 'Education', 'Projects'];
 
@@ -74,12 +78,25 @@ const Header: React.FC<HeaderProps> = ({
         <img
           src={avatarUrl}
           alt={name}
-          className="w-20 h-20 rounded-full flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300"
+          className="w-20 h-20 rounded-full flex-shrink-0 grayscale hover:grayscale-0 hover:scale-105 transition-all duration-300 ease-out"
         />
         <div className="flex-1 min-w-0 pt-1">
-          <h1 className="text-xl sm:text-2xl font-semibold text-stone-900 tracking-tight">
-            {name}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl sm:text-2xl font-semibold text-stone-900 dark:text-stone-100 tracking-[-0.03em]">
+              {name}
+            </h1>
+            <button
+              onClick={toggleTheme}
+              className="p-2 -mr-2 text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 transition-colors duration-150"
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDark ? (
+                <SunIcon className="w-5 h-5" />
+              ) : (
+                <MoonIcon className="w-5 h-5" />
+              )}
+            </button>
+          </div>
           <p className="text-stone-500 mt-1 text-sm sm:text-base leading-relaxed">
             {bio}
           </p>
@@ -94,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Navigation */}
-      <nav className="mt-8 pt-6 border-t border-stone-200">
+      <nav className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-800">
         <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto pb-1 -mb-1">
           {navItems.map((item) => (
             <NavLink
