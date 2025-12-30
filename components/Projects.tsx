@@ -25,7 +25,10 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
           <span className="text-xs sm:text-sm text-gray-500 font-mono whitespace-nowrap">{item.date}</span>
         </div>
 
-        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">{item.description}</p>
+        <p 
+          className="text-sm sm:text-base text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: item.description }}
+        />
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
           {item.links && item.links.map(link => (
