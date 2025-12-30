@@ -28,7 +28,7 @@ const About: React.FC<AboutProps> = ({ about }) => {
         {about.paragraphs.map((p, index) => (
           <p
             key={index}
-            className="text-base text-stone-600 leading-[1.75] tracking-[-0.01em]"
+            className="text-base text-stone-600 dark:text-stone-400 leading-[1.75] tracking-[-0.01em]"
           >
             <LinkRenderer text={p} />
           </p>
