@@ -4,51 +4,71 @@ import { ArrowUpRightIcon } from '../data';
 
 const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
   return (
-    <div className="relative py-4">
-      {item.year && (
-        <div className="absolute left-full ml-8 top-4 hidden xl:block">
-            <span className="text-gray-400 font-mono text-sm transform-gpu -rotate-90 origin-top-left whitespace-nowrap">
-                {item.year}
-            </span>
+    <article className="group">
+      {/* Image */}
+      {item.imageUrl && (
+        <div className="mb-4 overflow-hidden rounded-lg">
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="w-full aspect-[16/10] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          />
         </div>
       )}
-      
-      <div className="space-y-3">
-        {item.imageUrl && (
-          <img src={item.imageUrl} alt={item.title} className="w-full rounded-xl object-cover aspect-[16/10]" />
-        )}
 
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-4">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 min-w-0 flex-1">
-            {item.title}
-          </h3>
-          <span className="text-xs sm:text-sm text-gray-500 font-mono whitespace-nowrap">{item.date}</span>
-        </div>
-
-        <p 
-          className="text-sm sm:text-base text-gray-700 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: item.description }}
-        />
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
-          {item.links && item.links.map(link => (
-            <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-800 hover:underline inline-flex items-center">
-              {link.name}
-              <ArrowUpRightIcon className="w-3.5 h-3.5" />
-            </a>
-          ))}
-          {item.tags && item.tags.map(tag => (
-            <span key={tag} className="text-gray-500 text-sm font-mono">{tag}</span>
-          ))}
-        </div>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-4">
+        <h3 className="text-base font-semibold text-stone-900">
+          {item.title}
+        </h3>
+        <span className="text-sm text-stone-400 font-mono whitespace-nowrap">
+          {item.date}
+        </span>
       </div>
-    </div>
+
+      {/* Description */}
+      <p
+        className="mt-3 text-stone-600 text-sm sm:text-base leading-relaxed [&_a]:text-stone-900 [&_a]:underline [&_a]:decoration-stone-300 [&_a]:underline-offset-2 hover:[&_a]:decoration-accent [&_a]:transition-colors"
+        dangerouslySetInnerHTML={{ __html: item.description }}
+      />
+
+      {/* Links & Tags */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        {/* Links */}
+        {item.links && item.links.map(link => (
+          <a
+            key={link.name}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-stone-800 hover:text-accent transition-colors inline-flex items-center gap-1"
+          >
+            {link.name}
+            <ArrowUpRightIcon className="w-3.5 h-3.5" />
+          </a>
+        ))}
+
+        {/* Tags */}
+        {item.tags && item.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {item.tags.map(tag => (
+              <span
+                key={tag}
+                className="text-xs font-mono text-stone-400 bg-stone-50 px-2 py-0.5 rounded"
+              >
+                {tag.replace('#', '')}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </article>
   );
 };
 
 const Projects: React.FC<{ projects: ProjectItem[] }> = ({ projects }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {projects.map(item => (
         <ProjectCard key={item.id} item={item} />
       ))}

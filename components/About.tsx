@@ -23,12 +23,17 @@ const LinkRenderer: React.FC<{ text: string }> = ({ text }) => {
 
 const About: React.FC<AboutProps> = ({ about }) => {
   return (
-    <section className="space-y-4 text-sm sm:text-base text-gray-700 leading-relaxed">
-      {about.paragraphs.map((p, index) => (
-        <p key={index}>
-          <LinkRenderer text={p} />
-        </p>
-      ))}
+    <section className="max-w-xl">
+      <div className="space-y-5">
+        {about.paragraphs.map((p, index) => (
+          <p
+            key={index}
+            className="text-base text-stone-600 leading-[1.75] tracking-[-0.01em]"
+          >
+            <LinkRenderer text={p} />
+          </p>
+        ))}
+      </div>
     </section>
   );
 };
