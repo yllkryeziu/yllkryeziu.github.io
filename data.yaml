@@ -14,7 +14,7 @@ highlights:
   - year: "[2025]"
     description: "Founded <b>Advanced Resilience & Computing Mission (ARC-M)</b>, student research initiative on system resilience and autonomous operations"
   - year: "[2025]"
-    description: "Researching on <b>Adaptive Compute in Reasoning LLMs</b> under Prof. Stefan Bauer and in collaboration with pdoom.org"
+    description: "Researching on <b>Adaptive Compute in Reasoning LLMs</b> @ [p(doom)](https://pdoom.org)"
   - year: "[2025]"
     description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
   - year: "[2025]"
@@ -73,7 +73,7 @@ projects:
   - id: 1
     title: "Thesis: Adaptive Compute in Reasoning LLMs"
     date: "ongoing"
-    description: "Investigating an adaptive compute strategy for LLMs to dynamically modulate the detail of their reasoning process in response to problem complexity under Prof. Stefan Bauer and in collaboration with pdoom.org."
+    description: "Investigating an adaptive compute strategy for LLMs to dynamically modulate the detail of their reasoning process in response to problem complexity @ [p(doom)](https://pdoom.org)."
     imageUrl: ""
     tags: ["#llms", "#adaptive-compute", "#reasoning", "#research"]
     links: []
