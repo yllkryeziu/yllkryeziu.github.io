@@ -72,6 +72,7 @@ const App: React.FC = () => {
           email={aboutData.email}
           linkedinUrl={aboutData.linkedinUrl}
           githubUrl={aboutData.githubUrl}
+          xUrl={aboutData.xUrl}
           isDark={isDark}
           toggleTheme={toggleTheme}
         />

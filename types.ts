@@ -8,6 +8,7 @@ export interface AboutData {
   email: string;
   linkedinUrl: string;
   githubUrl: string;
+  xUrl: string;
 }
 
 export interface HighlightItem {
