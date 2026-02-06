@@ -1,6 +1,6 @@
 import React from 'react';
 import type { View } from '../types';
-import { MailIcon, LinkedInIcon, GitHubIcon, SunIcon, MoonIcon } from '../data';
+import { MailIcon, LinkedInIcon, GitHubIcon, XIcon, SunIcon, MoonIcon } from '../data';
 
 interface HeaderProps {
   activeView: View;
@@ -11,6 +11,7 @@ interface HeaderProps {
   email: string;
   linkedinUrl: string;
   githubUrl: string;
+  xUrl: string;
   isDark: boolean;
   toggleTheme: () => void;
 }
@@ -66,10 +67,11 @@ const Header: React.FC<HeaderProps> = ({
   email,
   linkedinUrl,
   githubUrl,
+  xUrl,
   isDark,
   toggleTheme
 }) => {
-  const navItems: View[] = ['Highlights', 'About', 'Experience', 'Education', 'Projects'];
+  const navItems: View[] = ['Highlights', 'Experience', 'Projects'];
 
   return (
     <header>
@@ -106,6 +108,7 @@ const Header: React.FC<HeaderProps> = ({
             <SocialLink href={email} icon={MailIcon} label="Mail" />
             <SocialLink href={linkedinUrl} icon={LinkedInIcon} label="LinkedIn" external />
             <SocialLink href={githubUrl} icon={GitHubIcon} label="GitHub" external />
+            <SocialLink href={xUrl} icon={XIcon} label="X" external />
           </div>
         </div>
       </div>
