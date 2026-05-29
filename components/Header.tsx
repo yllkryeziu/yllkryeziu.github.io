@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({
   isDark,
   toggleTheme
 }) => {
-  const navItems: View[] = ['Highlights', 'Experience', 'Projects', 'Blog'];
+  const navItems: View[] = ['Highlights', 'Experience', 'Work'];
 
   return (
     <header>

@@ -8,8 +8,8 @@ xUrl: "https://x.com/yllkry"
 
 about:
   paragraphs:
-    - "Computer Science student at TUM with focus on Software Engineering, Algorithms, and Machine Learning. Currently researching adaptive compute in reasoning LLMs and developing embodied AI systems."
-    - "Experience spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
+    - "Computer Science graduate from TUM and Founding Engineer at p(doom). Working on adaptive compute in reasoning LLMs and building embodied AI systems."
+    - "Background spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
 
 highlights:
   - year: "[2026]"
@@ -35,7 +35,12 @@ cv:
   experience:
     title: "Experience"
     items:
-      - period: "Oct 2022 - Present"
+      - period: "Apr 2026 - Present"
+        role: "Founding Engineer"
+        company: "p(doom)"
+        companyUrl: "https://pdoom.org"
+        details: "Building core infrastructure and research tooling as a Founding Engineer. Working on adaptive compute in reasoning LLMs and embodied AI systems."
+      - period: "Oct 2022 - Apr 2026"
         role: "Software Engineer Working Student"
         company: "Porsche Informatik"
         companyUrl: "https://www.porscheinformatik.com/"

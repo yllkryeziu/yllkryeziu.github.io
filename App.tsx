@@ -4,10 +4,9 @@ import About from './components/About';
 import Highlights from './components/Highlights';
 import Experience from './components/Experience';
 import Education from './components/Education';
-import Projects from './components/Projects';
-import Blog from './components/Blog';
+import Work from './components/Blog';
 import type { View } from './types';
-import { aboutData, highlightsData, cvData, projectsData } from './data';
+import { aboutData, highlightsData, cvData } from './data';
 
 const NOISE_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 
@@ -17,9 +16,9 @@ function hashToView(hash: string): View {
     highlights: 'Highlights',
     experience: 'Experience',
     education: 'Education',
-    projects: 'Projects',
+    work: 'Work',
+    blog: 'Work',
     about: 'About',
-    blog: 'Blog',
   };
   return map[segment] || 'Highlights';
 }
@@ -130,12 +129,10 @@ const App: React.FC = () => {
         return <Experience cv={cvData} />;
       case 'Education':
         return <Education cv={cvData} />;
-      case 'Projects':
-        return <Projects projects={projectsData} />;
       case 'About':
         return <About about={aboutData} />;
-      case 'Blog':
-        return <Blog />;
+      case 'Work':
+        return <Work />;
       default:
         return <Highlights highlights={highlightsData} />;
     }
