@@ -83,7 +83,7 @@ const Experience: React.FC<{ cv: CVData }> = ({ cv }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-child">
       {cv.experience.items.map((item, index) => {
         const id = `exp-${index}`;
         return (

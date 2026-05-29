@@ -33,7 +33,7 @@ const NavLink: React.FC<{
     >
       {label}
       <span
-        className={`absolute bottom-0 left-0 h-0.5 bg-accent transition-all duration-300 ease-out ${
+        className={`absolute bottom-0 left-0 h-0.5 nav-gradient-bar transition-all duration-300 ease-out ${
           isActive ? 'w-full' : 'w-0'
         }`}
       />
@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({
   isDark,
   toggleTheme
 }) => {
-  const navItems: View[] = ['Highlights', 'Experience', 'Projects'];
+  const navItems: View[] = ['Highlights', 'Experience', 'Projects', 'Blog'];
 
   return (
     <header>
@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({
         <img
           src={avatarUrl}
           alt={name}
-          className="w-20 h-20 rounded-full flex-shrink-0 grayscale hover:grayscale-0 hover:scale-105 transition-all duration-300 ease-out"
+          className="w-20 h-20 rounded-full flex-shrink-0 avatar-glow"
         />
         <div className="flex-1 min-w-0 pt-1">
           <div className="flex items-center justify-between">

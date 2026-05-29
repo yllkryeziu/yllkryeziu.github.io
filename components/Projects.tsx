@@ -4,7 +4,7 @@ import { ArrowUpRightIcon } from '../data';
 
 const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
   return (
-    <article className="group -mx-3 px-3 py-3 -my-3 rounded-xl transition-all duration-200 hover:bg-stone-900/[0.02] dark:hover:bg-white/[0.03] hover:-translate-y-0.5">
+    <article className="group -mx-3 px-3 py-3 -my-3 project-card-enhanced hover:bg-stone-900/[0.02] dark:hover:bg-white/[0.03]">
       {/* Image */}
       {item.imageUrl && (
         <div className="mb-4 overflow-hidden rounded-lg">
@@ -68,7 +68,7 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
 
 const Projects: React.FC<{ projects: ProjectItem[] }> = ({ projects }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 stagger-child">
       {projects.map(item => (
         <ProjectCard key={item.id} item={item} />
       ))}
