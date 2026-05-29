@@ -164,7 +164,7 @@ const Education: React.FC<{ cv: CVData }> = ({ cv }) => {
       {/* Education Section */}
       <section>
         <SectionTitle>{cv.education.title}</SectionTitle>
-        <div className="space-y-6">
+        <div className="space-y-6 stagger-child">
           {cv.education.items.map((item, index) => {
             const id = `edu-${index}`;
             return (
@@ -184,7 +184,7 @@ const Education: React.FC<{ cv: CVData }> = ({ cv }) => {
       {cv.initiatives && (
         <section>
           <SectionTitle>{cv.initiatives.title}</SectionTitle>
-          <div className="space-y-6">
+          <div className="space-y-6 stagger-child">
             {cv.initiatives.items.map((item, index) => {
               const id = `init-${index}`;
               return (

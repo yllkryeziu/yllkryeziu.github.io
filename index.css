@@ -24,7 +24,7 @@
 
 /* Dark Mode Colors */
 .dark {
-  --color-bg: #000000;
+  --color-bg: #06060E;
   --color-text: #F5F5F7;
   --color-text-muted: #86868B;
   --color-text-subtle: #6E6E73;
@@ -32,7 +32,7 @@
   --color-accent-hover: #40A9FF;
   --color-border: #38383A;
   --color-border-light: #1D1D1F;
-  --color-hover: rgba(255, 255, 255, 0.05);
+  --color-hover: rgba(255, 255, 255, 0.04);
 }
 
 /* Base Styles */
@@ -85,7 +85,7 @@ a {
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -94,7 +94,7 @@ a {
 }
 
 .animate-in {
-  animation: fadeSlideIn var(--transition-slow) ease-out forwards;
+  animation: fadeSlideIn 350ms ease-out forwards;
 }
 
 /* Link Styles */
@@ -245,4 +245,142 @@ a {
 
 .border-accent-transition.active {
   border-left-color: var(--color-accent);
+}
+
+/* ============================================
+   CUSTOM CURSOR
+   Only activates on non-touch pointer devices
+   ============================================ */
+@media (hover: hover) and (pointer: fine) {
+  html, * {
+    cursor: none !important;
+  }
+
+  #cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-text);
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.2s ease, width 0.2s ease, height 0.2s ease;
+    will-change: transform;
+  }
+
+  #cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.35;
+    will-change: transform;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease;
+  }
+
+  #cursor-ring.is-hovering {
+    width: 40px;
+    height: 40px;
+    opacity: 0.2;
+    border-color: var(--color-accent);
+  }
+
+  #cursor-dot.is-hovering {
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent);
+  }
+}
+
+/* ============================================
+   STAGGER ENTRANCE ANIMATIONS
+   Apply .stagger-child to the list container;
+   each direct child animates in with a delay
+   ============================================ */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-child > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s ease-out forwards;
+}
+
+.stagger-child > *:nth-child(1)   { animation-delay: 0.04s; }
+.stagger-child > *:nth-child(2)   { animation-delay: 0.08s; }
+.stagger-child > *:nth-child(3)   { animation-delay: 0.13s; }
+.stagger-child > *:nth-child(4)   { animation-delay: 0.18s; }
+.stagger-child > *:nth-child(5)   { animation-delay: 0.23s; }
+.stagger-child > *:nth-child(6)   { animation-delay: 0.28s; }
+.stagger-child > *:nth-child(7)   { animation-delay: 0.33s; }
+.stagger-child > *:nth-child(8)   { animation-delay: 0.38s; }
+.stagger-child > *:nth-child(n+9) { animation-delay: 0.42s; }
+
+/* ============================================
+   GRADIENT NAV ACTIVE INDICATOR
+   ============================================ */
+.nav-gradient-bar {
+  background: linear-gradient(90deg, var(--color-accent) 0%, #7C3AED 100%);
+}
+
+/* ============================================
+   AVATAR HOVER GLOW
+   ============================================ */
+.avatar-glow {
+  transition: filter 0.35s ease-out, box-shadow 0.35s ease-out, transform 0.35s ease-out;
+  filter: grayscale(1);
+}
+
+.avatar-glow:hover {
+  filter: grayscale(0);
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 0 5px rgba(0, 113, 227, 0.35),
+    0 6px 24px rgba(0, 113, 227, 0.2);
+}
+
+.dark .avatar-glow:hover {
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 0 5px rgba(41, 151, 255, 0.4),
+    0 6px 24px rgba(41, 151, 255, 0.25);
+}
+
+/* ============================================
+   ENHANCED PROJECT CARD
+   ============================================ */
+.project-card-enhanced {
+  transition: box-shadow 0.3s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+}
+
+.project-card-enhanced:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 113, 227, 0.12),
+    0 6px 24px rgba(0, 113, 227, 0.08);
+  transform: translateY(-3px);
+}
+
+.dark .project-card-enhanced:hover {
+  box-shadow:
+    0 0 0 1px rgba(41, 151, 255, 0.18),
+    0 6px 24px rgba(41, 151, 255, 0.1);
 }

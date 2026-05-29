@@ -8,7 +8,7 @@ interface HighlightsProps {
 const Highlights: React.FC<HighlightsProps> = ({ highlights }) => {
   return (
     <section>
-      <div className="space-y-4">
+      <div className="space-y-4 stagger-child">
         {highlights.map((item, index) => (
           <div
             key={index}
