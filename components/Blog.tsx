@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BlogJAX from './BlogJAX';
 import BlogSIMD from './BlogSIMD';
 
@@ -67,11 +67,33 @@ const BlogList: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
 );
 
 const Blog: React.FC = () => {
-  const [selected, setSelected] = useState<Post | null>(null);
+  const [selected, setSelected] = useState<Post | null>(() => {
+    const match = window.location.hash.match(/^#blog\/(jax|simd)$/i);
+    return match ? (match[1].toLowerCase() as Post) : null;
+  });
 
-  if (selected === 'jax') return <BlogJAX onBack={() => setSelected(null)} />;
-  if (selected === 'simd') return <BlogSIMD onBack={() => setSelected(null)} />;
-  return <BlogList onSelect={setSelected} />;
+  const handleSelect = (p: Post) => {
+    window.location.hash = 'blog/' + p;
+    setSelected(p);
+  };
+
+  const handleBack = () => {
+    window.location.hash = 'blog';
+    setSelected(null);
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const match = window.location.hash.match(/^#blog\/(jax|simd)$/i);
+      setSelected(match ? (match[1].toLowerCase() as Post) : null);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  if (selected === 'jax') return <BlogJAX onBack={handleBack} />;
+  if (selected === 'simd') return <BlogSIMD onBack={handleBack} />;
+  return <BlogList onSelect={handleSelect} />;
 };
 
 export default Blog;
