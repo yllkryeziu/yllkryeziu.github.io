@@ -11,10 +11,23 @@ import { aboutData, highlightsData, cvData, projectsData } from './data';
 
 const NOISE_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 
+function hashToView(hash: string): View {
+  const segment = (hash.replace('#', '').split('/')[0] || '').toLowerCase();
+  const map: Record<string, View> = {
+    highlights: 'Highlights',
+    experience: 'Experience',
+    education: 'Education',
+    projects: 'Projects',
+    about: 'About',
+    blog: 'Blog',
+  };
+  return map[segment] || 'Highlights';
+}
+
 const App: React.FC = () => {
-  const [activeView, setActiveView] = useState<View>('Highlights');
+  const [activeView, setActiveViewRaw] = useState<View>(() => hashToView(window.location.hash));
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [displayedView, setDisplayedView] = useState<View>('Highlights');
+  const [displayedView, setDisplayedView] = useState<View>(() => hashToView(window.location.hash));
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
@@ -34,6 +47,23 @@ const App: React.FC = () => {
       localStorage.theme = 'light';
     }
   };
+
+  const setActiveView = (view: View) => {
+    const newHash = view.toLowerCase();
+    if (window.location.hash !== '#' + newHash) {
+      window.location.hash = newHash;
+    }
+    setActiveViewRaw(view);
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const view = hashToView(window.location.hash);
+      setActiveViewRaw(view);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   useEffect(() => {
     if (activeView !== displayedView) {

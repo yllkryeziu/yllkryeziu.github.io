@@ -1,5 +1,5 @@
 name: "Yll Kryeziu"
-bio: "Computer Science student at TUM and Software Engineer Working Student at Porsche Informatik."
+bio: "Software Engineer and CS graduate from TUM. Currently Founding Engineer at p(doom)."
 avatarUrl: "/profile.jpg"
 email: "mailto:yllkry@gmail.com"
 linkedinUrl: "https://www.linkedin.com/in/yll-kryeziu/"
@@ -12,6 +12,10 @@ about:
     - "Experience spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
 
 highlights:
+  - year: "[2026]"
+    description: "Joined <b>[p(doom)](https://pdoom.org)</b> as <b>Founding Engineer</b>"
+  - year: "[2026]"
+    description: "Graduated with a <b>Bachelor of Science in Computer Science</b> from <b>Technical University of Munich</b>"
   - year: "[2025]"
     description: "Researching <b>Adaptive Compute in Token Space using CoT Rewriting</b> @ [p(doom)](https://pdoom.org)"
   - year: "[2025]"
@@ -64,7 +68,7 @@ cv:
   education:
     title: "Education"
     items:
-      - period: "Oct 2022 - Present"
+      - period: "Oct 2022 - Apr 2026"
         degree: "Bachelor of Science, Computer Science"
         institution: "Technical University of Munich"
         institutionUrl: "https://www.tum.de/"
