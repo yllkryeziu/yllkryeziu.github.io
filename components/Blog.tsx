@@ -116,10 +116,13 @@ const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
               fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em',
               color: 'var(--color-text)', lineHeight: 1.2, marginBottom: '0.5rem',
             }}>{item.title}</div>
-            <p style={{
-              fontSize: '13.5px', color: 'var(--color-text-subtle)', lineHeight: 1.55,
-              margin: '0 0 0.6rem',
-            }}>{item.description}</p>
+            <p
+              style={{
+                fontSize: '13.5px', color: 'var(--color-text-subtle)', lineHeight: 1.55,
+                margin: '0 0 0.6rem',
+              }}
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            />
             <div style={{
               display: 'flex', alignItems: 'center', gap: '1rem',
               fontFamily: 'SF Mono, Menlo, monospace', fontSize: '11.5px',

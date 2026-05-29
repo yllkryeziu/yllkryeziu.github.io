@@ -82,7 +82,7 @@ cv:
 projects:
   - id: 1
     title: "Adaptive Compute in Token Space using CoT Rewriting"
-    date: "ongoing"
+    date: "October 2025 - April 2026"
     description: "Investigating an adaptive compute strategy for LLMs that dynamically modulates reasoning detail in token space through Chain-of-Thought (CoT) rewriting. The approach enables models to adjust the granularity and depth of their reasoning process in response to problem complexity, optimizing computational resources while maintaining reasoning quality @ [p(doom)](https://pdoom.org)."
     imageUrl: ""
     tags: ["#llms", "#adaptive-compute", "#reasoning", "#cot", "#token-space", "#research"]

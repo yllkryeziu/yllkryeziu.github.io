@@ -305,78 +305,63 @@ function Flamegraph() {
     </div>
   );
 
+  const panel = (label: React.ReactNode, rows: React.ReactNode) => (
+    <div>
+      <div style={{ fontFamily: MONO, fontSize: '11.5px', fontWeight: 600, color: TEXT, marginBottom: 8, display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        {label}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {rows}
+      </div>
+    </div>
+  );
+
+  const row = (children: React.ReactNode) => (
+    <div style={{ display: 'flex', gap: 3 }}>{children}</div>
+  );
+
+  const bar = (bg: string, fg: string, flex: number, label: string) => (
+    <div style={{ flex, minWidth: 0, ...f(bg, fg) }}>{label}</div>
+  );
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-      {/* before */}
-      <div>
-        <div style={{ fontFamily: MONO, fontSize: '11.5px', fontWeight: 600, color: TEXT, marginBottom: 10, display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          Before · Java tree parser
-          <span style={{ color: '#e8590c', fontWeight: 500 }}>parse 71%</span>
-        </div>
-        <div style={{ display: 'flex', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
-            <div style={f('#c2c6cf', '#3a3a40')}>ingestFeed()</div>
-            <div style={{ display: 'flex', gap: 3 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
-                <div style={f('#aab0bb')}>parseBatch()</div>
-                <div style={{ display: 'flex', gap: 3 }}>
-                  <div style={{ flex: 71, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
-                    <div style={f('#e8590c')}>Jackson.readTree()</div>
-                    <div style={{ display: 'flex', gap: 3 }}>
-                      <div style={{ flex: 30, minWidth: 0 }}>
-                        <div style={f('#f08c2b', '#3a2400')}>nextToken</div>
-                      </div>
-                      <div style={{ flex: 26, minWidth: 0 }}>
-                        <div style={f('#c92a2a')}>parseObject</div>
-                      </div>
-                      <div style={{ flex: 15, minWidth: 0 }}>
-                        <div style={f('#f08c2b', '#3a2400')}>_parseName</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ flex: 19, minWidth: 0 }}>
-                    <div style={f('#8aa0e8')}>mapToListing</div>
-                  </div>
-                  <div style={{ flex: 10, minWidth: 0 }}>
-                    <div style={f('#b7c4ee', '#243a78')}>validate</div>
-                  </div>
-                </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {panel(
+        <>Before · Java tree parser <span style={{ color: '#e8590c', fontWeight: 500 }}>parse 71%</span></>,
+        <>
+          {row(<div style={{ ...f('#c2c6cf', '#3a3a40'), flex: 1 }}>ingestFeed()</div>)}
+          {row(<div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div style={f('#aab0bb')}>parseBatch()</div>
+            {row(<>
+              <div style={{ flex: 71, display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+                <div style={f('#e8590c')}>Jackson.readTree()</div>
+                {row(<>
+                  {bar('#f08c2b', '#3a2400', 30, 'nextToken')}
+                  {bar('#c92a2a', '#fff', 26, 'parseObject')}
+                  {bar('#f08c2b', '#3a2400', 15, '_parseName')}
+                </>)}
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* after */}
-      <div>
-        <div style={{ fontFamily: MONO, fontSize: '11.5px', fontWeight: 600, color: TEXT, marginBottom: 10, display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          After · simdjson via JNI
-          <span style={{ color: ACCENT, fontWeight: 500 }}>parse 12%</span>
-        </div>
-        <div style={{ display: 'flex', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
-            <div style={f('#c2c6cf', '#3a3a40')}>ingestFeed()</div>
-            <div style={{ display: 'flex', gap: 3 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
-                <div style={f('#aab0bb')}>parseBatch()</div>
-                <div style={{ display: 'flex', gap: 3 }}>
-                  <div style={{ flex: 12, minWidth: 0 }}>
-                    <div style={f('#e8590c')}>simdjson</div>
-                  </div>
-                  <div style={{ flex: 46, minWidth: 0 }}>
-                    <div style={f('#8aa0e8')}>mapToListing</div>
-                  </div>
-                  <div style={{ flex: 26, minWidth: 0 }}>
-                    <div style={f('#b7c4ee', '#243a78')}>validate</div>
-                  </div>
-                  <div style={{ flex: 16, minWidth: 0 }}>
-                    <div style={f('#d6deef', '#2a3a66')}>index</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              {bar('#8aa0e8', '#fff', 19, 'mapToListing')}
+              {bar('#b7c4ee', '#243a78', 10, 'validate')}
+            </>)}
+          </div>)}
+        </>
+      )}
+      {panel(
+        <>After · simdjson via JNI <span style={{ color: ACCENT, fontWeight: 500 }}>parse 12%</span></>,
+        <>
+          {row(<div style={{ ...f('#c2c6cf', '#3a3a40'), flex: 1 }}>ingestFeed()</div>)}
+          {row(<div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div style={f('#aab0bb')}>parseBatch()</div>
+            {row(<>
+              {bar('#e8590c', '#fff', 12, 'simdjson')}
+              {bar('#8aa0e8', '#fff', 46, 'mapToListing')}
+              {bar('#b7c4ee', '#243a78', 26, 'validate')}
+              {bar('#d6deef', '#2a3a66', 16, 'index')}
+            </>)}
+          </div>)}
+        </>
+      )}
     </div>
   );
 }
