@@ -678,17 +678,6 @@ const BlogSIMD: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <><strong>Output equivalence</strong> enforced by a differential harness on every batch.</>,
       ]} />
       <p style={p}>The honest caveats: JNI adds operational weight. You now ship and debug a native artifact per platform, malformed input must become a Java exception rather than a segfault, and native document handles need disciplined lifetime management. For a path that was two-thirds of our CPU, that trade was obvious. For a parser that was 5% of yours, it would not be.</p>
-      <Pull>If you remember one thing: the speed-up doesn't live in the parser. It lives in not copying the bytes to reach it.</Pull>
-
-      {/* résumé line */}
-      <div style={{
-        fontSize: '14px', color: MUTED, background: BORDER_LIGHT,
-        border: `1px solid ${BORDER}`, borderRadius: 8, padding: '1.1rem 1.3rem',
-        marginBottom: '2rem',
-      }}>
-        <strong style={{ color: TEXT, display: 'block', marginBottom: 4 }}>Résumé line</strong>
-        Built a JNI bridge to a SIMD-accelerated JSON parser, increasing ingestion throughput <strong style={{ color: TEXT }}>6.9×</strong> and reducing parse CPU <strong style={{ color: TEXT }}>61%</strong> versus the Java baseline, while maintaining output equivalence via differential tests.
-      </div>
 
     </section>
   );
