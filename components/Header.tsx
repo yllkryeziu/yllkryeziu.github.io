@@ -25,18 +25,9 @@ const NavLink: React.FC<{
   return (
     <button
       onClick={() => onClick(label)}
-      className={`relative pb-1 text-sm font-medium transition-all duration-200 hover:scale-[1.02] ${
-        isActive
-          ? 'text-stone-900 dark:text-stone-100'
-          : 'text-stone-500 hover:text-stone-900 dark:hover:text-stone-100'
-      }`}
+      className={`nav-link text-sm font-medium ${isActive ? 'active' : ''}`}
     >
       {label}
-      <span
-        className={`absolute bottom-0 left-0 h-0.5 nav-gradient-bar transition-all duration-300 ease-out ${
-          isActive ? 'w-full' : 'w-0'
-        }`}
-      />
     </button>
   );
 };
@@ -51,9 +42,9 @@ const SocialLink: React.FC<{
     href={href}
     target={external ? "_blank" : undefined}
     rel={external ? "noopener noreferrer" : undefined}
-    className="group flex items-center gap-1.5 text-sm text-stone-500 hover:text-accent transition-colors duration-150"
+    className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 transition-colors duration-150"
   >
-    <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+    <Icon className="w-4 h-4" />
     <span className="link-underline">{label}</span>
   </a>
 );
@@ -80,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({
         <img
           src={avatarUrl}
           alt={name}
-          className="w-20 h-20 rounded-full flex-shrink-0 avatar-glow"
+          className="w-20 h-20 rounded-full flex-shrink-0 object-cover"
         />
         <div className="flex-1 min-w-0 pt-1">
           <div className="flex items-center justify-between">

@@ -4,14 +4,14 @@ import { ArrowUpRightIcon } from '../data';
 
 const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
   return (
-    <article className="group -mx-3 px-3 py-3 -my-3 project-card-enhanced hover:bg-stone-900/[0.02] dark:hover:bg-white/[0.03]">
+    <article>
       {/* Image */}
       {item.imageUrl && (
         <div className="mb-4 overflow-hidden rounded-lg">
           <img
             src={item.imageUrl}
             alt={item.title}
-            className="w-full aspect-[16/10] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            className="w-full aspect-[16/10] object-cover"
           />
         </div>
       )}
@@ -28,7 +28,7 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
 
       {/* Description */}
       <p
-        className="mt-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed [&_a]:text-stone-900 dark:[&_a]:text-stone-100 [&_a]:underline [&_a]:decoration-stone-300 dark:[&_a]:decoration-stone-600 [&_a]:underline-offset-2 hover:[&_a]:decoration-accent [&_a]:transition-colors"
+        className="mt-2 text-stone-500 dark:text-stone-400 text-sm leading-relaxed [&_a]:text-stone-900 dark:[&_a]:text-stone-100 [&_a]:underline [&_a]:decoration-stone-300 dark:[&_a]:decoration-stone-600 [&_a]:underline-offset-2"
         dangerouslySetInnerHTML={{ __html: item.description }}
       />
 
@@ -41,16 +41,16 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-underline text-sm font-medium text-stone-700 dark:text-stone-300 hover:text-accent transition-colors inline-flex items-center gap-1"
+            className="link-underline text-sm font-medium text-stone-700 dark:text-stone-300 inline-flex items-center gap-1"
           >
             {link.name}
-            <ArrowUpRightIcon className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <ArrowUpRightIcon className="w-3.5 h-3.5" />
           </a>
         ))}
 
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 transition-opacity duration-200 opacity-60 group-hover:opacity-100">
+          <div className="flex flex-wrap gap-1.5">
             {item.tags.map(tag => (
               <span
                 key={tag}
@@ -68,7 +68,7 @@ const ProjectCard: React.FC<{ item: ProjectItem }> = ({ item }) => {
 
 const Projects: React.FC<{ projects: ProjectItem[] }> = ({ projects }) => {
   return (
-    <div className="space-y-8 stagger-child">
+    <div className="space-y-8">
       {projects.map(item => (
         <ProjectCard key={item.id} item={item} />
       ))}

@@ -13,17 +13,11 @@ about:
 
 highlights:
   - year: "[2026]"
-    description: "Joined <b>[p(doom)](https://pdoom.org)</b> as <b>Founding Engineer</b>"
+    description: "Joined <b>[p(doom)](https://pdoom.org)</b>"
   - year: "[2026]"
     description: "Graduated with a <b>Bachelor of Science in Computer Science</b> from <b>Technical University of Munich</b>"
   - year: "[2025]"
-    description: "Researching <b>Adaptive Compute in Token Space using CoT Rewriting</b> @ [p(doom)](https://pdoom.org)"
-  - year: "[2025]"
-    description: "Initiated <b>[Advanced Resilience & Computing Mission (ARC-M)](https://arc-mission.github.io)</b>, a student research initiative exploring system resilience and autonomous operations"
-  - year: "[2025]"
     description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
-  - year: "[2025]"
-    description: "Researching on <b>Depression Detection from Speech</b> using deep learning at Chair of Health Informatics"
   - year: "[2023-24]"
     description: "Teaching Assistant at <b>TUM</b> for Software Engineering and Computer Architecture courses"
   - year: "[2022]"
@@ -45,11 +39,6 @@ cv:
         company: "Porsche Informatik"
         companyUrl: "https://www.porscheinformatik.com/"
         details: "Collaborated on engineering of Java enterprise sales platform used across Volkswagen Group brands. Developed high-performance native C++ module to optimize critical vehicle data processing pipelines, integrating via JNI."
-      - period: "Apr 2025 - Sep 2025"
-        role: "Student Researcher"
-        company: "Chair of Health Informatics, TU Munich"
-        companyUrl: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
-        details: "Designed hybrid CNN-LSTM architecture utilizing transfer learning to process acoustic signals and classify depression severity, achieving SOTA performance metrics on the target benchmark."
       - period: "Oct 2023 - Oct 2024"
         role: "Teaching Assistant"
         company: "Technical University of Munich"
@@ -59,11 +48,6 @@ cv:
   initiatives:
     title: "Initiatives & Leadership"
     items:
-      - period: "Aug 2025 - Present"
-        role: "Founder & Technical Lead"
-        company: "Advanced Resilience & Computing Mission"
-        companyUrl: "https://arc-mission.github.io"
-        details: "Launched student research initiative exploring civilian and dual-use technologies for system resilience and autonomous operations. Engineering flagship Embodied AI project using NVIDIA Isaac Sim, ROS 2 and Reasoning LLMs."
       - period: "Jan 2025 - Present"
         role: "Founder & President"
         company: "TUM Albanian Student Society"
@@ -87,18 +71,6 @@ projects:
     imageUrl: ""
     tags: ["#llms", "#adaptive-compute", "#reasoning", "#cot", "#token-space", "#research"]
     links: []
-
-  - id: 2
-    title: "Deep Learning Framework for Depression Detection from Speech"
-    date: "April 2025"
-    description: "Developed a hybrid CNN-LSTM architecture using transfer learning by finetuning existing CNN architectures to classify depression severity from speech. Built a data pipeline to convert audio into mel spectrograms and achieved binary classification of depression (PHQ-8 scores) and evaluated the model with comprehensive metrics."
-    imageUrl: ""
-    tags: ["#deep-learning", "#cnn-lstm", "#transfer-learning", "#speech-analysis"]
-    links:
-      - name: "GitHub"
-        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning"
-      - name: "Paper"
-        url: "https://github.com/yllkryeziu/Depression-Detection-Deep-Learning/blob/main/report-kryeziu.pdf"
 
   - id: 3
     title: "AULA AI-powered Educational Platform"

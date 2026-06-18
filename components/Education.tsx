@@ -15,7 +15,7 @@ const EducationItemComponent: React.FC<{
   onToggle: () => void;
 }> = ({ item, id, isExpanded, onToggle }) => {
   return (
-    <div className="group -mx-3 px-3 py-2 -my-2 rounded-lg transition-colors duration-150 hover:bg-stone-900/[0.02] dark:hover:bg-white/[0.03]">
+    <div>
       <div
         className={`flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-6 ${
           item.details ? 'cursor-pointer' : ''
@@ -31,12 +31,12 @@ const EducationItemComponent: React.FC<{
               <a
                 href={item.institutionUrl}
                 onClick={(e) => e.stopPropagation()}
-                className="link-underline hover:text-accent transition-colors inline-flex items-center gap-1"
+                className="link-underline inline-flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {item.institution}
-                <ArrowUpRightIcon className="w-3.5 h-3.5 text-stone-400 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRightIcon className="w-3.5 h-3.5 text-stone-400" />
               </a>
             ) : (
               item.institution
@@ -86,7 +86,7 @@ const InitiativeItem: React.FC<{
   onToggle: () => void;
 }> = ({ item, id, isExpanded, onToggle }) => {
   return (
-    <div className="group -mx-3 px-3 py-2 -my-2 rounded-lg transition-colors duration-150 hover:bg-stone-900/[0.02] dark:hover:bg-white/[0.03]">
+    <div>
       <div
         className={`flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 sm:gap-6 ${
           item.details ? 'cursor-pointer' : ''
@@ -102,12 +102,12 @@ const InitiativeItem: React.FC<{
               <a
                 href={item.companyUrl}
                 onClick={(e) => e.stopPropagation()}
-                className="link-underline hover:text-accent transition-colors inline-flex items-center gap-1"
+                className="link-underline inline-flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {item.company}
-                <ArrowUpRightIcon className="w-3.5 h-3.5 text-stone-400 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRightIcon className="w-3.5 h-3.5 text-stone-400" />
               </a>
             ) : (
               item.company || item.role
@@ -164,7 +164,7 @@ const Education: React.FC<{ cv: CVData }> = ({ cv }) => {
       {/* Education Section */}
       <section>
         <SectionTitle>{cv.education.title}</SectionTitle>
-        <div className="space-y-6 stagger-child">
+        <div className="space-y-6">
           {cv.education.items.map((item, index) => {
             const id = `edu-${index}`;
             return (
@@ -184,7 +184,7 @@ const Education: React.FC<{ cv: CVData }> = ({ cv }) => {
       {cv.initiatives && (
         <section>
           <SectionTitle>{cv.initiatives.title}</SectionTitle>
-          <div className="space-y-6 stagger-child">
+          <div className="space-y-6">
             {cv.initiatives.items.map((item, index) => {
               const id = `init-${index}`;
               return (
