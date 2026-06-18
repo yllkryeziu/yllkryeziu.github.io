@@ -64,7 +64,7 @@ function ArchDiagram() {
     <div style={{
       background: 'var(--color-border-light)',
       border: '1px solid var(--color-border)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: '2rem 1.8rem 2.2rem',
     }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
@@ -120,7 +120,7 @@ function ArchDiagram() {
 function ArchNode({ title, sub, accent = false, small = false, full = false }: { title: string; sub?: string; accent?: boolean; small?: boolean; full?: boolean }) {
   return (
     <div style={{
-      background: accent ? 'rgba(0,113,227,0.07)' : 'var(--color-bg)',
+      background: accent ? 'rgba(201,104,74,0.07)' : 'var(--color-bg)',
       border: `1px solid ${accent ? 'var(--color-accent)' : 'var(--color-border)'}`,
       borderRadius: 10,
       padding: small ? '0.55rem 0.9rem' : '0.65rem 1.1rem',
@@ -160,10 +160,9 @@ function CodeBlock({ filename, children }: { filename: string; children: React.R
   return (
     <div style={{
       margin: '1.4rem 0',
-      borderRadius: 12,
+      borderRadius: 8,
       overflow: 'hidden',
       border: '1px solid #2b2a38',
-      boxShadow: '0 12px 28px -16px rgba(28,27,38,0.5)',
     }}>
       <div style={{
         background: '#16151f',
@@ -215,8 +214,9 @@ function Eq({ children }: { children: React.ReactNode }) {
 function Figcaption({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
+      fontFamily: 'var(--font-sans)',
       fontSize: '13px',
-      color: 'var(--color-text-muted)',
+      color: 'var(--color-text-subtle)',
       marginTop: '0.8rem',
       lineHeight: 1.5,
       paddingLeft: '0.9rem',
@@ -241,11 +241,11 @@ function BarChart({ title, sub, rows, note }: {
     <div ref={ref} style={{
       background: 'var(--color-bg)',
       border: '1px solid var(--color-border)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: '1.6rem 1.6rem 1.3rem',
     }}>
-      <div style={{ fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>{title}</div>
-      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>{sub}</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>{title}</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', color: 'var(--color-text-subtle)', marginTop: '0.15rem' }}>{sub}</div>
       <div style={{ marginTop: '1.5rem', display: 'grid', gap: '0.8rem' }}>
         {rows.map((r, i) => (
           <div key={i} style={{ display: 'grid', gridTemplateColumns: '116px 1fr 72px', alignItems: 'center', gap: '0.85rem' }}>
@@ -258,13 +258,11 @@ function BarChart({ title, sub, rows, note }: {
             }}>{r.label}</div>
             <div style={{ position: 'relative', height: 22 }}>
               <div
-                data-pct={r.pct}
                 style={{
                   height: '100%',
                   borderRadius: '0 5px 5px 0',
                   background: r.hi ? 'var(--color-accent)' : 'var(--color-border)',
-                  width: 0,
-                  transition: 'width 1.2s cubic-bezier(.22,1,.36,1)',
+                  width: `${r.pct}%`,
                 }}
               />
             </div>
@@ -297,11 +295,11 @@ function AccuracyChart() {
     <div ref={ref} style={{
       background: 'var(--color-bg)',
       border: '1px solid var(--color-border)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: '1.6rem 1.6rem 1.3rem',
     }}>
-      <div style={{ fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>Model quality</div>
-      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>Held-out test set · 10,000 sessions</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>Model quality</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', color: 'var(--color-text-subtle)', marginTop: '0.15rem' }}>Held-out test set · 10,000 sessions</div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.4rem', marginTop: '1.5rem' }}>
         {[
           { label: 'Top-1 accuracy', h: 61, pct: '61%' },
@@ -319,14 +317,12 @@ function AccuracyChart() {
                 position: 'absolute', top: '0.2rem', left: '50%', transform: 'translateX(-50%)',
                 fontFamily: '"IBM Plex Mono", SF Mono, Menlo, monospace',
                 fontSize: '24px', fontWeight: 600, letterSpacing: '-0.03em',
-                color: 'var(--color-text)', opacity: 0,
-                transition: 'opacity 0.5s 0.6s', whiteSpace: 'nowrap',
+                color: 'var(--color-text)', opacity: 1, whiteSpace: 'nowrap',
               }}>{b.pct}</div>
               <div className="acc-col" style={{
                 width: 60, margin: '0 auto',
                 background: 'var(--color-accent)',
-                borderRadius: '6px 6px 0 0', height: 0,
-                transition: 'height 1.2s cubic-bezier(.22,1,.36,1)',
+                borderRadius: '6px 6px 0 0', height: `${b.h}%`,
               }} />
             </div>
             <div style={{ textAlign: 'center', marginTop: '0.6rem', fontSize: '13px', color: 'var(--color-text-subtle)' }}>{b.label}</div>
@@ -359,7 +355,7 @@ function SessionWalk() {
     <div ref={ref} style={{
       background: 'var(--color-border-light)',
       border: '1px solid var(--color-border)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: '1.8rem 1.5rem',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -391,7 +387,7 @@ function SessionWalk() {
               <div className="pred-fill" style={{
                 display: 'block', height: '100%', borderRadius: 5,
                 background: p.go ? 'var(--color-accent)' : 'var(--color-border)',
-                width: 0, transition: 'width 1.1s cubic-bezier(.22,1,.36,1)',
+                width: `${p.w}%`,
               }} />
             </div>
             <span style={{
@@ -401,9 +397,9 @@ function SessionWalk() {
               padding: '0.14rem 0.45rem',
               borderRadius: 20,
               whiteSpace: 'nowrap',
-              background: p.go ? 'rgba(0,113,227,0.1)' : 'var(--color-border-light)',
+              background: p.go ? 'rgba(201,104,74,0.1)' : 'var(--color-border-light)',
               color: p.go ? 'var(--color-accent)' : 'var(--color-text-muted)',
-              border: `1px solid ${p.go ? 'rgba(0,113,227,0.2)' : 'var(--color-border)'}`,
+              border: `1px solid ${p.go ? 'rgba(201,104,74,0.2)' : 'var(--color-border)'}`,
             }}>{p.verdict}</span>
           </div>
         ))}
@@ -422,11 +418,11 @@ function LineChart() {
     <div ref={ref} style={{
       background: 'var(--color-bg)',
       border: '1px solid var(--color-border)',
-      borderRadius: 14,
+      borderRadius: 8,
       padding: '1.6rem',
     }}>
-      <div style={{ fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>p95 latency under concurrency</div>
-      <div style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>Lower and flatter is better</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em', color: 'var(--color-text)' }}>p95 latency under concurrency</div>
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', color: 'var(--color-text-subtle)', marginTop: '0.15rem' }}>Lower and flatter is better</div>
       <div style={{ display: 'flex', gap: '1.2rem', marginTop: '0.7rem', fontSize: '13px', color: 'var(--color-text-subtle)' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <i style={{ width: 12, height: 12, borderRadius: 3, display: 'inline-block', background: 'var(--color-border)' }} />
@@ -452,12 +448,10 @@ function LineChart() {
           <text x="570" y="278">1000 users</text>
         </g>
         <path className="lc-path" stroke="var(--color-border)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
-          style={{ strokeDasharray: 1200, strokeDashoffset: 1200, transition: 'stroke-dashoffset 1.6s ease' }}
           d="M120 134.5 L345 103 L570 43.5" />
         <path className="lc-path" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
-          style={{ strokeDasharray: 1200, strokeDashoffset: 1200, transition: 'stroke-dashoffset 1.6s ease' }}
           d="M120 180 L345 166 L570 134.5" />
-        <g className="lc-dot" style={{ opacity: 0, transition: 'opacity .4s 1.1s' }}>
+        <g className="lc-dot" style={{ opacity: 1 }}>
           <circle cx="120" cy="134.5" r="4" fill="var(--color-border)" />
           <circle cx="345" cy="103" r="4" fill="var(--color-border)" />
           <circle cx="570" cy="43.5" r="4" fill="var(--color-border)" />
@@ -468,37 +462,6 @@ function LineChart() {
           <text x="570" y="35" fontFamily="SF Mono, Menlo, monospace" fontSize="11" fill="var(--color-text-muted)" textAnchor="middle">690 ms</text>
         </g>
       </svg>
-    </div>
-  );
-}
-
-function SafetyTable() {
-  return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0,
-      border: '1px solid var(--color-border)', borderRadius: 12, overflow: 'hidden',
-      marginTop: '1rem',
-    }}>
-      <div style={{ padding: '1.2rem 1.3rem', background: 'rgba(34,197,94,0.05)' }}>
-        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#22c55e', fontWeight: 600, marginBottom: '0.7rem' }}>● Allowed to prefetch</div>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: '0.4rem' }}>
-          {['GET read-only endpoints', 'cacheable recommendations', 'cacheable reviews', 'cacheable product data', 'cacheable search refinements'].map(s => (
-            <li key={s} style={{ fontSize: '13.5px', color: 'var(--color-text-subtle)', display: 'flex', gap: '0.5rem' }}>
-              <span style={{ fontFamily: 'SF Mono, Menlo, monospace', fontSize: '11px', marginTop: 2 }}>✓</span>{s}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div style={{ padding: '1.2rem 1.3rem', background: 'rgba(234,179,8,0.05)', borderLeft: '1px solid var(--color-border)' }}>
-        <div style={{ fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ca8a04', fontWeight: 600, marginBottom: '0.7rem' }}>● Never prefetch</div>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: '0.4rem' }}>
-          {['checkout submission', 'payment', 'account deletion / password changes', 'any write request', 'private data without cache isolation'].map(s => (
-            <li key={s} style={{ fontSize: '13.5px', color: 'var(--color-text-subtle)', display: 'flex', gap: '0.5rem' }}>
-              <span style={{ fontFamily: 'SF Mono, Menlo, monospace', fontSize: '11px', marginTop: 2 }}>✗</span>{s}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }
@@ -515,11 +478,13 @@ const ic = (s: string) => <span style={{ color: '#e8e6f0' }}>{s}</span>;
 
 const BlogJAX: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const body: React.CSSProperties = {
-    fontSize: '15.5px',
-    lineHeight: 1.65,
+    fontFamily: 'var(--font-serif)',
+    fontSize: '17px',
+    lineHeight: 1.72,
     color: 'var(--color-text)',
   };
   const h2: React.CSSProperties = {
+    fontFamily: 'var(--font-sans)',
     fontSize: '24px',
     fontWeight: 700,
     letterSpacing: '-0.025em',
@@ -528,6 +493,7 @@ const BlogJAX: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     margin: '3.5rem 0 0.9rem',
   };
   const h3: React.CSSProperties = {
+    fontFamily: 'var(--font-sans)',
     fontSize: '17.5px',
     fontWeight: 600,
     letterSpacing: '-0.015em',
@@ -546,13 +512,12 @@ const BlogJAX: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   return (
-    <section style={body} className="animate-in">
+    <section style={body} className="d-article">
       {/* back button */}
-      <button onClick={onBack} style={{
+      <button onClick={onBack} className="d-sans" style={{
         display: 'flex', alignItems: 'center', gap: '0.4rem',
         background: 'none', border: 'none', padding: '0 0 1.5rem', cursor: 'pointer',
         color: 'var(--color-text-muted)', fontSize: '13px',
-        fontFamily: 'inherit',
       }}
         onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-text)')}
         onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-muted)')}
@@ -560,52 +525,49 @@ const BlogJAX: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         ← Blog
       </button>
       {/* kicker */}
-      <div style={{
-        fontFamily: '"IBM Plex Mono", SF Mono, Menlo, monospace',
+      <div className="d-sans" style={{
         fontSize: '11.5px',
-        fontWeight: 500,
-        letterSpacing: '0.16em',
+        fontWeight: 600,
+        letterSpacing: '0.08em',
         textTransform: 'uppercase',
-        color: 'var(--color-accent)',
+        color: 'var(--color-text-muted)',
       }}>Systems · Machine Learning · JAX</div>
 
       {/* title */}
-      <h1 style={{
+      <h1 className="d-sans" style={{
         fontSize: '34px',
         fontWeight: 700,
         letterSpacing: '-0.035em',
         lineHeight: 1.08,
         color: 'var(--color-text)',
-        margin: '0.8rem 0 0',
+        margin: '0.6rem 0 0',
       }}>
-        Cost-Aware Predictive Query{' '}
-        <span style={{ color: 'var(--color-accent)' }}>Prefetching</span>{' '}
-        with JAX
+        Cost-Aware Predictive Query Prefetching with JAX
       </h1>
 
       {/* lead */}
-      <p style={{ fontSize: '17px', lineHeight: 1.55, color: 'var(--color-text-subtle)', marginTop: '1.1rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '19px', lineHeight: 1.55, color: 'var(--color-text-subtle)', marginTop: '1.1rem', marginBottom: 0 }}>
         A prefetch is a bet. This system uses a lightweight JAX predictor to place that bet only when the expected latency savings beat the expected backend cost.
       </p>
 
       {/* byline */}
-      <div style={{
-        display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem 0.8rem',
-        marginTop: '1.6rem',
-        fontFamily: '"IBM Plex Mono", SF Mono, Menlo, monospace',
-        fontSize: '13px',
-        color: 'var(--color-text-muted)',
-      }}>
-        <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>Yll Kryeziu</span>
-        <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-border)', display: 'inline-block' }} />
-        <span>February 2026</span>
-        <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-border)', display: 'inline-block' }} />
-        <a href="https://github.com/yllkryeziu/JAXPrefetch" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-muted)')}>
-          github.com/yllkryeziu/JAXPrefetch
-        </a>
+      <div className="d-byline">
+        <div>
+          <div className="label">Author</div>
+          <div className="value">Yll Kryeziu</div>
+        </div>
+        <div>
+          <div className="label">Published</div>
+          <div className="value">February 2026</div>
+        </div>
+        <div>
+          <div className="label">Code</div>
+          <div className="value">
+            <a href="https://github.com/yllkryeziu/JAXPrefetch" target="_blank" rel="noopener noreferrer">
+              JAXPrefetch
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* TL;DR */}
@@ -704,10 +666,6 @@ const BlogJAX: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <SessionWalk />
         <Figcaption><strong>Figure 3.</strong> Two prefetches fire; two are gated. <code style={{ ...inlineCode, background: 'transparent', border: 'none', padding: 0 }}>/cart</code> is plausible but below the probability floor; <code style={{ ...inlineCode, background: 'transparent', border: 'none', padding: 0 }}>/checkout/start</code> is blocked because it's a write path.</Figcaption>
       </figure>
-
-      <h3 style={h3}>Safety is not negotiable</h3>
-      <p style={p}>The policy can never speculate on anything that mutates state or leaks private data. This list short-circuits the cost math entirely.</p>
-      <SafetyTable />
 
       {/* --- Experiments --- */}
       <h2 style={h2}>Does it actually pay off?</h2>

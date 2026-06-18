@@ -78,16 +78,15 @@ function FigCard({ title, unit, caption, children }: { title: string; unit: stri
     <figure style={{ margin: '2rem 0' }}>
       <div style={{
         background: BG, border: `1px solid ${BORDER}`,
-        borderRadius: 12, padding: '1.6rem 1.6rem 1.3rem',
-        boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 16px 36px -24px rgba(0,0,0,0.12)',
+        borderRadius: 8, padding: '1.6rem 1.6rem 1.3rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: '1.3rem' }}>
-          <span style={{ fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', color: TEXT }}>{title}</span>
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', color: TEXT }}>{title}</span>
           <span style={{ fontFamily: MONO, fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#a3a3ab', whiteSpace: 'nowrap' }}>{unit}</span>
         </div>
         {children}
       </div>
-      <div style={{ fontSize: '13px', color: MUTED, marginTop: '0.8rem', lineHeight: 1.5, paddingLeft: '0.9rem', borderLeft: `2px solid ${BORDER}` }}>
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', color: SUBTLE, marginTop: '0.8rem', lineHeight: 1.5, paddingLeft: '0.9rem', borderLeft: `2px solid ${BORDER}` }}>
         {caption}
       </div>
     </figure>
@@ -169,7 +168,7 @@ function ThroughputChart() {
           <div style={{ position: 'relative', height: 32 }}>
             <div style={{
               height: '100%', borderRadius: '0 4px 4px 0',
-              background: r.accent ? ACCENT : r.semi ? 'rgba(0,113,227,0.25)' : BORDER,
+              background: r.accent ? ACCENT : r.semi ? 'rgba(201,104,74,0.25)' : BORDER,
               width: r.pct + '%',
               display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
               paddingRight: 10, minWidth: 44,
@@ -211,7 +210,7 @@ function LatencyChart() {
         <text x="88" y="42">2000</text>
       </g>
       {/* Java baseline (gray) */}
-      <rect x="114" y="205.4" width="38" height="44.6" fill="#c3c5cd" />
+      <rect x="114" y="192.7" width="38" height="57.3" fill="#c3c5cd" />
       <rect x="304" y="124.5" width="38" height="125.5" fill="#c3c5cd" />
       <rect x="494" y="33.5" width="38" height="216.5" fill="#c3c5cd" />
       {/* Native (accent) */}
@@ -220,7 +219,7 @@ function LatencyChart() {
       <rect x="542" y="219.2" width="38" height="30.8" fill={ACCENT} />
       {/* value labels */}
       <g fontSize="11" fontFamily="SF Mono, Menlo, monospace" textAnchor="middle">
-        <text x="133" y="197" fill={MUTED}>540</text>
+        <text x="133" y="184" fill={MUTED}>540</text>
         <text x="181" y="232" fill={ACCENT} fontWeight="600">88</text>
         <text x="323" y="116" fill={MUTED}>1180</text>
         <text x="371" y="224" fill={ACCENT} fontWeight="600">165</text>
@@ -230,8 +229,8 @@ function LatencyChart() {
       {/* group labels */}
       <g fill={TEXT} fontSize="13" fontWeight="600" textAnchor="middle">
         <text x="157" y="272">p50</text>
-        <text x="385" y="272">p95</text>
-        <text x="561" y="272">p99</text>
+        <text x="347" y="272">p95</text>
+        <text x="537" y="272">p99</text>
       </g>
     </svg>
   );
@@ -262,18 +261,16 @@ function CPUChart() {
           <text x="40" y="56">100%</text>
         </g>
         {/* native fill area */}
-        <polygon fill="rgba(0,113,227,0.08)" stroke="none"
+        <polygon fill="rgba(201,104,74,0.08)" stroke="none"
           points="50,190 133,180 216,188 299,193 382,183 465,185 548,190 620,190 620,260 50,260" />
         {/* avg reference lines */}
         <line x1="50" y1="79.3" x2="620" y2="79.3" stroke={SUBTLE} strokeWidth="1" strokeDasharray="3 5" />
         <line x1="50" y1="187.5" x2="620" y2="187.5" stroke={ACCENT} strokeWidth="1" strokeDasharray="3 5" />
         {/* baseline line */}
         <polyline className="cpu-path" fill="none" stroke={BORDER} strokeWidth="2" strokeLinejoin="round"
-          style={{ strokeDasharray: 1400, strokeDashoffset: 1400, transition: 'stroke-dashoffset 1.6s ease' }}
           points="50,95.2 133,77 216,84.4 299,71.5 382,79 465,74 548,81 620,83" />
         {/* native line */}
         <polyline className="cpu-path" fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinejoin="round"
-          style={{ strokeDasharray: 1400, strokeDashoffset: 1400, transition: 'stroke-dashoffset 1.6s ease 0.1s' }}
           points="50,190 133,180 216,188 299,193 382,183 465,185 548,190 620,190" />
         {/* inline labels */}
         <text x="430" y="65" fill={MUTED} fontSize="12" fontWeight="600">Java baseline · avg 78%</text>
@@ -372,7 +369,7 @@ function MemoryDiagram() {
     <svg viewBox="0 0 660 360" style={{ width: '100%', height: 'auto', display: 'block' }}>
       <defs>
         <marker id="ar-acc2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0 0L10 5L0 10z" fill="#0071E3" />
+          <path d="M0 0L10 5L0 10z" fill="#C9684A" />
         </marker>
         <marker id="ar-red2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M0 0L10 5L0 10z" fill="#c92a2a" />
@@ -396,12 +393,12 @@ function MemoryDiagram() {
       <text x="46" y="135" fill={MUTED} fontSize="11">address + capacity</text>
       <text x="46" y="154" fill="#a3a3ab" fontSize="10.5" fontStyle="italic">handle, not the bytes</text>
       {/* off-heap arena */}
-      <rect x="245" y="84" width="170" height="90" rx="9" fill="rgba(0,113,227,0.06)" stroke={ACCENT} strokeWidth="1.5" strokeDasharray="5 4" />
+      <rect x="245" y="84" width="170" height="90" rx="9" fill="rgba(201,104,74,0.06)" stroke={ACCENT} strokeWidth="1.5" strokeDasharray="5 4" />
       <text x="330" y="102" fill={ACCENT} fontSize="10" fontWeight="600" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">16 MiB arena · GC-immovable</text>
       <g>
         {[0, 1, 2, 3, 4, 5, 6].map(i => (
           <rect key={i} x={258 + i * 20} y={114} width={18} height={24} rx={2}
-            fill={i % 2 === 0 ? '#fff' : 'rgba(0,113,227,0.12)'} stroke="rgba(0,113,227,0.2)" strokeWidth={1} />
+            fill={i % 2 === 0 ? '#fff' : 'rgba(201,104,74,0.12)'} stroke="rgba(201,104,74,0.2)" strokeWidth={1} />
         ))}
       </g>
       <text x="330" y="163" fill="#a3a3ab" fontSize="9.5" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">raw UTF-8</text>
@@ -423,10 +420,10 @@ function MemoryDiagram() {
       <rect x="80" y="260" width="220" height="58" rx="8" fill="#f6f1f1" stroke="#c92a2a" strokeWidth="1.4" strokeDasharray="5 4" />
       <text x="190" y="286" fill="#b23636" fontSize="12" fontWeight="600" textAnchor="middle">byte[] on managed heap</text>
       <text x="190" y="303" fill="#c0726f" fontSize="10" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">GetByteArrayElements → memcpy</text>
-      {/* red crossed arrow */}
-      <line x1="300" y1="285" x2="510" y2="180" stroke="#c92a2a" strokeWidth="1.5" strokeDasharray="5 4" markerEnd="url(#ar-red2)" />
+      {/* red crossed arrow — aims toward native but stops clear of the zero-copy badge */}
+      <line x1="300" y1="285" x2="387" y2="232" stroke="#c92a2a" strokeWidth="1.5" strokeDasharray="5 4" markerEnd="url(#ar-red2)" />
       <g stroke="#c92a2a" strokeWidth="3" strokeLinecap="round">
-        <line x1="388" y1="222" x2="408" y2="242" /><line x1="408" y1="222" x2="388" y2="242" />
+        <line x1="334" y1="249" x2="354" y2="269" /><line x1="354" y1="249" x2="334" y2="269" />
       </g>
       <text x="335" y="346" fill="#c92a2a" fontSize="11" fontWeight="600" textAnchor="middle">the copy you don't make</text>
     </svg>
@@ -442,19 +439,20 @@ const ic: React.CSSProperties = {
 
 // ---- Main component ----
 const BlogSIMD: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const body: React.CSSProperties = { fontSize: '15.5px', lineHeight: 1.65, color: TEXT };
+  const body: React.CSSProperties = { fontFamily: 'var(--font-serif)', fontSize: '17px', lineHeight: 1.72, color: TEXT };
   const p: React.CSSProperties = { margin: '0 0 1rem' };
   const h2s: React.CSSProperties = {
-    fontSize: '22px', fontWeight: 700, letterSpacing: '-0.025em',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '23px', fontWeight: 700, letterSpacing: '-0.025em',
     lineHeight: 1.15, color: TEXT, margin: '3.2rem 0 0.8rem',
   };
   return (
-    <section style={body} className="animate-in">
+    <section style={body} className="d-article">
       {/* back */}
-      <button onClick={onBack} style={{
+      <button onClick={onBack} className="d-sans" style={{
         display: 'flex', alignItems: 'center', gap: '0.4rem',
         background: 'none', border: 'none', padding: '0 0 1.5rem', cursor: 'pointer',
-        color: MUTED, fontSize: '13px', fontFamily: 'inherit',
+        color: MUTED, fontSize: '13px',
       }}
         onMouseEnter={e => (e.currentTarget.style.color = TEXT)}
         onMouseLeave={e => (e.currentTarget.style.color = MUTED)}
@@ -463,29 +461,32 @@ const BlogSIMD: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </button>
 
       {/* kicker */}
-      <div style={{ fontFamily: MONO, fontSize: '11.5px', fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', color: ACCENT }}>
+      <div className="d-sans" style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: MUTED }}>
         Performance Engineering · JVM × Native
       </div>
 
       {/* title */}
-      <h1 style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1, color: TEXT, margin: '0.8rem 0 0' }}>
-        Crossing the JNI boundary for{' '}
-        <span style={{ color: ACCENT }}>6.9×</span>{' '}
-        faster JSON ingestion
+      <h1 className="d-sans" style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1, color: TEXT, margin: '0.6rem 0 0' }}>
+        Crossing the JNI boundary for 6.9× faster JSON ingestion
       </h1>
 
       {/* dek */}
-      <p style={{ fontSize: '17px', lineHeight: 1.55, color: SUBTLE, marginTop: '1rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '19px', lineHeight: 1.55, color: SUBTLE, marginTop: '1rem', marginBottom: 0 }}>
         A Java ingestion service was burning most of its CPU just turning vehicle-listing feeds into objects.
         Routing the hot path through <strong>simdjson</strong> using zero-copy{' '}
         <code style={ic}>DirectByteBuffer</code>s pushed sustained throughput past 2.9 GB/s and gave back 61% of the parse CPU.
       </p>
 
       {/* byline */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem 0.8rem', marginTop: '1.4rem', fontFamily: MONO, fontSize: '13px', color: MUTED }}>
-        <span style={{ color: TEXT, fontWeight: 500 }}>Yll Kryeziu</span>
-        <span style={{ width: 3, height: 3, borderRadius: '50%', background: BORDER, display: 'inline-block' }} />
-        <span>October 2025</span>
+      <div className="d-byline">
+        <div>
+          <div className="label">Author</div>
+          <div className="value">Yll Kryeziu</div>
+        </div>
+        <div>
+          <div className="label">Published</div>
+          <div className="value">October 2025</div>
+        </div>
       </div>
 
       {/* hero stats */}

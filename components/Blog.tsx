@@ -59,33 +59,28 @@ const projectItems: Extract<FeedItem, { kind: 'project' }>[] = projectsData.map(
 const feed: FeedItem[] = [...blogItems, ...projectItems].sort((a, b) => b.sortDate - a.sortDate);
 
 const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
-  <section className="animate-in">
+  <section>
     <h2 style={{
       fontSize: '13px', fontWeight: 600, letterSpacing: '0.08em',
       textTransform: 'uppercase', color: 'var(--color-text-muted)',
       margin: '0 0 1.5rem',
     }}>Work</h2>
-    <div style={{ display: 'grid', gap: '1px', background: 'var(--color-border)' }}>
+    <div style={{ borderTop: '1px solid var(--color-border)' }}>
       {feed.map(item => {
         if (item.kind === 'blog') {
           return (
             <button
               key={item.id}
               onClick={() => onSelect(item.id)}
+              className="feed-link"
               style={{
                 display: 'block', width: '100%', textAlign: 'left',
-                background: 'var(--color-bg)', border: 'none', cursor: 'pointer',
-                padding: '1.3rem 0', transition: 'background 0.15s',
+                background: 'none', border: 'none',
+                borderBottom: '1px solid var(--color-border)',
+                cursor: 'pointer', padding: '1.4rem 0', font: 'inherit',
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-border-light)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-bg)')}
             >
-              <div style={{
-                fontFamily: 'SF Mono, Menlo, monospace',
-                fontSize: '10.5px', letterSpacing: '0.12em', textTransform: 'uppercase',
-                color: 'var(--color-accent)', marginBottom: '0.4rem',
-              }}>Writing · {item.kicker}</div>
-              <div style={{
+              <div className="feed-title" style={{
                 fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em',
                 color: 'var(--color-text)', lineHeight: 1.2, marginBottom: '0.5rem',
               }}>{item.title}</div>
@@ -101,17 +96,11 @@ const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
           );
         }
 
-        const kicker = 'Project · ' + item.tags.slice(0, 3).map(t => t.replace('#', '')).join(' · ');
         return (
           <div
             key={item.id}
-            style={{ background: 'var(--color-bg)', padding: '1.3rem 0' }}
+            style={{ borderBottom: '1px solid var(--color-border)', padding: '1.4rem 0' }}
           >
-            <div style={{
-              fontFamily: 'SF Mono, Menlo, monospace',
-              fontSize: '10.5px', letterSpacing: '0.12em', textTransform: 'uppercase',
-              color: 'var(--color-accent)', marginBottom: '0.4rem',
-            }}>{kicker}</div>
             <div style={{
               fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em',
               color: 'var(--color-text)', lineHeight: 1.2, marginBottom: '0.5rem',
@@ -135,7 +124,7 @@ const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--color-accent)', textDecoration: 'none', fontSize: '11.5px' }}
+                  style={{ color: 'var(--color-text-subtle)', textDecoration: 'none', fontSize: '11.5px' }}
                   onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
                   onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
                 >
