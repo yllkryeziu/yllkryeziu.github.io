@@ -16,8 +16,8 @@ const blogItems: Extract<FeedItem, { kind: 'blog' }>[] = [
     id: 'thesis',
     kicker: 'Machine Learning · LLM Reasoning · Distillation',
     title: 'On-policy self-distillation for adaptive compute',
-    date: 'March 2026',
-    sortDate: 202603,
+    date: 'February 2026',
+    sortDate: 202602,
     desc: 'Reasoning models overthink. I let a model rewrite its own reasoning to the right length, then distill that behavior back in — no reward model, no difficulty labels, just the model itself.',
   },
   {
