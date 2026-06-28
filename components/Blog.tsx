@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import BlogJAX from './BlogJAX';
 import BlogSIMD from './BlogSIMD';
+import BlogThesis from './BlogThesis';
 import { projectsData } from '../data';
 
-type Post = 'jax' | 'simd';
+type Post = 'jax' | 'simd' | 'thesis';
 
 type FeedItem =
   | { kind: 'blog'; id: Post; kicker: string; title: string; date: string; sortDate: number; desc: string }
   | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; tags: string[]; links: { name: string; url: string }[] };
 
 const blogItems: Extract<FeedItem, { kind: 'blog' }>[] = [
+  {
+    kind: 'blog',
+    id: 'thesis',
+    kicker: 'Machine Learning · LLM Reasoning · Distillation',
+    title: 'On-policy self-distillation for adaptive compute',
+    date: 'March 2026',
+    sortDate: 202603,
+    desc: 'Reasoning models overthink. I let a model rewrite its own reasoning to the right length, then distill that behavior back in — no reward model, no difficulty labels, just the model itself.',
+  },
   {
     kind: 'blog',
     id: 'jax',
@@ -141,7 +151,7 @@ const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
 
 const Work: React.FC = () => {
   const [selected, setSelected] = useState<Post | null>(() => {
-    const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd)$/i);
+    const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
     return match ? (match[1].toLowerCase() as Post) : null;
   });
 
@@ -157,13 +167,14 @@ const Work: React.FC = () => {
 
   useEffect(() => {
     const onHashChange = () => {
-      const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd)$/i);
+      const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
       setSelected(match ? (match[1].toLowerCase() as Post) : null);
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  if (selected === 'thesis') return <BlogThesis onBack={handleBack} />;
   if (selected === 'jax') return <BlogJAX onBack={handleBack} />;
   if (selected === 'simd') return <BlogSIMD onBack={handleBack} />;
   return <WorkFeed onSelect={handleSelect} />;
