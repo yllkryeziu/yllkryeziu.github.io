@@ -459,7 +459,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
         <div>
           <div className="label">Published</div>
-          <div className="value">March 2026</div>
+          <div className="value">February 2026</div>
         </div>
         <div>
           <div className="label">Code</div>

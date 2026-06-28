@@ -1,4 +1,4 @@
-export type View = 'Highlights' | 'Experience' | 'Education' | 'Work' | 'About';
+export type View = 'Highlights' | 'Experience' | 'Education' | 'Work' | 'About' | 'Intro';
 
 export interface AboutData {
   name: string;

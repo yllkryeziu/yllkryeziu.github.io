@@ -5,6 +5,7 @@ import Highlights from './components/Highlights';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import Work from './components/Blog';
+import Intro from './components/Intro';
 import type { View } from './types';
 import { aboutData, highlightsData, cvData } from './data';
 
@@ -17,6 +18,7 @@ function hashToView(hash: string): View {
     work: 'Work',
     blog: 'Work',
     about: 'About',
+    intro: 'Intro',
   };
   return map[segment] || 'Highlights';
 }
@@ -75,6 +77,11 @@ const App: React.FC = () => {
         return <Highlights highlights={highlightsData} />;
     }
   };
+
+  // Standalone, URL-only page: render the intro video without the portfolio chrome.
+  if (activeView === 'Intro') {
+    return <Intro />;
+  }
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
