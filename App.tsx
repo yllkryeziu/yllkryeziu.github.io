@@ -9,6 +9,10 @@ import Intro from './components/Intro';
 import type { View } from './types';
 import { aboutData, highlightsData, cvData } from './data';
 
+function isPostOpen(hash: string): boolean {
+  return /^#(?:work|blog)\/[a-z]+$/i.test(hash);
+}
+
 function hashToView(hash: string): View {
   const segment = (hash.replace('#', '').split('/')[0] || '').toLowerCase();
   const map: Record<string, View> = {
@@ -25,6 +29,7 @@ function hashToView(hash: string): View {
 
 const App: React.FC = () => {
   const [activeView, setActiveViewRaw] = useState<View>(() => hashToView(window.location.hash));
+  const [postOpen, setPostOpen] = useState(() => isPostOpen(window.location.hash));
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
@@ -51,11 +56,13 @@ const App: React.FC = () => {
       window.location.hash = newHash;
     }
     setActiveViewRaw(view);
+    setPostOpen(false);
   };
 
   useEffect(() => {
     const onHashChange = () => {
       setActiveViewRaw(hashToView(window.location.hash));
+      setPostOpen(isPostOpen(window.location.hash));
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
@@ -85,7 +92,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24">
+      <div className={`${postOpen ? 'max-w-3xl' : 'max-w-2xl'} mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24`}>
         <Header
           activeView={activeView}
           setActiveView={setActiveView}

@@ -1,132 +1,122 @@
-import React, { useState, useEffect } from 'react';
-import BlogJAX from './BlogJAX';
-import BlogSIMD from './BlogSIMD';
-import BlogThesis from './BlogThesis';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { POSTS, type PostSlug } from './post/posts';
 import { projectsData } from '../data';
 
-type Post = 'jax' | 'simd' | 'thesis';
-
 type FeedItem =
-  | { kind: 'blog'; id: Post; kicker: string; title: string; date: string; sortDate: number; desc: string }
-  | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; tags: string[]; links: { name: string; url: string }[] };
-
-const blogItems: Extract<FeedItem, { kind: 'blog' }>[] = [
-  {
-    kind: 'blog',
-    id: 'thesis',
-    kicker: 'Machine Learning · LLM Reasoning · Distillation',
-    title: 'On-policy self-distillation for adaptive compute',
-    date: 'February 2026',
-    sortDate: 202602,
-    desc: 'Reasoning models overthink. I let a model rewrite its own reasoning to the right length, then distill that behavior back in — no reward model, no difficulty labels, just the model itself.',
-  },
-  {
-    kind: 'blog',
-    id: 'jax',
-    kicker: 'Systems · Machine Learning · JAX',
-    title: 'Cost-Aware Predictive Query Prefetching with JAX',
-    date: 'February 2026',
-    sortDate: 202602,
-    desc: 'A prefetch is a bet. This system uses a lightweight JAX predictor to place that bet only when the expected latency savings beat the expected backend cost.',
-  },
-  {
-    kind: 'blog',
-    id: 'simd',
-    kicker: 'Performance Engineering · JVM × Native',
-    title: 'Crossing the JNI boundary for 6.9× faster JSON ingestion',
-    date: 'October 2025',
-    sortDate: 202510,
-    desc: 'Routing the hot path through simdjson using zero-copy DirectByteBuffers pushed sustained throughput past 2.9 GB/s and gave back 61% of parse CPU.',
-  },
-];
+  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; desc: string }
+  | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; links: { name: string; url: string }[] };
 
 function parseSortDate(date: string): number {
   const lower = date.toLowerCase();
-  const yearMatch = lower.match(/\d{4}/);
-  const year = yearMatch ? parseInt(yearMatch[0]) : 2025;
-  const months: [string, number][] = [
-    ['january', 1], ['february', 2], ['march', 3], ['april', 4],
-    ['may', 5], ['june', 6], ['july', 7], ['august', 8],
-    ['september', 9], ['october', 10], ['november', 11], ['december', 12],
+  const yearMatch = lower.match(/\d{4}/g);
+  const year = yearMatch ? parseInt(yearMatch[yearMatch.length - 1]) : 2025;
+  const months = [
+    'january', 'february', 'march', 'april', 'may', 'june',
+    'july', 'august', 'september', 'october', 'november', 'december',
   ];
-  for (const [name, num] of months) {
-    if (lower.includes(name)) return year * 100 + num;
-  }
-  return year * 100;
+  const month = months.findIndex(name => lower.includes(name));
+  return year * 100 + (month >= 0 ? month + 1 : 0);
 }
 
-const projectItems: Extract<FeedItem, { kind: 'project' }>[] = projectsData.map(p => ({
-  kind: 'project' as const,
-  id: p.id,
-  title: p.title,
-  date: p.date,
-  sortDate: parseSortDate(p.date),
-  description: p.description,
-  tags: p.tags,
-  links: p.links ?? [],
-}));
+const feed: FeedItem[] = [
+  ...POSTS.map<FeedItem>(post => ({
+    kind: 'post',
+    id: post.slug,
+    title: post.title,
+    date: post.date,
+    sortDate: post.sortDate,
+    desc: post.dek,
+  })),
+  ...projectsData.map<FeedItem>(project => ({
+    kind: 'project',
+    id: project.id,
+    title: project.title,
+    date: project.date,
+    sortDate: parseSortDate(project.date),
+    description: project.description,
+    links: project.links ?? [],
+  })),
+].sort((a, b) => b.sortDate - a.sortDate);
 
-const feed: FeedItem[] = [...blogItems, ...projectItems].sort((a, b) => b.sortDate - a.sortDate);
+const BlogPrefetch = lazy(() => import('./BlogPrefetch'));
+const BlogSimdjson = lazy(() => import('./BlogSimdjson'));
+const BlogThesis = lazy(() => import('./BlogThesis'));
 
-const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
+const PostFallback: React.FC = () => (
+  <div style={{ padding: '3rem 0', color: 'var(--color-text-muted)', fontSize: '13px' }}>Loading…</div>
+);
+
+const itemStyle: React.CSSProperties = {
+  borderBottom: '1px solid var(--color-border)',
+  padding: '1.4rem 0',
+};
+
+const titleStyle: React.CSSProperties = {
+  fontSize: '16px',
+  fontWeight: 600,
+  letterSpacing: '-0.02em',
+  color: 'var(--color-text)',
+  lineHeight: 1.25,
+  marginBottom: '0.5rem',
+};
+
+const descStyle: React.CSSProperties = {
+  fontSize: '13.5px',
+  color: 'var(--color-text-subtle)',
+  lineHeight: 1.55,
+  margin: '0 0 0.6rem',
+};
+
+const metaStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+  fontFamily: 'var(--font-mono)',
+  fontSize: '11.5px',
+  color: 'var(--color-text-muted)',
+};
+
+const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }) => (
   <section>
     <h2 style={{
-      fontSize: '13px', fontWeight: 600, letterSpacing: '0.08em',
-      textTransform: 'uppercase', color: 'var(--color-text-muted)',
+      fontSize: '13px',
+      fontWeight: 600,
+      letterSpacing: '0.08em',
+      textTransform: 'uppercase',
+      color: 'var(--color-text-muted)',
       margin: '0 0 1.5rem',
     }}>Work</h2>
     <div style={{ borderTop: '1px solid var(--color-border)' }}>
-      {feed.map(item => {
-        if (item.kind === 'blog') {
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelect(item.id)}
-              className="feed-link"
-              style={{
-                display: 'block', width: '100%', textAlign: 'left',
-                background: 'none', border: 'none',
-                borderBottom: '1px solid var(--color-border)',
-                cursor: 'pointer', padding: '1.4rem 0', font: 'inherit',
-              }}
-            >
-              <div className="feed-title" style={{
-                fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em',
-                color: 'var(--color-text)', lineHeight: 1.2, marginBottom: '0.5rem',
-              }}>{item.title}</div>
-              <p style={{
-                fontSize: '13.5px', color: 'var(--color-text-subtle)', lineHeight: 1.55,
-                margin: '0 0 0.6rem',
-              }}>{item.desc}</p>
-              <div style={{
-                fontFamily: 'SF Mono, Menlo, monospace', fontSize: '11.5px',
-                color: 'var(--color-text-muted)',
-              }}>{item.date}</div>
-            </button>
-          );
-        }
-
-        return (
-          <div
+      {feed.map(item =>
+        item.kind === 'post' ? (
+          <button
             key={item.id}
-            style={{ borderBottom: '1px solid var(--color-border)', padding: '1.4rem 0' }}
+            onClick={() => onSelect(item.id)}
+            className="feed-link"
+            style={{
+              ...itemStyle,
+              display: 'block',
+              width: '100%',
+              textAlign: 'left',
+              background: 'none',
+              border: 'none',
+              borderBottom: '1px solid var(--color-border)',
+              cursor: 'pointer',
+              font: 'inherit',
+            }}
           >
-            <div style={{
-              fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em',
-              color: 'var(--color-text)', lineHeight: 1.2, marginBottom: '0.5rem',
-            }}>{item.title}</div>
-            <p
-              style={{
-                fontSize: '13.5px', color: 'var(--color-text-subtle)', lineHeight: 1.55,
-                margin: '0 0 0.6rem',
-              }}
-              dangerouslySetInnerHTML={{ __html: item.description }}
-            />
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '1rem',
-              fontFamily: 'SF Mono, Menlo, monospace', fontSize: '11.5px',
-              color: 'var(--color-text-muted)',
-            }}>
+            <div className="feed-title" style={titleStyle}>{item.title}</div>
+            <p style={descStyle}>{item.desc}</p>
+            <div style={metaStyle}>
+              <span>{item.date}</span>
+              <span>Read →</span>
+            </div>
+          </button>
+        ) : (
+          <div key={item.id} style={itemStyle}>
+            <div style={titleStyle}>{item.title}</div>
+            <p style={descStyle} dangerouslySetInnerHTML={{ __html: item.description }} />
+            <div style={metaStyle}>
               <span>{item.date}</span>
               {item.links.map(link => (
                 <a
@@ -134,30 +124,31 @@ const WorkFeed: React.FC<{ onSelect: (p: Post) => void }> = ({ onSelect }) => (
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--color-text-subtle)', textDecoration: 'none', fontSize: '11.5px' }}
-                  onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
-                  onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                  className="link-underline"
+                  style={{ color: 'var(--color-text-subtle)' }}
                 >
                   {link.name} ↗
                 </a>
               ))}
             </div>
           </div>
-        );
-      })}
+        )
+      )}
     </div>
   </section>
 );
 
-const Work: React.FC = () => {
-  const [selected, setSelected] = useState<Post | null>(() => {
-    const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
-    return match ? (match[1].toLowerCase() as Post) : null;
-  });
+function slugFromHash(): PostSlug | null {
+  const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
+  return match ? (match[1].toLowerCase() as PostSlug) : null;
+}
 
-  const handleSelect = (p: Post) => {
-    window.location.hash = 'work/' + p;
-    setSelected(p);
+const Work: React.FC = () => {
+  const [selected, setSelected] = useState<PostSlug | null>(slugFromHash);
+
+  const handleSelect = (slug: PostSlug) => {
+    window.location.hash = `work/${slug}`;
+    setSelected(slug);
   };
 
   const handleBack = () => {
@@ -166,18 +157,24 @@ const Work: React.FC = () => {
   };
 
   useEffect(() => {
-    const onHashChange = () => {
-      const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
-      setSelected(match ? (match[1].toLowerCase() as Post) : null);
-    };
+    const onHashChange = () => setSelected(slugFromHash());
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  if (selected === 'thesis') return <BlogThesis onBack={handleBack} />;
-  if (selected === 'jax') return <BlogJAX onBack={handleBack} />;
-  if (selected === 'simd') return <BlogSIMD onBack={handleBack} />;
-  return <WorkFeed onSelect={handleSelect} />;
+  useEffect(() => {
+    if (selected) window.scrollTo(0, 0);
+  }, [selected]);
+
+  if (!selected) return <WorkFeed onSelect={handleSelect} />;
+
+  return (
+    <Suspense fallback={<PostFallback />}>
+      {selected === 'thesis' && <BlogThesis onBack={handleBack} />}
+      {selected === 'jax' && <BlogPrefetch onBack={handleBack} />}
+      {selected === 'simd' && <BlogSimdjson onBack={handleBack} />}
+    </Suspense>
+  );
 };
 
 export default Work;

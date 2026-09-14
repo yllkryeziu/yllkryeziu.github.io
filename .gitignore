@@ -1,3 +1,13 @@
 node_modules
 .env
 .DS_Store
+
+projects/**/data/*
+!projects/**/data/.gitkeep
+projects/**/build
+projects/**/target
+projects/**/third_party
+projects/**/.venv
+projects/**/__pycache__
+projects/**/artifacts
+projects/**/results-m3
