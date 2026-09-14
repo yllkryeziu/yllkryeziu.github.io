@@ -49,11 +49,11 @@ export const SIMD_REFS: Reference[] = [
   },
 ];
 
-export const SIMD_BIBTEX = `@article{kryeziu2026jni,
-  title   = {Crossing the JNI boundary without paying for it},
+export const SIMD_BIBTEX = `@article{kryeziu2025jni,
+  title   = {What crossing the JNI boundary actually costs},
   author  = {Kryeziu, Yll},
   journal = {yllkryeziu.github.io},
-  year    = {2026},
-  month   = {September},
+  year    = {2025},
+  month   = {October},
   url     = {https://yllkryeziu.github.io/#work/simd}
 }`;
