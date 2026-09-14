@@ -3,7 +3,7 @@ set -euo pipefail
 
 HOST="${CLUSTER_HOST:-berlin1}"
 REMOTE="${CLUSTER_WORK:-/fast/project/HFMI_SynergyUnit/yll/blog-benchmarks}"
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/projects"
+ROOT="${PROJECTS_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
 cd "${ROOT}"
 rsync -az --itemize-changes \
