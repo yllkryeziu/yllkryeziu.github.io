@@ -330,12 +330,12 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       the scalars, through one hidden layer, and a softmax over the vocabulary. Raw JAX<Cite ids={[7]} /> rather
       than a framework, because the whole model is {num(results.modelCost.parameter_count)} parameters and the
       interesting part is <code>vmap</code> and <code>grad</code>, not layer plumbing. Optimisation is Adam via
-      optax<Cite ids={[8]} />; the whole thing trains in {results.modelCost.training_seconds.toFixed(0)} seconds on CPU.
+      optax<Cite ids={[8]} />, and training takes {results.modelCost.training_seconds.toFixed(0)} seconds on CPU.
     </p>
     <p>
       A transformer would be the wrong tool here. The model runs inline on the request path, so any latency
-      it adds is subtracted directly from the latency a prefetch might save. That constraint turns out to
-      produce the least flattering number in the project, discussed in the takeaway.
+      it adds is subtracted directly from the latency a prefetch might save. That constraint produces the
+      least flattering number in the project, discussed in the takeaway.
     </p>
 
     <H2 id="baselines">The baseline is the experiment</H2>
@@ -724,9 +724,9 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       origin distance, from about {ms(Math.abs(byOriginLatency[0].absolute), 1)} ms at{' '}
       {byOriginLatency[0].originMs} ms to about{' '}
       {ms(Math.abs(byOriginLatency[byOriginLatency.length - 1].absolute), 1)} ms at{' '}
-      {byOriginLatency[byOriginLatency.length - 1].originMs} ms. This is the sense in which prefetching is a
-      technique for distant origins: the mechanism is identical at every distance, but only at distance is
-      the prize large enough to be worth the machinery.
+      {byOriginLatency[byOriginLatency.length - 1].originMs} ms. Prefetching is therefore a technique for
+      distant origins. The mechanism is identical at every distance, and only at distance is the saving
+      large enough to justify the machinery.
     </p>
 
     <H2 id="sweep">Mapping the boundary</H2>

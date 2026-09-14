@@ -150,7 +150,7 @@ export const GroupedBarChart: React.FC<{
   const tip = useTip();
   const width = 640;
   const height = 260;
-  const left = 46;
+  const left = 58;
   const bottom = 34;
   const top = 12;
   const max = Math.max(...series.flatMap(s => s.values));
@@ -261,7 +261,7 @@ export const LineChart: React.FC<{
           <text key={t.v} className="chart-axis" x={px(t.v)} y={height - bottom + 22} textAnchor="middle">{t.label}</text>
         ))}
         <text className="chart-axis" x={left} y={height - 6} textAnchor="start">{xLabel}</text>
-        <text className="chart-axis" x={left - 10} y={11} textAnchor="end">{yLabel}</text>
+        <text className="chart-axis" x={0} y={11} textAnchor="start">{yLabel}</text>
         {series.map((s, si) => (
           <path
             key={s.label}
@@ -335,7 +335,7 @@ export const ScatterChart: React.FC<{
   const height = 300;
   const left = 54;
   const right = 20;
-  const top = 16;
+  const top = 26;
   const bottom = 46;
   const plotW = width - left - right;
   const plotH = height - top - bottom;
@@ -365,7 +365,7 @@ export const ScatterChart: React.FC<{
           <text key={t} className="chart-axis" x={px(t)} y={height - bottom + 22} textAnchor="middle">{t.toLocaleString()}</text>
         ))}
         <text className="chart-axis" x={left + plotW / 2} y={height - 6} textAnchor="middle">{xLabel}</text>
-        <text className="chart-axis" x={left - 10} y={11} textAnchor="end">{yLabel}</text>
+        <text className="chart-axis" x={0} y={11} textAnchor="start">{yLabel}</text>
         {frontier && (
           <path
             d={frontier.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p.x)},${py(p.y)}`).join(' ')}

@@ -159,13 +159,14 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <p>
       Perfect play identifies the animal in a mean of 5.72 questions against an information floor of{' '}
-      <M>{String.raw`\log_2 50 = 5.64`}</M>. A twenty-question game therefore hands the model
-      fourteen turns of rope.
+      <M>{String.raw`\log_2 50 = 5.64`}</M>. A twenty-question game leaves about fourteen turns of
+      slack.
     </p>
 
     <H2 id="whose-beliefs">Consistency against whose beliefs</H2>
     <p>
-      Here is the subtlety that decides whether any of this measures the right thing. If the model
+      Which beliefs the answers are scored against decides whether any of this measures the right
+      thing. If the model
       thinks a lion counts as black and the human annotators disagree, scoring against the human
       matrix records a contradiction where none exists. That measures disagreement about the world
       rather than failure to hold a commitment.
@@ -329,7 +330,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       has no discriminating power.
     </p>
     <p>
-      Underneath the saturated game outcome, answer-level agreement does degrade with temperature:{' '}
+      Underneath the saturated game outcome, answer-level agreement degrades with temperature:{' '}
       {pct(ANALYSIS.arms.greedy.overall_agreement)},{' '}
       {pct(ANALYSIS.arms.sampled.overall_agreement)} and{' '}
       {pct(ANALYSIS.arms.sampled_t1.overall_agreement)}. Sampling makes things worse. It simply
@@ -339,7 +340,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <H3>There is no drift over turns</H3>
     <p>
       The obvious story is that the model loses the thread as context grows. It does not, and the
-      reason I nearly believed it is instructive.
+      measurement that appears to show it does is confounded.
     </p>
     <p>
       Under the optimal questioner, agreement appears to climb steeply over the first few turns, a
@@ -384,8 +385,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <p>
-      The per-attribute breakdown then explains the whole thing, and this is the part I did not
-      anticipate.
+      The per-attribute breakdown accounts for the rest.
     </p>
 
     <Figure
@@ -444,8 +444,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H2 id="probe">Is anything represented at all</H2>
     <p>
-      Behaviour says the model does not hold a secret. That leaves the more interesting question:
-      does it ever <em>form</em> one?
+      Behaviour says the model does not hold a secret. Whether it ever <em>forms</em> one is a
+      separate question, and answering it needs a look at the activations.
     </p>
     <p>
       Train a linear probe on the residual stream at the commitment turn, right after the model says
@@ -510,8 +510,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      This is the result the project was built to get. At the moment of commitment there <em>is</em>{' '}
-      a representation: a linear probe reads the animal out of the activations at{' '}
+      At the moment of commitment there <em>is</em> a representation. A linear probe reads the
+      animal out of the activations at{' '}
       {pct(probeStats.accuracy)}, which is {(probeStats.accuracy / P.most_common_baseline).toFixed(1)}{' '}
       times the majority baseline, with the correct animal in the probe's top five{' '}
       {pct(probeStats.top5_accuracy)} of the time. The model does pick something, and you can read
@@ -533,9 +533,9 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H2 id="causal">Steering the representation</H2>
     <p>
-      A probe that reads a variable does not show the model uses it. The probe could be picking up
-      a trace that nothing downstream consults. The way to tell is to stop reading and start
-      writing.
+      A probe that reads a variable does not show that the model uses it. The direction could be a
+      trace that nothing downstream consults. Writing to it rather than reading from it
+      distinguishes the two cases.
     </p>
     <p>
       In each game the animal the model names when asked immediately is the <em>source</em>. A
@@ -592,7 +592,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      The report moves. Steering along the probe direction makes the model name the target in{' '}
+      Steering along the probe direction makes the model name the target in{' '}
       {pct(SP.reveal_is_target)} of games, up from {pct(SU.reveal_is_target)}, while still
       producing a valid animal name {pct(SP.reveal_is_animal)} of the time. The random direction at
       the same norm reaches {pct(SR.reveal_is_target)}. It also clears out the original choice,
@@ -600,24 +600,24 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       direction and only to {pct(SR.reveal_is_source)} under the random one.
     </p>
     <p>
-      The answers do not move. Agreement with the target's attribute profile goes from{' '}
+      The answers are unaffected. Agreement with the target's attribute profile goes from{' '}
       {pct(SU.answer_matches_target)} to {pct(SP.answer_matches_target)}, and the random control
-      sits at {pct(SR.answer_matches_target)}. On the questions built to separate the two animals,
-      steering does nothing.
+      sits at {pct(SR.answer_matches_target)}. On the questions chosen to separate the two animals,
+      steering changes nothing.
     </p>
     <p>
-      The unsteered row is what makes this sharp. Before any intervention the model's answers match
-      its own revealed animal {pct(SU.answer_matches_source)} of the time on these attributes,
-      which is chance. So there is a direction that decides what the model says it was thinking of,
-      and that direction has no grip on what it actually answers. The commitment is a label
-      attached to the report rather than a state that drives behaviour.
+      The unsteered row is worth reading alongside this. Before any intervention the model's
+      answers match its own revealed animal {pct(SU.answer_matches_source)} of the time on these
+      attributes, which is chance. So the probe direction determines what the model reports it was
+      thinking of, while the answers it gives are unrelated to that report either way. The
+      commitment behaves like a label on the report rather than a state that drives behaviour.
     </p>
 
     <Figure
       n={4}
       caption={
         <>
-          The effect lives in a narrow band. At{' '}
+          The effect holds over a narrow range of strengths. At{' '}
           <M>{'\\alpha = 1'}</M> the model is still coherent{' '}
           {pct(SP.reveal_is_animal)} of the time; by <M>{'\\alpha = 2'}</M> that has fallen to{' '}
           {pct(SL.probe_alpha2.reveal_is_animal)} and the apparent drop in target naming is mostly
@@ -686,7 +686,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </p>
     <p>
       The steering result inherits that bound. A linear write along a linear probe's direction is
-      the crudest possible intervention, so the answers failing to move is evidence that this
+      a blunt intervention, so the answers failing to move is evidence that this
       direction does not drive them, and not evidence that nothing does. A nonlinear or
       multi-direction edit could land differently.
     </p>
