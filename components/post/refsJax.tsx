@@ -54,6 +54,6 @@ export const JAX_BIBTEX = `@article{kryeziu2026prefetch,
   author  = {Kryeziu, Yll},
   journal = {yllkryeziu.github.io},
   year    = {2026},
-  month   = {September},
+  month   = {February},
   url     = {https://yllkryeziu.github.io/#work/jax}
 }`;
