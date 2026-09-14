@@ -279,7 +279,7 @@ function LoopDiagram() {
 
       {/* dense supervision note */}
       <text x="330" y="288" fill={SUBTLE} fontSize="11.5" textAnchor="middle" fontFamily="var(--font-sans)">
-        Dense, token-level signal on the prefixes the student actually visits —
+        Dense, token-level signal on the prefixes the student actually visits.
       </text>
       <text x="330" y="306" fill={SUBTLE} fontSize="11.5" textAnchor="middle" fontFamily="var(--font-sans)">
         no ground-truth answers, no separate reward model.
@@ -447,8 +447,8 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       {/* dek */}
       <p style={{ fontSize: '19px', lineHeight: 1.55, color: SUBTLE, marginTop: '1rem', marginBottom: 0 }}>
         Reasoning models overthink: they burn thousands of tokens on easy problems for no extra accuracy. I let a model
-        rewrite its own reasoning to a length that fits the problem, then distill that behavior back in — using
-        only the model itself, with <strong>no reward model and no difficulty labels</strong>.
+        rewrite its own reasoning to a length that fits the problem, then distill that behaviour back in,
+        using only the model itself, with <strong>no reward model and no difficulty labels</strong>.
       </p>
 
       {/* byline */}
@@ -485,30 +485,30 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         chains of thought before answering, and accuracy on hard benchmarks climbs with the number of tokens it is
         allowed to spend at inference time.<Cite ids={[1, 2, 3]} /> The flip side is less flattering: the same models
         keep thinking long after the problem has been solved. They allocate a wall of reasoning to <code style={ic}>2+3</code>,
-        re-derive the obvious, and second-guess correct answers — a pattern documented as <em>overthinking</em>.<Cite ids={[4]} />
+        re-derive the obvious, and second-guess correct answers, a pattern documented as <em>overthinking</em>.<Cite ids={[4]} />
       </p>
       <p style={p}>
         Every extra token costs latency and money without buying accuracy. So you want the opposite of a fixed budget:
         spend less on easy problems, keep the budget for hard ones. The catch is that &ldquo;how hard is this problem&rdquo;
         is exactly the thing you don't know in advance.
       </p>
-      <Pull>The goal isn't shorter reasoning. It's reasoning that's the right length for the problem in front of it.</Pull>
+      <Pull>The target is not shorter reasoning in general, but reasoning whose length matches the difficulty of the problem in front of it.</Pull>
       <p style={p}>
-        Plenty of methods chase this, but most lean on something external — a token budget conditioned on an estimated
+        Plenty of methods chase this, and most lean on something external: a token budget conditioned on an estimated
         difficulty, a verifier, a reward model, or preference pairs curated by a stronger teacher. Those signals are
-        powerful, but they're not always available, and they pull you out of the single-model setting.<Cite ids={[5]} /> I
-        wanted to know how far you can get <strong>self-contained</strong>: one frozen model, the problem, and the
-        model's own reasoning trace. Nothing else.
+        powerful, but they are not always available, and they pull you out of the single-model setting.<Cite ids={[5]} /> The
+        question here is how far the <strong>self-contained</strong> version gets, with one frozen model, the problem,
+        and the model's own reasoning trace as the only inputs.
       </p>
 
       {/* ---- 02 ---- */}
       <h2 style={h2s}>Let the model rewrite itself</h2>
       <p style={p}>
         The first idea is self-refinement.<Cite ids={[6]} /> Take the model's own reasoning trace and ask the same model
-        to rewrite it — not to a fixed length, but to a length that matches how hard the problem actually was. If the
-        trace overthinks an easy problem, trim it. If it underthinks a hard one, deepen it. Crucially, the rewrite must
-        stay <em>in distribution</em>: it should read like a normal solution, not like edit notes or meta-commentary
-        about the rewrite, because we later want to use it as a training signal.
+        to rewrite it to a length that matches how hard the problem actually was, rather than to a fixed length. If the
+        trace overthinks an easy problem, trim it. If it underthinks a hard one, deepen it. The rewrite has to stay{' '}
+        <em>in distribution</em>: it should read like a normal solution rather than edit notes or commentary about the
+        rewrite, because it is later used as a training signal.
       </p>
 
       <FigCard
@@ -516,14 +516,14 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         unit="rewrite behavior"
         caption={<><strong>Figure 1.</strong> The rewrite is adaptive by construction. The instruction asks the model to first
           judge whether the original trace was overthinking or underthinking <em>for its true difficulty</em>, then trim or
-          expand accordingly — preserving the original voice, productive tangents, and self-corrections.</>}
+          expand accordingly, preserving the original voice, productive tangents, and self-corrections.</>}
       >
         <AdaptiveFigure />
       </FigCard>
 
       <p style={p}>
         The whole mechanism is a prompt. It tells the model to act as a careful reader of its own monologue, keep the
-        voice intact, fix genuine errors, and delete only redundancy that leads nowhere — and to compress
+        voice intact, fix genuine errors, and delete only redundancy that leads nowhere, compressing{' '}
         <em>only</em> when the problem is clearly overthought for its difficulty.
       </p>
 
@@ -546,15 +546,15 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         It works, and not by a little. Across Qwen3 models from 1.7B to 14B<Cite ids={[7]} /> on a math subset of
         OpenThoughts-114k,<Cite ids={[8]} /> self-refinement strips <strong>78–83%</strong> of the reasoning trace while
         final-answer accuracy goes <em>up</em>, by +1 to +6 points. The load-bearing steps survive; what gets cut is the
-        redundancy. Self-refinement is a strong test-time compression operator — and because the rewrites stay in
-        distribution, they're clean enough to teach <em>back</em> to the model.
+        redundancy. Self-refinement is a strong test-time compression operator, and because the rewrites stay in
+        distribution they are clean enough to teach <em>back</em> to the model.
       </p>
 
       <FigCard
         title="Original vs. rewritten reasoning length"
         unit="avg tokens per generation · lower is better"
-        caption={<><strong>Figure 2.</strong> Self-refinement collapses each trace from roughly 6–8k tokens down to 1.2–1.4k —
-          a <strong>78–83%</strong> cut — while final-answer accuracy is preserved or improved across every model size.</>}
+        caption={<><strong>Figure 2.</strong> Self-refinement collapses each trace from roughly 6–8k tokens down to 1.2–1.4k,
+          a <strong>78–83%</strong> cut, while final-answer accuracy is preserved or improved across every model size.</>}
       >
         <BenchmarkChart />
       </FigCard>
@@ -569,18 +569,17 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         plagues offline imitation.<Cite ids={[9, 10]} />
       </p>
       <p style={p}>
-        The twist is that the teacher and student are the <em>same model</em>. They differ only in their prompt. The
-        student sees the bare problem. The teacher sees the problem, a frozen static trace of the student's own earlier
-        attempt, and the rewrite instruction — so its next-token distribution is shifted toward the concise,
-        compute-optimal continuation. We never sample an explicit rewrite from the teacher; we only use it as a
-        <em>scorer</em>.
+        The teacher and student are the <em>same model</em>, differing only in their prompt. The student sees the bare
+        problem. The teacher sees the problem, a frozen static trace of the student's own earlier attempt, and the
+        rewrite instruction, so its next-token distribution is shifted toward the concise, compute-optimal
+        continuation. No explicit rewrite is ever sampled from the teacher; it is used only as a <em>scorer</em>.
       </p>
 
       <FigCard
         title="The on-policy rewrite-distillation loop"
         unit="same weights, two prompts"
-        caption={<><strong>Figure 3.</strong> The student samples a live rollout; the teacher — identical weights under a
-          rewrite-conditioned prefix — scores those exact tokens. Because the teacher conditions on context the student
+        caption={<><strong>Figure 3.</strong> The student samples a live rollout; the teacher, identical weights under a
+          rewrite-conditioned prefix, scores those exact tokens. Because the teacher conditions on context the student
           never sees at inference time, this is a form of context distillation: a context-conditioned teacher pressed into
           a context-free student.</>}
       >
@@ -620,16 +619,17 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </CodeBlock>
 
       <p style={p}>
-        Because the teacher grades the student's own prefixes, every token position gets a directional grade — dense
-        supervision, no sparse sequence-level reward, and no ground-truth answer anywhere in the loop.<Cite ids={[11]} />
+        Because the teacher grades the student's own prefixes, every token position gets a directional grade. The
+        supervision is dense, with no sparse sequence-level reward and no ground-truth answer anywhere in the
+        loop.<Cite ids={[11]} />
       </p>
 
       {/* ---- 05 ---- */}
       <h2 style={h2s}>Folding conciseness into the weights</h2>
       <p style={p}>
         Trained across all four Qwen3 sizes and evaluated on MATH500 and AIME2025, the distilled checkpoints generate
-        <strong> 28–46% fewer tokens</strong> by default. The model reasons concisely on the first pass — no second
-        rewrite, no inference-time overhead. The behavior moved into the weights.
+        <strong> 28–46% fewer tokens</strong> by default. The model reasons concisely on the first pass, with no second
+        rewrite and no inference-time overhead. The behaviour has moved into the weights.
       </p>
 
       <FigCard
@@ -645,21 +645,21 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <p style={p}>
         Scale is the lever. As the underlying model gets stronger, the rewrite-conditioned teacher delivers sharper
         token-level guidance, and the student internalizes conciseness while keeping the robustness hard problems demand.
-        Stronger models compress harder <em>and</em> hold their accuracy — exactly the trajectory you want.
+        Stronger models compress harder <em>and</em> hold their accuracy.
       </p>
 
       {/* ---- 06 ---- */}
       <h2 style={h2s}>What it adds up to</h2>
       <p style={p}>
         Two results stand on their own. First, a model can rewrite its own reasoning to the right length with no external
-        signal, cutting ~80% of the trace while improving correctness — self-refinement is a powerful, self-contained
-        test-time compression operator. Second, that behavior is distillable: token-level on-policy self-distillation
-        bakes the conciseness into the model's default policy, and the trade tilts further in your favor as models scale.
+        signal, cutting ~80% of the trace while improving correctness, which makes self-refinement a self-contained
+        test-time compression operator. Second, that behaviour is distillable: token-level on-policy self-distillation
+        bakes the conciseness into the model's default policy, and the trade improves as models scale.
       </p>
       <TickList items={[
         <><strong>78–83%</strong> trace-token reduction from self-rewriting, with accuracy <strong>+1 to +6</strong> points.</>,
         <><strong>28–46%</strong> fewer tokens after distillation; the behavior survives the transfer into the weights.</>,
-        <><strong>Self-contained</strong> end to end — one frozen model as its own teacher, no reward model, no difficulty labels, no ground-truth answers in the loop.</>,
+        <><strong>Self-contained</strong> end to end: one frozen model as its own teacher, no reward model, no difficulty labels, no ground-truth answers in the loop.</>,
         <><strong>Scale helps.</strong> The downstream accuracy gap narrows with model size on both easy and hard benchmarks.</>,
       ]} />
 

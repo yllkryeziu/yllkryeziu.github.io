@@ -85,8 +85,8 @@ export const ClassificationFigure: React.FC = () => {
           </g>
         );
       })}
-      <text x={left} y={top + rowH * 4 + 30} fontFamily="var(--font-mono)" fontSize="11" fill={MUTED}>
-        structural index ← positions of set bits, extracted with a leading-zero count per word
+      <text x={0} y={top + rowH * 4 + 30} fontFamily="var(--font-mono)" fontSize="11" fill={MUTED}>
+        structural index ← set-bit positions, via a leading-zero count per word
       </text>
     </svg>
   );

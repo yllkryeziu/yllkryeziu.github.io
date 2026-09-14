@@ -259,8 +259,8 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H2 id="honest">Making the comparison honest</H2>
     <p>
-      This is the part of a parser benchmark that is easiest to get wrong, so it comes before the
-      results.
+      Measurement setup is the part of a parser benchmark that is easiest to get wrong, so it comes
+      before the results.
     </p>
     <p>
       simdjson's On Demand API is lazy. It does not parse a document so much as promise to. A
@@ -604,7 +604,7 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      This is the result I actually wanted. With Jackson's tree parser, parsing is{' '}
+      The pipeline breakdown is where the change shows up. With Jackson's tree parser, parsing is{' '}
       {pct(pipeline['jackson-tree'].stage_share_of_full.parse_scan, 0)} of the pipeline and nothing
       else is worth optimising. With the zero-copy native path it is{' '}
       {pct(pipeline['simdjson-jni-direct'].stage_share_of_full.parse_scan, 0)}, and mapping into typed
