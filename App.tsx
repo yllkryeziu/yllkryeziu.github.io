@@ -92,7 +92,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <div className={`${postOpen ? 'max-w-3xl' : 'max-w-2xl'} mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24`}>
+      <div className={`${postOpen ? 'max-w-6xl' : 'max-w-2xl'} mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24`}>
         <Header
           activeView={activeView}
           setActiveView={setActiveView}

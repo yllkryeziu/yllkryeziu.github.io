@@ -95,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({
           </p>
 
           {/* Social Links - inline */}
-          <div className="flex items-center gap-5 mt-4">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-4">
             <SocialLink href={email} icon={MailIcon} label="Mail" />
             <SocialLink href={linkedinUrl} icon={LinkedInIcon} label="LinkedIn" external />
             <SocialLink href={githubUrl} icon={GitHubIcon} label="GitHub" external />
