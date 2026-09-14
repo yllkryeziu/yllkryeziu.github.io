@@ -19,6 +19,17 @@ from src.model.prompts import REVEAL_TURN, game_messages
 RESULTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 
 
+def sample_answer(probability: float, temperature: float,
+                  generator: np.random.Generator) -> bool:
+    if temperature <= 0.0:
+        return probability >= 0.5
+    clipped = min(max(probability, 1e-6), 1.0 - 1e-6)
+    power = 1.0 / temperature
+    yes = clipped ** power
+    no = (1.0 - clipped) ** power
+    return bool(generator.random() < yes / (yes + no))
+
+
 def normalise(text: str) -> str:
     return text.strip().strip(".!\"'").lower()
 
@@ -88,7 +99,7 @@ def main() -> None:
             attribute = chosen[game]
             if attribute is None:
                 continue
-            said_yes = probabilities[game] >= 0.5
+            said_yes = sample_answer(probabilities[game], args.temperature, generator)
             questions[game].append(texts[game])
             answers[game].append("Yes" if said_yes else "No")
             before = states[game]
