@@ -3,8 +3,13 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const read = path => JSON.parse(readFileSync(resolve(root, path), 'utf8'));
-const readIf = path => (existsSync(resolve(root, path)) ? read(path) : null);
+// Projects live outside this repo. Override with PROJECTS_ROOT.
+const projectsRoot = resolve(root, process.env.PROJECTS_ROOT ?? '..');
+const locate = path =>
+  path.startsWith('projects/') ? resolve(projectsRoot, path.slice('projects/'.length))
+                               : resolve(root, path);
+const read = path => JSON.parse(readFileSync(locate(path), 'utf8'));
+const readIf = path => (existsSync(locate(path)) ? read(path) : null);
 const round = (value, digits = 2) =>
   value === null || value === undefined ? null : Number(value.toFixed(digits));
 
