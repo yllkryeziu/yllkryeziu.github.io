@@ -23,8 +23,8 @@ const TOC = [
   { id: 'setup', label: 'Setup' },
   { id: 'throughput', label: 'Throughput' },
   { id: 'zerocopy', label: 'What zero-copy is worth' },
-  { id: 'allocation', label: 'The number that is not close' },
-  { id: 'latency', label: 'The tail, and a claim that did not survive' },
+  { id: 'allocation', label: 'Allocation' },
+  { id: 'latency', label: 'The tail, and a prediction that failed' },
   { id: 'pipeline', label: 'Where the time goes afterwards' },
   { id: 'scaling', label: 'Scaling' },
   { id: 'limits', label: 'What this does not show' },
@@ -263,9 +263,10 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       before the results.
     </p>
     <p>
-      simdjson's On Demand API is lazy. It does not parse a document so much as promise to. A
-      benchmark that hands it bytes and reads nothing measures almost nothing and reports a
-      spectacular, fictional speedup. Any comparison has to force every engine to do the same work.
+      simdjson's On Demand API is lazy: it defers most of the work until values are actually read.
+      A benchmark that hands it bytes and reads nothing therefore measures almost nothing and
+      reports a speedup that does not exist. Any comparison has to force every engine to do the
+      same work.
     </p>
     <p>
       The harness does that with a checksum every engine must produce: an FNV-1a fold, in document
@@ -279,11 +280,11 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <Note label="Equivalence gate">
       <p>
         {EQ.mismatches} mismatches across {EQ.datasets.length} datasets. Agreement on the raw bits of
-        every non-integral number is stronger than it sounds: float parsing is a classic source of
-        silent disagreement between JSON implementations, and <code>canada.json</code> is essentially
+        every non-integral number is a demanding check, because float parsing is a classic source of
+        silent disagreement between JSON implementations and <code>canada.json</code> is essentially
         a few megabytes of coordinates. Two independently written parsers landing on bit-identical
-        doubles across it is what makes the performance comparison meaningful, because the engines are
-        demonstrably computing the same function.
+        doubles across it establishes that the engines compute the same function, which is what
+        makes the performance comparison meaningful.
       </p>
     </Note>
 
@@ -362,8 +363,8 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       The speedup ranges from {minSpeedup.toFixed(2)}x on{' '}
       <code>{minSpeedupDataset.replace('.json', '')}</code> to {maxSpeedup.toFixed(2)}x on{' '}
       <code>{maxSpeedupDataset.replace('.json', '')}</code>. A single speedup number for a JSON parser
-      is close to meaningless without naming the document, which is worth remembering whenever you
-      read one. Aggregated over the corpus by total bytes divided by total time, the zero-copy path
+      says little without naming the document it was measured on. Aggregated over the corpus by
+      total bytes divided by total time, the zero-copy path
       reaches {mb(bestNative)} MB/s against {mb(bestJvm)} MB/s for Jackson streaming, a factor of{' '}
       {aggregateSpeedup.toFixed(2)}.
     </p>
@@ -402,15 +403,15 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       <p>
         The boundary is cheap and crossing it often is not. At {crossingNanos.toFixed(1)} ns per
         crossing you can afford to enter native code once per request, or once per batch. You cannot
-        afford to enter it once per field. That is the sentence I would have wanted before starting,
-        and it is a statement about API shape rather than about JNI.
+        afford to enter it once per field. The constraint is on API shape rather than on JNI
+        itself.
       </p>
     </Note>
 
     <H2 id="zerocopy">What zero-copy is worth</H2>
     <p>
-      The received wisdom is that the direct buffer is the whole trick. It is a real effect, and it is
-      smaller than that framing suggests.
+      The direct buffer is often described as the main source of the speedup. It is a real effect,
+      but a smaller one than that description suggests.
     </p>
 
     <Figure
@@ -448,15 +449,15 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       parse fastest.
     </p>
     <p>
-      Worth being clear about what this corrects. Zero-copy is worth having and costs nothing to
-      adopt, so use it. The {aggregateSpeedup.toFixed(1)}x overall gain comes from the parsing
-      algorithm, and the direct buffer contributes a few percent of it on a typical document.
+      To be clear about what this corrects: zero-copy is worth having and costs nothing to adopt.
+      The {aggregateSpeedup.toFixed(1)}x overall gain comes from the parsing algorithm, and the
+      direct buffer contributes a few percent of it on a typical document.
     </p>
 
-    <H2 id="allocation">The number that is not close</H2>
+    <H2 id="allocation">Allocation</H2>
     <p>
-      Throughput is the number people quote. Allocation is the number that decides whether a service
-      is pleasant to operate, and it is not a close comparison.
+      Throughput is the number usually quoted, but allocation is what determines how a service
+      behaves under sustained load. The gap there is much larger than the throughput gap.
     </p>
 
     <Table
@@ -501,7 +502,7 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       operational character of an ingestion service and is invisible in a throughput chart.
     </p>
 
-    <H2 id="latency">The tail, and a claim that did not survive</H2>
+    <H2 id="latency">The tail, and a prediction that failed</H2>
 
     <Table
       n={4}
@@ -553,10 +554,10 @@ const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         for the zero-copy path. The relative spread is essentially unchanged.
       </p>
       <p>
-        Everything got faster, including the tail, in proportion. Predictability did not improve. The
-        remaining variance is evidently not dominated by allocation, which leaves scheduling,
-        frequency and cache effects as the likely sources. I have not chased it further, and I would
-        rather report the null result than the intuition.
+        Everything got faster in proportion, including the tail, so predictability did not improve.
+        The remaining variance is evidently not dominated by allocation, which leaves scheduling,
+        frequency and cache effects as the likely sources. I have not investigated further, and the
+        null result is worth reporting alongside the intuition it contradicts.
       </p>
     </Note>
 

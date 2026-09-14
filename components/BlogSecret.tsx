@@ -18,8 +18,8 @@ const TOC = [
   { id: 'measurable', label: 'What makes it measurable' },
   { id: 'whose-beliefs', label: 'Consistency against whose beliefs' },
   { id: 'behaviour', label: 'The behavioural result' },
-  { id: 'control', label: 'The control that makes it mean something' },
-  { id: 'wrong', label: 'Two things that turned out not to be true' },
+  { id: 'control', label: 'The control' },
+  { id: 'wrong', label: 'Two hypotheses that did not hold' },
   { id: 'probe', label: 'Is anything represented at all' },
   { id: 'causal', label: 'Steering the representation' },
   { id: 'limits', label: 'Limitations' },
@@ -126,11 +126,12 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       each answer and only appears to have committed.
     </p>
     <p>
-      This is not really about party games. Multi-turn agents assume latent state survives across
-      turns without being written down: a plan held while tools run, a hypothesis held while
-      evidence accumulates, a constraint held while a conversation wanders. The assumption is rarely
-      tested, because testing it usually requires knowing what the model was supposed to be holding.
-      20 Questions solves that, because the ground truth is computable.
+      The same assumption appears well outside party games. Multi-turn agents rely on latent state
+      surviving across turns without being written down: a plan held while tools run, a hypothesis
+      held while evidence accumulates, a constraint held while a conversation wanders. That
+      assumption is rarely tested, because testing it usually requires knowing what the model was
+      supposed to be holding. 20 Questions makes it testable, since the ground truth is
+      computable.
     </p>
 
     <H2 id="measurable">What makes it measurable</H2>
@@ -144,8 +145,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <ul>
       <li>
         <strong>Exact contradiction detection.</strong> Track the set of animals consistent with
-        every answer so far. When it empties, the model has contradicted itself. That is a
-        certainty, not a judgement call.
+        every answer so far. When that set empties, the model has contradicted itself. The check is
+        exact, so no judgement is involved.
       </li>
       <li><strong>The exact posterior</strong> over animals at every turn.</li>
       <li>
@@ -165,11 +166,10 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H2 id="whose-beliefs">Consistency against whose beliefs</H2>
     <p>
-      Which beliefs the answers are scored against decides whether any of this measures the right
-      thing. If the model
-      thinks a lion counts as black and the human annotators disagree, scoring against the human
-      matrix records a contradiction where none exists. That measures disagreement about the world
-      rather than failure to hold a commitment.
+      The choice of which beliefs to score against determines whether any of this measures the
+      right thing. If the model thinks a lion counts as black and the human annotators disagree,
+      scoring against the human matrix records a contradiction where none exists. That would
+      measure disagreement about animals rather than failure to hold a commitment.
     </p>
     <p>
       So the pipeline first asks the model all {num(E.objects * E.attributes)} attribute questions
@@ -188,8 +188,9 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <Note label="One more design decision">
       <p>
         With an identical prompt and greedy decoding, every game picks the same animal, so two
-        hundred games would be one game repeated. Each game therefore sees a different random subset
-        of the catalogue. The choice stays free and the distribution of choices spreads.
+        hundred games would be one game repeated two hundred times. Each game therefore sees a
+        different random subset of the catalogue. The model still chooses freely, and the choices
+        spread across the catalogue.
       </p>
     </Note>
 
@@ -232,9 +233,9 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       caption={
         <>
           Fraction of games still logically possible after each turn, under the optimal questioner
-          and under a random one. The optimal questioner kills games faster by construction, since
-          it deliberately asks the questions that split the candidate set most. Both end in the same
-          place.
+          and under a random one. The optimal questioner eliminates candidates faster by
+          construction, since it asks the questions that split the candidate set most evenly. Both
+          arms end with almost no games still consistent.
         </>
       }
     >
@@ -260,7 +261,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       />
     </Figure>
 
-    <H2 id="control">The control that makes it mean something</H2>
+    <H2 id="control">The control</H2>
     <p>A high contradiction rate admits two very different explanations:</p>
     <ol>
       <li>the model never held a commitment, and every answer is improvised</li>
@@ -314,11 +315,11 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       The gap replicates across two independent designs. The model's beliefs about zebras are stable
       enough when the word zebra is present, so most of the in-game inconsistency is a failure to
       hold the referent rather than a shifting opinion about zebras. The residual, roughly{' '}
-      {pct(1 - CFULL.named_context_vs_elicited_beliefs, 0)} even when named, is ordinary
-      prompt-context noise, and now it is measured rather than assumed.
+      {pct(1 - CFULL.named_context_vs_elicited_beliefs, 0)} even when the animal is named, is
+      ordinary prompt-context noise, and the control puts a number on it.
     </p>
 
-    <H2 id="wrong">Two things that turned out not to be true</H2>
+    <H2 id="wrong">Two hypotheses that did not hold</H2>
 
     <H3>Temperature does not matter</H3>
     <p>
@@ -333,14 +334,15 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       Underneath the saturated game outcome, answer-level agreement degrades with temperature:{' '}
       {pct(ANALYSIS.arms.greedy.overall_agreement)},{' '}
       {pct(ANALYSIS.arms.sampled.overall_agreement)} and{' '}
-      {pct(ANALYSIS.arms.sampled_t1.overall_agreement)}. Sampling makes things worse. It simply
-      cannot make them much worse.
+      {pct(ANALYSIS.arms.sampled_t1.overall_agreement)}. Sampling does make agreement worse, but
+      the game-level outcome is already saturated, so the effect has nowhere to show up.
     </p>
 
     <H3>There is no drift over turns</H3>
     <p>
-      The obvious story is that the model loses the thread as context grows. It does not, and the
-      measurement that appears to show it does is confounded.
+      A natural explanation is that the model loses the thread as context grows. The measurement
+      that appears to support this is confounded, and once the confound is removed the effect
+      disappears.
     </p>
     <p>
       Under the optimal questioner, agreement appears to climb steeply over the first few turns, a
@@ -360,9 +362,9 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       caption={
         <>
           Self-agreement by turn under the random questioner, which breaks the confound between turn
-          index and attribute. The line is flat. The model is inconsistent at a roughly constant
-          rate from the very first question, so this is not context degradation. There was never a
-          stable commitment to degrade.
+          index and attribute. The line is flat: the model is inconsistent at roughly the same rate
+          from the first question onward. That pattern is inconsistent with context degradation,
+          which would show agreement falling as the transcript grows.
         </>
       }
     >
@@ -385,7 +387,7 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <p>
-      The per-attribute breakdown accounts for the rest.
+      The per-attribute breakdown accounts for most of what is left.
     </p>
 
     <Figure
@@ -426,19 +428,18 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <Note label="What that means">
       <p>
         The model answers perfectly on questions like <em>is it weak</em> (no animal in the set is),{' '}
-        <em>can it fly</em> (2% can) and <em>is it slow</em> (4% are). Those need no knowledge of the
-        secret. Answer "No" and you are almost always consistent.
+        <em>can it fly</em> (2% can) and <em>is it slow</em> (4% are). None of these require knowing
+        the secret, because answering "No" is consistent with almost every animal in the set.
       </p>
       <p>
-        It fails on the questions that require actually having one. So its apparent consistency is
-        largely an artifact of question difficulty, and the more a question would tell you about the
-        animal, the less reliably the model answers it.
+        It fails on the questions that can only be answered by knowing which animal was chosen. Its
+        apparent consistency is therefore largely an artifact of question difficulty: the more a
+        question would tell you about the animal, the less reliably the model answers it.
       </p>
       <p>
-        This also explains why the optimal questioner kills games faster than the random one.
+        This also explains why the optimal questioner ends games faster than the random one.
         Maximising information gain means picking the most balanced question available, which is
-        precisely where the model is weakest. The better your questions, the faster it contradicts
-        itself.
+        where the model is weakest, so better questions produce contradictions sooner.
       </p>
     </Note>
 
@@ -458,8 +459,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <Note label="The baseline that nearly fooled me">
       <p>
-        My first run reported {pct(0.616)} probe accuracy against a {pct(0.02)} uniform chance and
-        looked spectacular. Then I computed the majority-class baseline: {pct(0.504)}. Asked to pick
+        My first run reported {pct(0.616)} probe accuracy against {pct(0.02)} uniform chance, which
+        looked strong until I computed the majority-class baseline: {pct(0.504)}. Asked to pick
         with no questions in between, the model collapsed onto one animal half the time, so the
         probe was barely better than a constant predictor and its transfer score was <em>worse</em>{' '}
         than always guessing zebra.
@@ -514,8 +515,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       animal out of the activations at{' '}
       {pct(probeStats.accuracy)}, which is {(probeStats.accuracy / P.most_common_baseline).toFixed(1)}{' '}
       times the majority baseline, with the correct animal in the probe's top five{' '}
-      {pct(probeStats.top5_accuracy)} of the time. The model does pick something, and you can read
-      what it picked before it has said a word about it.
+      {pct(probeStats.top5_accuracy)} of the time. The model does pick something, and the choice is
+      readable from its activations before it has said anything about it.
     </p>
     <p>
       That representation does not survive the game. The same probe predicts the eventually revealed
@@ -525,10 +526,10 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       {pct(probeStats.transfer_top5_accuracy)}.
     </p>
     <p>
-      So the failure is not that the model never chooses. It chooses, the choice is linearly
-      decodable, and then across twenty turns of answering questions about it the choice is largely
-      gone. Whatever the model reveals at the end is only weakly related to what it was holding at
-      the start.
+      The failure is therefore not an absence of choice. The model chooses, the choice is linearly
+      decodable at the moment it is made, and over twenty turns of answering questions about it the
+      choice largely disappears. What the model reveals at the end is only weakly related to what it
+      was holding at the start.
     </p>
 
     <H2 id="causal">Steering the representation</H2>
@@ -544,9 +545,8 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       if that direction is load-bearing. Two things then get measured: whether the model names the
       target, and whether its Yes/No answers move onto the target's attribute profile. Questions
       are restricted to attributes where source and target disagree, so agreeing with one is
-      disagreeing with the other. A random direction of the same norm is the control, because a
-      large enough perturbation changes behaviour no matter what it encodes, and that would prove
-      nothing.
+      disagreeing with the other. A random direction of the same norm serves as the control, since
+      a large enough perturbation changes behaviour regardless of what it encodes.
     </p>
 
     <Table
@@ -685,15 +685,15 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       it.
     </p>
     <p>
-      The steering result inherits that bound. A linear write along a linear probe's direction is
-      a blunt intervention, so the answers failing to move is evidence that this
-      direction does not drive them, and not evidence that nothing does. A nonlinear or
-      multi-direction edit could land differently.
+      The steering result inherits that bound. A linear write along a linear probe's direction is a
+      coarse intervention, so the answers failing to move is evidence that this particular direction
+      does not drive them rather than evidence that nothing does. A nonlinear or multi-direction
+      edit could behave differently.
     </p>
     <p>
-      Steering also works over a narrow range of strengths, and the failure mode outside it is the
-      model producing text that is not an animal name. Reporting coherence alongside the effect
-      keeps that visible, but it does mean the intervention is blunt.
+      Steering also works over a narrow range of strengths, and outside that range the model stops
+      producing animal names at all. Reporting coherence alongside the effect keeps that failure
+      visible in the numbers.
     </p>
 
     <References refs={SECRET_REFS} bibtex={SECRET_BIBTEX} />

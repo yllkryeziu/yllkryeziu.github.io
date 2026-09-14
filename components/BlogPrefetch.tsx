@@ -15,15 +15,15 @@ const Cite = makeCite(JAX_REFS);
 const meta = POST_BY_SLUG.jax;
 
 const TOC = [
-  { id: 'the-bet', label: 'The bet nobody prices' },
-  { id: 'workload', label: 'A real trace, or nothing' },
+  { id: 'the-bet', label: 'The cost of a speculative fetch' },
+  { id: 'workload', label: 'Choosing a workload' },
   { id: 'limits', label: 'What a 1995 trace can and cannot tell you' },
   { id: 'predictor', label: 'Predicting the next request' },
   { id: 'baselines', label: 'The baseline is the experiment' },
-  { id: 'calibration', label: 'Calibration, not accuracy' },
+  { id: 'calibration', label: 'Why calibration matters more than accuracy' },
   { id: 'policy', label: 'Pricing the bet' },
-  { id: 'simulator', label: 'A simulator that can hurt you' },
-  { id: 'results', label: 'Where the bet pays' },
+  { id: 'simulator', label: 'A simulator where prefetching can hurt' },
+  { id: 'results', label: 'Where prefetching pays' },
   { id: 'matched', label: 'What the origin distance is worth' },
   { id: 'sweep', label: 'Mapping the boundary' },
   { id: 'takeaway', label: 'Limitations and what I would change' },
@@ -209,10 +209,10 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       ]}
     />
 
-    <H2 id="the-bet">The bet nobody prices</H2>
+    <H2 id="the-bet">The cost of a speculative fetch</H2>
     <p>
       Prefetching is an old idea<Cite ids={[1]} />: guess what the user will ask for next, fetch it early,
-      serve it from cache. The usual pitch stops at that sentence. What it leaves out is that every
+      serve it from cache. Descriptions of the idea usually stop there, which leaves out that every
       speculative fetch is a real request the origin has to absorb, whether or not anyone ever wanted it.
     </p>
     <p>
@@ -232,7 +232,7 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       to locate the boundary between the regime where speculation pays and the regime where it is dangerous.
     </p>
 
-    <H2 id="workload">A real trace, or nothing</H2>
+    <H2 id="workload">Choosing a workload</H2>
     <p>
       Generating a workload from a transition matrix and then fitting a model to it proves only that the
       model can learn the generator. Prefetching systems evaluated this way look uniformly excellent, which
@@ -292,7 +292,8 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H2 id="limits">What a 1995 trace can and cannot tell you</H2>
     <p>
-      Stating the limits up front, because they are the honest boundary of the exercise.
+      The limits of this trace bound what the rest of the post can claim, so they belong here rather
+      than in a footnote.
     </p>
     <p>
       It <em>can</em> tell you about the structure of the problem: heavily skewed resource popularity<Cite ids={[5]} />,
@@ -376,7 +377,8 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      The model wins, and the way it wins is worth examining. Against a second-order Markov chain it gains{' '}
+      The model comes out ahead, though the margin depends on which metric you look at. Against a
+      second-order Markov chain it gains{' '}
       {((results.predictorNasa.jax_mlp.top1_accuracy - results.predictorNasa.markov_order2_backoff.top1_accuracy) * 100).toFixed(1)}{' '}
       points of top-1 accuracy and{' '}
       {((results.predictorNasa.jax_mlp.top3_accuracy - results.predictorNasa.markov_order2_backoff.top3_accuracy) * 100).toFixed(1)}{' '}
@@ -398,7 +400,7 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       </p>
     </Note>
 
-    <H2 id="calibration">Calibration, not accuracy</H2>
+    <H2 id="calibration">Why calibration matters more than accuracy</H2>
     <p>
       A cost gate consumes a probability and multiplies it by a latency saving, so the calibration of that
       probability matters more than the rank of the top prediction. If the model reports 0.4 where the true
@@ -482,7 +484,7 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       />
     </Figure>
 
-    <H2 id="simulator">A simulator that can hurt you</H2>
+    <H2 id="simulator">A simulator where prefetching can hurt</H2>
     <p>
       A simulator in which prefetching is free would prove nothing, so the first task was to confirm that
       this one can make things worse.
@@ -538,11 +540,11 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       })}
     />
 
-    <H2 id="results">Where the bet pays</H2>
+    <H2 id="results">Where prefetching pays</H2>
     <p>
-      Everything so far has been setup. The experiment itself asks a single question: across realistic
-      operating points, does pricing a prefetch beat issuing it unconditionally, and does either beat doing
-      nothing?
+      With the predictor, the policy and the simulator in place, the experiment asks one question:
+      across realistic operating points, does pricing a prefetch beat issuing it unconditionally, and
+      does either beat doing nothing?
     </p>
     <p>
       The answer depends almost entirely on one parameter I initially set without thinking:{' '}
@@ -615,8 +617,8 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      Read the provisioned case first, because it is the happy one. With a 1024-entry cache and 64 workers,
-      every strategy helps. The cost-aware policy takes p95 from{' '}
+      Take the provisioned case first, where there is spare origin capacity. With a 1024-entry cache
+      and 64 workers, every strategy helps. The cost-aware policy takes p95 from{' '}
       {ms(edgeRow('edge_warm', 64, 'none').p95!.mean, 1)} ms to{' '}
       {ms(edgeRow('edge_warm', 64, 'cost_aware_mlp').p95!.mean, 1)} ms, a reduction of{' '}
       {pct(Math.abs(edgeDelta('edge_warm', 64, 'cost_aware_mlp')))}, for{' '}
@@ -644,9 +646,9 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Note>
 
     <p>
-      That is the result. The policy captures essentially all of the upside available in the benign regime
-      and removes the failure mode in the hostile one. It is worth being precise about why, because the
-      mechanism is simple and does not require the model to be clever. Backend cost in the gate scales with{' '}
+      The policy captures essentially all of the upside available in the benign regime and removes the
+      failure mode in the hostile one. The mechanism behind that is simple and does not depend on the
+      model being accurate. Backend cost in the gate scales with{' '}
       <M>{String.raw`1 + q/c`}</M>. At 16 workers with a saturated queue, that multiplier is large enough
       that no candidate probability the predictor can produce will clear the threshold, so the policy
       issues almost nothing. At 64 workers the multiplier is near 1 and the same candidates clear easily.
@@ -789,9 +791,9 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         {(Math.abs(naiveRegret.median - costAwareRegret.median) * 100).toFixed(1)} percentage points.
       </p>
       <p>
-        The gate does not make prefetching better. It makes prefetching safe to deploy without knowing in
-        advance which regime you are in, which is the property that matters when the regime changes under
-        you at 3am.
+        The gate does not improve prefetching in the regimes where prefetching already works. What it
+        provides is safety across regimes, so the policy can be deployed without knowing in advance
+        which regime the system is in, and without being retuned when that changes.
       </p>
     </Note>
 
@@ -851,7 +853,8 @@ const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       predictions.
     </p>
     <p>
-      Speculation is a bet. Systems that speculate without writing down the odds are making it anyway.
+      Any speculative fetch is a bet on future demand, whether or not the system that issues it
+      represents the odds explicitly. Writing them down is what makes the bet controllable.
     </p>
 
     <References refs={JAX_REFS} bibtex={JAX_BIBTEX} />
