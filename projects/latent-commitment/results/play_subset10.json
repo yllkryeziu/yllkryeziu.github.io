@@ -1,0 +1,108 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "tag": "subset10",
+  "games": 300,
+  "turns": 12,
+  "temperature": 0.0,
+  "questioner": "optimal",
+  "seed": 0,
+  "catalogue_shuffled_per_game": true,
+  "subset_size": 10,
+  "world_source": "/fast/project/HFMI_SynergyUnit/yll/blog-benchmarks/latent-commitment/results/model_matrix.npy",
+  "perfect_play_questions": 5.643856189774724,
+  "survival_curve": [
+    {
+      "turn": 1,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 2,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 3,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 4,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 5,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 6,
+      "alive_fraction": 0.9366666666666666
+    },
+    {
+      "turn": 7,
+      "alive_fraction": 0.6833333333333333
+    },
+    {
+      "turn": 8,
+      "alive_fraction": 0.49666666666666665
+    },
+    {
+      "turn": 9,
+      "alive_fraction": 0.36333333333333334
+    },
+    {
+      "turn": 10,
+      "alive_fraction": 0.2866666666666667
+    },
+    {
+      "turn": 11,
+      "alive_fraction": 0.20666666666666667
+    },
+    {
+      "turn": 12,
+      "alive_fraction": 0.15333333333333332
+    }
+  ],
+  "contradicted_fraction": 0.8466666666666667,
+  "median_death_turn": 8.0,
+  "reveal_parsed_fraction": 1.0,
+  "reveal_consistent_fraction": 0.013333333333333334,
+  "reveal_distribution": {
+    "antelope": 5,
+    "grizzly bear": 10,
+    "killer whale": 1,
+    "beaver": 2,
+    "dalmatian": 28,
+    "persian cat": 2,
+    "horse": 3,
+    "german shepherd": 2,
+    "siamese cat": 4,
+    "skunk": 10,
+    "mole": 1,
+    "tiger": 12,
+    "hippopotamus": 3,
+    "leopard": 17,
+    "moose": 3,
+    "spider monkey": 2,
+    "elephant": 2,
+    "gorilla": 11,
+    "fox": 15,
+    "sheep": 7,
+    "chimpanzee": 4,
+    "squirrel": 7,
+    "rhinoceros": 9,
+    "rabbit": 3,
+    "giraffe": 1,
+    "weasel": 3,
+    "buffalo": 11,
+    "zebra": 18,
+    "giant panda": 40,
+    "deer": 1,
+    "bobcat": 8,
+    "pig": 6,
+    "lion": 3,
+    "collie": 1,
+    "walrus": 1,
+    "raccoon": 35,
+    "cow": 8,
+    "dolphin": 1
+  },
+  "wall_clock_seconds": 86.88393490901217
+}

@@ -203,9 +203,41 @@ function distillSimd() {
   return { environment, equivalence, summary };
 }
 
+function distillSecret() {
+  const root = 'projects/latent-commitment/results/';
+  const elicitation = readIf(`${root}elicitation.json`);
+  const probe = readIf(`${root}probe_subset10.json`);
+  const control = readIf(`${root}control_subset10.json`);
+  const controlFull = readIf(`${root}control.json`);
+  const analysis = readIf(`${root}analysis.json`);
+  const arms = {};
+  for (const tag of ['greedy', 'sampled', 'sampled_t1', 'random', 'subset10']) {
+    const row = readIf(`${root}play_${tag}.json`);
+    if (row) {
+      arms[tag] = {
+        temperature: row.temperature,
+        questioner: row.questioner,
+        games: row.games,
+        turns: row.turns,
+        subsetSize: row.subset_size ?? null,
+        contradicted: round(row.contradicted_fraction, 4),
+        medianDeathTurn: row.median_death_turn,
+        revealConsistent: round(row.reveal_consistent_fraction, 4),
+        survival: row.survival_curve.map(s => ({ turn: s.turn, alive: round(s.alive_fraction, 4) })),
+        distinctReveals: Object.keys(row.reveal_distribution).length,
+      };
+    }
+  }
+  if (!elicitation || !probe || !control || Object.keys(arms).length === 0) {
+    throw new Error('latent-commitment has not produced a complete run yet');
+  }
+  return { elicitation, probe, control, controlFull, analysis, arms };
+}
+
 const targets = [
   ['components/post/results/prefetch.json', distillPrefetch],
   ['components/post/results/simdjson.json', distillSimd],
+  ['components/post/results/secret.json', distillSecret],
 ];
 
 for (const [out, build] of targets) {

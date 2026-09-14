@@ -8,7 +8,7 @@ import torch
 
 from src.game.world import load_model_world, load_reference_world
 from src.model import runner as rn
-from src.model.prompts import REVEAL_TURN, commit_messages, game_messages
+from src.model.prompts import REVEAL_TURN, commit_messages, game_messages, subset_orders
 
 RESULTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 
@@ -31,112 +31,148 @@ def softmax_rows(scores: np.ndarray) -> np.ndarray:
 
 
 def train_logistic(features: np.ndarray, labels: np.ndarray, classes: int,
-                   epochs: int = 300, learning_rate: float = 0.05,
-                   weight_decay: float = 1e-3, seed: int = 0) -> np.ndarray:
+                   epochs: int = 400, learning_rate: float = 0.05,
+                   weight_decay: float = 1e-3, seed: int = 0) -> tuple[np.ndarray, tuple]:
     torch.manual_seed(seed)
-    x = torch.tensor(features, dtype=torch.float32)
-    x = (x - x.mean(0)) / (x.std(0) + 1e-6)
+    mean = features.mean(0)
+    std = features.std(0) + 1e-6
+    x = torch.tensor((features - mean) / std, dtype=torch.float32)
     y = torch.tensor(labels, dtype=torch.long)
     weights = torch.zeros(x.shape[1], classes, requires_grad=True)
     bias = torch.zeros(classes, requires_grad=True)
     optimiser = torch.optim.Adam([weights, bias], lr=learning_rate, weight_decay=weight_decay)
     for _ in range(epochs):
         optimiser.zero_grad()
-        loss = torch.nn.functional.cross_entropy(x @ weights + bias, y)
-        loss.backward()
+        torch.nn.functional.cross_entropy(x @ weights + bias, y).backward()
         optimiser.step()
-    return np.concatenate([weights.detach().numpy(), bias.detach().numpy()[None, :]], axis=0)
+    probe = np.concatenate([weights.detach().numpy(), bias.detach().numpy()[None, :]], axis=0)
+    return probe, (mean, std)
 
 
 def apply_probe(probe: np.ndarray, features: np.ndarray, stats: tuple) -> np.ndarray:
     mean, std = stats
-    normalised = (features - mean) / (std + 1e-6)
-    return normalised @ probe[:-1] + probe[-1]
+    return ((features - mean) / std) @ probe[:-1] + probe[-1]
+
+
+def accuracy_at_k(scores: np.ndarray, labels: np.ndarray, k: int) -> float:
+    top = np.argsort(-scores, axis=1)[:, :k]
+    return float(np.mean([labels[i] in top[i] for i in range(len(labels))]))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="Qwen/Qwen3.5-9B")
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--samples", type=int, default=2000)
+    parser.add_argument("--samples", type=int, default=3000)
     parser.add_argument("--layers", type=int, nargs="*", default=None)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--subset-size", type=int, default=10)
     parser.add_argument("--world", default=os.path.join(RESULTS, "model_matrix.npy"))
     parser.add_argument("--transcripts", default=os.path.join(RESULTS, "transcripts_greedy.json"))
+    parser.add_argument("--play-seed", type=int, default=0)
+    parser.add_argument("--out", default=os.path.join(RESULTS, "probe.json"))
     args = parser.parse_args()
 
     started = time.perf_counter()
     reference = load_reference_world()
-    world = load_model_world(args.world, reference) if os.path.exists(args.world) else reference
+    world = load_model_world(args.world, reference)
     model = rn.load(args.model, device=args.device)
     generator = np.random.default_rng(args.seed)
 
     depth = model.model.config.num_hidden_layers
     layers = args.layers if args.layers else [depth // 4, depth // 2, 3 * depth // 4, depth]
 
-    orders = [list(generator.permutation(world.object_count)) for _ in range(args.samples)]
+    orders = subset_orders(world, args.samples, args.subset_size, generator)
     commit_prompts = [model.chat_prefix(commit_messages(world, order)) for order in orders]
-    reveal_prompts = [
+    immediate_prompts = [
         model.chat_prefix(game_messages(world, [], [], REVEAL_TURN, order)) for order in orders
     ]
 
-    reveals = rn.generate(model, reveal_prompts, max_new_tokens=10, temperature=0.0,
+    reveals = rn.generate(model, immediate_prompts, max_new_tokens=10, temperature=0.0,
                           batch_size=args.batch_size)
     labels = [match_object(world, text) for text in reveals]
     keep = [i for i, label in enumerate(labels) if label is not None]
-    print(f"parsed {len(keep)}/{args.samples} immediate reveals")
+    y = np.array([labels[i] for i in keep])
+    print(f"parsed {len(keep)}/{args.samples} immediate reveals, "
+          f"{len(set(y.tolist()))} distinct animals")
 
-    distinct = len({labels[i] for i in keep})
-    print(f"distinct animals chosen across shuffled catalogues: {distinct}/{world.object_count}")
+    split = int(0.8 * len(keep))
+    y_train, y_test = y[:split], y[split:]
+
+    transcripts = None
+    if os.path.exists(args.transcripts):
+        with open(args.transcripts, encoding="utf-8") as handle:
+            transcripts = json.load(handle)
+
+    game_prompts = []
+    game_labels = []
+    if transcripts:
+        play_generator = np.random.default_rng(args.play_seed)
+        game_orders = subset_orders(world, len(transcripts), args.subset_size, play_generator)
+        for order, record in zip(game_orders, transcripts):
+            if record["revealed_index"] is None:
+                continue
+            game_prompts.append(model.chat_prefix(commit_messages(world, order)))
+            game_labels.append(record["revealed_index"])
+        print(f"transfer set: {len(game_prompts)} games with a parsed post-game reveal")
 
     report = {
         "model": args.model,
         "samples": args.samples,
         "parsed": len(keep),
-        "distinct_animals_chosen": distinct,
+        "distinct_animals_chosen": len(set(y.tolist())),
         "chance_accuracy": 1.0 / world.object_count,
+        "subset_size": args.subset_size,
+        "most_common_baseline": float(np.bincount(y_test, minlength=world.object_count).max() / len(y_test)),
+        "transfer_most_common_baseline": (
+            float(np.bincount(np.array(game_labels), minlength=world.object_count).max() / len(game_labels))
+            if game_labels else None),
+        "transfer_games": len(game_prompts),
         "layers": {},
+        "question": (
+            "A probe is trained on commitment-turn activations to predict the animal the model "
+            "reveals when asked immediately, with no questions in between. Transfer accuracy "
+            "applies that probe to the commitment turn of full 20-question games and asks whether "
+            "it predicts the animal revealed at the end. High probe accuracy with low transfer "
+            "accuracy means a commitment is represented and then abandoned."
+        ),
     }
-
-    split = int(0.8 * len(keep))
-    train_idx = keep[:split]
-    test_idx = keep[split:]
-    y_train = np.array([labels[i] for i in train_idx])
-    y_test = np.array([labels[i] for i in test_idx])
-
-    transfer = None
-    if os.path.exists(args.transcripts):
-        with open(args.transcripts, encoding="utf-8") as handle:
-            transfer = json.load(handle)
 
     for layer in layers:
         states = rn.hidden_state(model, [commit_prompts[i] for i in keep], layer,
                                  batch_size=args.batch_size).numpy()
-        x_train = states[:split]
-        x_test = states[split:]
-        stats = (x_train.mean(0), x_train.std(0))
-        probe = train_logistic(x_train, y_train, world.object_count, seed=args.seed)
-        scores = apply_probe(probe, x_test, stats)
-        predictions = scores.argmax(axis=1)
-        probabilities = softmax_rows(scores)
-        accuracy = float((predictions == y_test).mean())
-        top5 = float(np.mean([
-            y_test[i] in np.argsort(-scores[i])[:5] for i in range(len(y_test))
-        ]))
-        report["layers"][str(layer)] = {
-            "accuracy": accuracy,
-            "top5_accuracy": top5,
-            "mean_confidence": float(probabilities.max(axis=1).mean()),
-            "train_examples": len(train_idx),
-            "test_examples": len(test_idx),
+        probe, stats = train_logistic(states[:split], y_train, world.object_count, seed=args.seed)
+        scores = apply_probe(probe, states[split:], stats)
+        entry = {
+            "accuracy": accuracy_at_k(scores, y_test, 1),
+            "top5_accuracy": accuracy_at_k(scores, y_test, 5),
+            "mean_confidence": float(softmax_rows(scores).max(axis=1).mean()),
+            "train_examples": split,
+            "test_examples": len(y_test),
         }
-        print(f"layer {layer}: accuracy {accuracy:.3f} top5 {top5:.3f} "
-              f"(chance {1.0 / world.object_count:.3f})")
+
+        if game_prompts:
+            game_states = rn.hidden_state(model, game_prompts, layer,
+                                          batch_size=args.batch_size).numpy()
+            game_scores = apply_probe(probe, game_states, stats)
+            truth = np.array(game_labels)
+            entry["transfer_accuracy"] = accuracy_at_k(game_scores, truth, 1)
+            entry["transfer_top5_accuracy"] = accuracy_at_k(game_scores, truth, 5)
+            entry["transfer_mean_confidence"] = float(
+                softmax_rows(game_scores).max(axis=1).mean())
+
+        report["layers"][str(layer)] = entry
+        line = (f"layer {layer:3d}: probe {entry['accuracy']:.3f} "
+                f"(top5 {entry['top5_accuracy']:.3f})")
+        if "transfer_accuracy" in entry:
+            line += (f"  transfer {entry['transfer_accuracy']:.3f} "
+                     f"(top5 {entry['transfer_top5_accuracy']:.3f})")
+        print(line + f"   chance {1.0 / world.object_count:.3f}")
 
     report["wall_clock_seconds"] = time.perf_counter() - started
     os.makedirs(RESULTS, exist_ok=True)
-    with open(os.path.join(RESULTS, "probe.json"), "w", encoding="utf-8") as handle:
+    with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(report, handle, indent=2)
 
 

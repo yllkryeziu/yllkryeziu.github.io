@@ -1,0 +1,53 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "samples": 3000,
+  "parsed": 2963,
+  "distinct_animals_chosen": 24,
+  "chance_accuracy": 0.02,
+  "most_common_baseline": 0.5042158516020236,
+  "transfer_games": 200,
+  "layers": {
+    "8": {
+      "accuracy": 0.5986509274873525,
+      "top5_accuracy": 0.8499156829679595,
+      "mean_confidence": 0.8149775266647339,
+      "train_examples": 2370,
+      "test_examples": 593,
+      "transfer_accuracy": 0.1,
+      "transfer_top5_accuracy": 0.235,
+      "transfer_mean_confidence": 0.9705873131752014
+    },
+    "16": {
+      "accuracy": 0.5025295109612141,
+      "top5_accuracy": 0.7318718381112985,
+      "mean_confidence": 0.9488511085510254,
+      "train_examples": 2370,
+      "test_examples": 593,
+      "transfer_accuracy": 0.1,
+      "transfer_top5_accuracy": 0.22,
+      "transfer_mean_confidence": 0.9915925860404968
+    },
+    "24": {
+      "accuracy": 0.6155143338954469,
+      "top5_accuracy": 0.8920741989881956,
+      "mean_confidence": 0.8556437492370605,
+      "train_examples": 2370,
+      "test_examples": 593,
+      "transfer_accuracy": 0.1,
+      "transfer_top5_accuracy": 0.23,
+      "transfer_mean_confidence": 0.9801509380340576
+    },
+    "32": {
+      "accuracy": 0.5986509274873525,
+      "top5_accuracy": 0.8819561551433389,
+      "mean_confidence": 0.9291750192642212,
+      "train_examples": 2370,
+      "test_examples": 593,
+      "transfer_accuracy": 0.085,
+      "transfer_top5_accuracy": 0.22,
+      "transfer_mean_confidence": 0.9534795880317688
+    }
+  },
+  "question": "A probe is trained on commitment-turn activations to predict the animal the model reveals when asked immediately, with no questions in between. Transfer accuracy applies that probe to the commitment turn of full 20-question games and asks whether it predicts the animal revealed at the end. High probe accuracy with low transfer accuracy means a commitment is represented and then abandoned.",
+  "wall_clock_seconds": 329.25570787099423
+}

@@ -1,79 +1,101 @@
 # latent-commitment
 
-**Status: work in progress.** The game engine and evaluation harness are finished and tested. The
-model experiments have not been run yet, so there are no results in this directory.
+Does a language model actually hold a secret it never wrote down?
 
-## The question
+Ask it to think of an animal and not say which. Nothing about the choice enters the transcript, so
+either the choice lives in the model's state or every answer is improvised. 20 Questions makes that
+testable, because the ground truth is computable.
 
-When a language model is told to think of something and not reveal it, does a specific object exist
-anywhere in the model, or does it improvise every answer and only appear to have committed?
+Every number below is produced by `scripts/run_all.sh` and written to `results/`.
 
-This matters beyond the game. Multi-turn agents assume latent state persists across turns without
-being written down, and that assumption is rarely checked.
+## Results
 
-20 Questions is a good testbed because it gives exact ground truth, which LLM evaluation usually
-lacks.
+Qwen3.5-9B, 50 animals, 85 binary attributes from Animals with Attributes 2.
 
-## Design
+| arm | games | contradicted | median death turn | self-agreement |
+| --- | ---: | ---: | ---: | ---: |
+| optimal questioner, greedy | 200 | 99.5% | 8 | 77.5% |
+| optimal questioner, T = 0.7 | 200 | 99.0% | 8 | 71.9% |
+| optimal questioner, T = 1.0 | 200 | 100.0% | 8 | 68.2% |
+| random questioner, greedy | 300 | 96.3% | 12 | 81.9% |
+| 10-animal subsets, greedy | 300 | 84.7% | 8 | 74.1% |
 
-The model is the answerer. It is given a closed list of 50 animals and asked to pick one, then
-answer yes or no questions about it, then reveal it.
+Perfect play identifies the animal in a mean of 5.72 questions against a floor of log2(50) = 5.64,
+so a twenty-question game leaves fourteen turns of slack. The model still contradicts itself in
+almost every game.
 
-Ground truth comes from the [Animals with Attributes 2](https://cvml.ista.ac.at/AwA2/) attribute
-matrix: 50 animals by 85 human-annotated binary attributes, with all 50 rows distinct. That single
-matrix provides:
+### The control
 
-- **Exact contradiction detection.** Track the set of animals consistent with every answer so far.
-  When it becomes empty, the model has contradicted itself, and this is certain rather than a
-  judgement call.
-- **The exact posterior** over animals at every turn.
-- **An optimal questioner** by information gain, so the questioner is a controlled instrument rather
-  than a second noisy model. Perfect play identifies the animal in a mean of 5.72 questions against
-  an information-theoretic floor of log2(50) = 5.64, so a 20-question game leaves 14 turns of rope.
-- **Labels for probing.**
+A high contradiction rate could mean the model never committed, or that its beliefs shift with
+prompt context. Re-asking every question with the animal named explicitly separates them.
 
-### Consistency is judged against the model's own beliefs
+| condition | 50 animals | 10-animal subsets |
+| --- | ---: | ---: |
+| animal named in the prompt | 92.8% | 89.9% |
+| animal held only in its head | 77.5% | 74.1% |
+| cost of latency | 15.3 pts | 15.7 pts |
 
-`scripts/elicit.py` first asks the model all 50 x 85 attribute questions and builds *its* matrix.
-Games are then scored against that rather than against the human annotations.
+The gap replicates across two designs. Beliefs are stable when the referent is explicit, so most of
+the in-game inconsistency is failure to hold the referent.
 
-This matters. A model that simply disagrees about whether a lion counts as "black" would otherwise
-be scored as inconsistent, which measures disagreement about the world rather than failure to hold a
-commitment. The elicitation step also reports agreement with the human annotation as a side result.
+### Apparent consistency tracks question difficulty
 
-### Catalogue order is shuffled per game
+Self-agreement correlates with attribute skew at r = 0.603. The
+25 balanced attributes, the ones that discriminate between
+animals, get 70.6% agreement. The
+35 skewed ones, answerable without knowing the secret at all,
+get 91.0%.
 
-With an identical prompt and greedy decoding every game would choose the same animal, so 200 games
-would be one game repeated. Each game sees the animal list in a different order.
+This also explains why an optimal questioner kills games faster than a random one: maximising
+information gain means choosing the most balanced question, which is exactly where the model is
+weakest.
 
-## Planned experiments
+### Is anything represented
 
-1. **Behavioural.** Survival curve: what fraction of games remain logically possible at each turn.
-2. **The determinism control.** The secret never appears in the transcript, so consistency could
-   come from the model genuinely holding state, or from it re-deriving the same answer each turn
-   from the same prefix. Greedy decoding cannot separate these. Running the same games at
-   temperature 0.7 can.
-3. **Mechanistic.** Train a linear probe on the residual stream at the commitment turn to decode
-   which animal is held, before any question is asked.
-4. **Causal.** Steer along the probe direction and check whether later answers follow the steered
-   animal.
-5. **Training.** Fine-tune on self-consistent games and measure whether consistency and probe
-   decodability move together or apart.
+A linear probe on commitment-turn activations, layer 32, 2992 samples.
 
-## Layout
+| measurement | top-1 | vs majority | top-5 |
+| --- | ---: | ---: | ---: |
+| majority-class baseline | 13.5% | 1.0x | - |
+| probe, animal named immediately | 49.9% | 3.7x | 85.3% |
+| transfer, animal revealed after the game | 17.3% | 1.3x | 48.0% |
 
-    src/game/       world, engine, exact consistency, optimal questioner, question phrasing
-    src/model/      inference wrapper and prompts
-    scripts/        elicit.py, play.py, probe.py
-    data/           AwA2 attribute matrix (fetched, gitignored)
+The commitment is real and linearly decodable at the moment it is made. It largely does not survive
+the game.
 
-## Running
+## Method notes that matter
+
+**Consistency is judged against the model's own beliefs.** The pipeline first asks the model all
+4250 attribute questions and builds its matrix.
+Scoring against the human annotation instead would record a contradiction whenever the model simply
+disagrees about the world; it agrees with the human labels
+79.2% of the time.
+
+**Catalogues are randomised per game.** With an identical prompt and greedy decoding every game
+picks the same animal.
+
+**Report against the majority baseline, not uniform chance.** An early probe run looked like 61.6%
+against 2% chance. The majority-class baseline was 50.4%. Random 10-animal subsets fixed the label
+collapse, taking distinct choices from 24 to 49 of 50.
+
+**Use the random questioner for anything about drift.** The optimal questioner asks the same
+question at turn 1 in every game, so turn index and attribute are confounded. Under the random
+questioner the trend over turns is -0.0001 per turn, which is flat.
+
+## Reproducing
 
     python3 -m venv .venv && .venv/bin/pip install numpy torch transformers
     PYTHONPATH=. .venv/bin/python scripts/elicit.py --model Qwen/Qwen3.5-9B
-    PYTHONPATH=. .venv/bin/python scripts/play.py --games 200 --temperature 0.0 --tag greedy
-    PYTHONPATH=. .venv/bin/python scripts/play.py --games 200 --temperature 0.7 --tag sampled
-    PYTHONPATH=. .venv/bin/python scripts/probe.py --samples 2000
+    PYTHONPATH=. .venv/bin/python scripts/play.py --games 200 --tag greedy
+    PYTHONPATH=. .venv/bin/python scripts/control.py
+    PYTHONPATH=. .venv/bin/python scripts/probe.py --samples 3000 --subset-size 10
+    PYTHONPATH=. .venv/bin/python scripts/analyze.py
 
-`--device cpu` works for smoke tests. The Slurm script in `scripts/` excludes one node whose CUDA
-driver fails to initialise.
+`--device cpu` works for smoke tests. Slurm scripts are in `scripts/`.
+
+## What this does not show
+
+One model, one family, fifty concrete animals. The probe is linear and read from the last token of
+the commitment turn, so 49.9% is a lower bound on what is encoded. The
+causal test, steering along the probe direction and checking whether later answers follow, is
+written and not yet run.

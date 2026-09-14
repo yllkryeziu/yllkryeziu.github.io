@@ -1,0 +1,133 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "tag": "random",
+  "games": 300,
+  "turns": 20,
+  "temperature": 0.0,
+  "questioner": "random",
+  "seed": 7,
+  "catalogue_shuffled_per_game": true,
+  "world_source": "/fast/project/HFMI_SynergyUnit/yll/blog-benchmarks/latent-commitment/results/model_matrix.npy",
+  "perfect_play_questions": 5.643856189774724,
+  "survival_curve": [
+    {
+      "turn": 1,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 2,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 3,
+      "alive_fraction": 0.9966666666666667
+    },
+    {
+      "turn": 4,
+      "alive_fraction": 0.9866666666666667
+    },
+    {
+      "turn": 5,
+      "alive_fraction": 0.97
+    },
+    {
+      "turn": 6,
+      "alive_fraction": 0.9366666666666666
+    },
+    {
+      "turn": 7,
+      "alive_fraction": 0.8466666666666667
+    },
+    {
+      "turn": 8,
+      "alive_fraction": 0.77
+    },
+    {
+      "turn": 9,
+      "alive_fraction": 0.7033333333333334
+    },
+    {
+      "turn": 10,
+      "alive_fraction": 0.6166666666666667
+    },
+    {
+      "turn": 11,
+      "alive_fraction": 0.5266666666666666
+    },
+    {
+      "turn": 12,
+      "alive_fraction": 0.43333333333333335
+    },
+    {
+      "turn": 13,
+      "alive_fraction": 0.37666666666666665
+    },
+    {
+      "turn": 14,
+      "alive_fraction": 0.30333333333333334
+    },
+    {
+      "turn": 15,
+      "alive_fraction": 0.24666666666666667
+    },
+    {
+      "turn": 16,
+      "alive_fraction": 0.17666666666666667
+    },
+    {
+      "turn": 17,
+      "alive_fraction": 0.12666666666666668
+    },
+    {
+      "turn": 18,
+      "alive_fraction": 0.09333333333333334
+    },
+    {
+      "turn": 19,
+      "alive_fraction": 0.06
+    },
+    {
+      "turn": 20,
+      "alive_fraction": 0.03666666666666667
+    }
+  ],
+  "contradicted_fraction": 0.9633333333333334,
+  "median_death_turn": 12.0,
+  "reveal_parsed_fraction": 0.99,
+  "reveal_consistent_fraction": 0.01,
+  "reveal_distribution": {
+    "grizzly bear": 7,
+    "killer whale": 13,
+    "dalmatian": 4,
+    "horse": 1,
+    "blue whale": 2,
+    "skunk": 2,
+    "tiger": 30,
+    "hippopotamus": 1,
+    "leopard": 15,
+    "moose": 2,
+    "spider monkey": 21,
+    "humpback whale": 1,
+    "elephant": 12,
+    "gorilla": 25,
+    "fox": 3,
+    "sheep": 1,
+    "chimpanzee": 12,
+    "squirrel": 1,
+    "rhinoceros": 5,
+    "rabbit": 6,
+    "giraffe": 14,
+    "wolf": 9,
+    "buffalo": 2,
+    "zebra": 14,
+    "deer": 1,
+    "bobcat": 6,
+    "lion": 54,
+    "polar bear": 3,
+    "walrus": 1,
+    "raccoon": 12,
+    "cow": 11,
+    "dolphin": 6
+  },
+  "wall_clock_seconds": 209.37251225998625
+}

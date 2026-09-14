@@ -32,100 +32,111 @@
     },
     {
       "turn": 6,
-      "alive_fraction": 0.985
+      "alive_fraction": 0.915
     },
     {
       "turn": 7,
-      "alive_fraction": 0.64
+      "alive_fraction": 0.635
     },
     {
       "turn": 8,
-      "alive_fraction": 0.395
+      "alive_fraction": 0.43
     },
     {
       "turn": 9,
-      "alive_fraction": 0.235
+      "alive_fraction": 0.27
     },
     {
       "turn": 10,
-      "alive_fraction": 0.165
+      "alive_fraction": 0.185
     },
     {
       "turn": 11,
-      "alive_fraction": 0.115
+      "alive_fraction": 0.135
     },
     {
       "turn": 12,
-      "alive_fraction": 0.085
+      "alive_fraction": 0.1
     },
     {
       "turn": 13,
-      "alive_fraction": 0.055
+      "alive_fraction": 0.09
     },
     {
       "turn": 14,
-      "alive_fraction": 0.045
+      "alive_fraction": 0.08
     },
     {
       "turn": 15,
-      "alive_fraction": 0.025
+      "alive_fraction": 0.055
     },
     {
       "turn": 16,
-      "alive_fraction": 0.025
+      "alive_fraction": 0.055
     },
     {
       "turn": 17,
-      "alive_fraction": 0.02
+      "alive_fraction": 0.035
     },
     {
       "turn": 18,
-      "alive_fraction": 0.01
+      "alive_fraction": 0.025
     },
     {
       "turn": 19,
-      "alive_fraction": 0.005
+      "alive_fraction": 0.015
     },
     {
       "turn": 20,
-      "alive_fraction": 0.005
+      "alive_fraction": 0.01
     }
   ],
-  "contradicted_fraction": 0.995,
+  "contradicted_fraction": 0.99,
   "median_death_turn": 8.0,
-  "reveal_parsed_fraction": 0.995,
+  "reveal_parsed_fraction": 0.98,
   "reveal_consistent_fraction": 0.0,
   "reveal_distribution": {
     "antelope": 1,
-    "grizzly bear": 3,
-    "killer whale": 2,
-    "dalmatian": 13,
+    "grizzly bear": 2,
+    "killer whale": 6,
+    "beaver": 1,
+    "dalmatian": 9,
     "horse": 2,
-    "siamese cat": 1,
+    "blue whale": 1,
+    "siamese cat": 2,
     "skunk": 2,
-    "tiger": 23,
-    "hippopotamus": 1,
-    "leopard": 23,
-    "spider monkey": 8,
-    "elephant": 1,
-    "gorilla": 14,
-    "fox": 5,
-    "sheep": 5,
-    "chimpanzee": 5,
-    "squirrel": 1,
-    "rhinoceros": 5,
-    "giraffe": 14,
+    "mole": 5,
+    "tiger": 13,
+    "leopard": 5,
+    "moose": 1,
+    "spider monkey": 13,
+    "humpback whale": 3,
+    "elephant": 7,
+    "gorilla": 19,
+    "ox": 3,
+    "fox": 8,
+    "sheep": 3,
+    "seal": 1,
+    "chimpanzee": 3,
+    "squirrel": 2,
+    "rhinoceros": 10,
+    "rabbit": 2,
+    "bat": 3,
+    "giraffe": 9,
     "wolf": 1,
-    "chihuahua": 1,
-    "weasel": 1,
-    "buffalo": 2,
-    "zebra": 37,
-    "giant panda": 1,
+    "rat": 2,
+    "weasel": 4,
+    "buffalo": 3,
+    "zebra": 3,
+    "deer": 2,
     "bobcat": 4,
-    "pig": 1,
-    "lion": 10,
-    "raccoon": 9,
-    "cow": 3
+    "lion": 11,
+    "mouse": 1,
+    "polar bear": 2,
+    "walrus": 2,
+    "raccoon": 14,
+    "cow": 7,
+    "dolphin": 4
   },
-  "wall_clock_seconds": 142.61122362600872
+  "wall_clock_seconds": 141.87149402103387
 }
