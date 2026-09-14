@@ -63,6 +63,23 @@ A linear probe on commitment-turn activations, layer 32, 2992 samples.
 The commitment is real and linearly decodable at the moment it is made. It largely does not survive
 the game.
 
+### Is the representation causal
+
+Writing the probe's source-to-target direction into the residual stream at layer 24. The source is
+the animal the model names on its own; the target is a different animal from the same catalogue.
+A random direction of equal norm is the control.
+
+| condition | names target | names own choice | still an animal | answers match target |
+| --- | ---: | ---: | ---: | ---: |
+| unsteered | 0.0% | 100.0% | 100.0% | 49.6% |
+| probe direction | 38.5% | 2.0% | 97.0% | 51.1% |
+| random direction | 6.7% | 33.4% | 95.0% | 50.2% |
+
+The direction controls what the model reports and not what it answers. Unsteered, answers already
+match the model's own revealed animal only 50.4% of the time on attributes that separate
+the two candidates, which is chance. The commitment is a label on the report rather than a state
+that drives behaviour.
+
 ## Method notes that matter
 
 **Consistency is judged against the model's own beliefs.** The pipeline first asks the model all
@@ -97,5 +114,7 @@ questioner the trend over turns is -0.0001 per turn, which is flat.
 
 One model, one family, fifty concrete animals. The probe is linear and read from the last token of
 the commitment turn, so 49.9% is a lower bound on what is encoded. The
-causal test, steering along the probe direction and checking whether later answers follow, is
-written and not yet run.
+steering result inherits that bound: a linear write along a linear probe direction is a blunt
+intervention, so answers failing to move is evidence against this direction driving them rather
+than evidence that nothing does. Steering also only works over a narrow band of strengths, and
+outside it the model stops producing animal names at all.

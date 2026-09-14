@@ -25,6 +25,7 @@ def build() -> str:
     analysis = load("analysis.json")
     probe = load("probe_subset10.json")
     control = load("control.json")
+    steering = load("steering.json")
     control_subset = load("control_subset10.json")
 
     arms = {}
@@ -35,6 +36,9 @@ def build() -> str:
 
     best_layer, best = max(probe["layers"].items(), key=lambda kv: kv[1]["accuracy"])
     random_arm = analysis["arms"]["random"]
+    steer = steering["layers"]["24"]
+    unsteered, probed, randomed = (
+        steer["unsteered"], steer["probe_alpha1"], steer["random_alpha1"])
 
     arm_rows = []
     for tag, row in arms.items():
@@ -108,6 +112,23 @@ A linear probe on commitment-turn activations, layer {best_layer}, {probe['parse
 The commitment is real and linearly decodable at the moment it is made. It largely does not survive
 the game.
 
+### Is the representation causal
+
+Writing the probe's source-to-target direction into the residual stream at layer 24. The source is
+the animal the model names on its own; the target is a different animal from the same catalogue.
+A random direction of equal norm is the control.
+
+| condition | names target | names own choice | still an animal | answers match target |
+| --- | ---: | ---: | ---: | ---: |
+| unsteered | {unsteered['reveal_is_target'] * 100:.1f}% | {unsteered['reveal_is_source'] * 100:.1f}% | {unsteered['reveal_is_animal'] * 100:.1f}% | {unsteered['answer_matches_target'] * 100:.1f}% |
+| probe direction | {probed['reveal_is_target'] * 100:.1f}% | {probed['reveal_is_source'] * 100:.1f}% | {probed['reveal_is_animal'] * 100:.1f}% | {probed['answer_matches_target'] * 100:.1f}% |
+| random direction | {randomed['reveal_is_target'] * 100:.1f}% | {randomed['reveal_is_source'] * 100:.1f}% | {randomed['reveal_is_animal'] * 100:.1f}% | {randomed['answer_matches_target'] * 100:.1f}% |
+
+The direction controls what the model reports and not what it answers. Unsteered, answers already
+match the model's own revealed animal only {unsteered['answer_matches_source'] * 100:.1f}% of the time on attributes that separate
+the two candidates, which is chance. The commitment is a label on the report rather than a state
+that drives behaviour.
+
 ## Method notes that matter
 
 **Consistency is judged against the model's own beliefs.** The pipeline first asks the model all
@@ -142,8 +163,10 @@ questioner the trend over turns is {random_arm['turn_trend_per_turn']:+.4f} per 
 
 One model, one family, fifty concrete animals. The probe is linear and read from the last token of
 the commitment turn, so {best['accuracy'] * 100:.1f}% is a lower bound on what is encoded. The
-causal test, steering along the probe direction and checking whether later answers follow, is
-written and not yet run.
+steering result inherits that bound: a linear write along a linear probe direction is a blunt
+intervention, so answers failing to move is evidence against this direction driving them rather
+than evidence that nothing does. Steering also only works over a narrow band of strengths, and
+outside it the model stops producing animal names at all.
 """
 
 

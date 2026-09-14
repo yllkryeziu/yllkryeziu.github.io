@@ -90,9 +90,20 @@ const App: React.FC = () => {
     return <Intro />;
   }
 
+  // An open post is a page of its own. The rail's back arrow is the only way out.
+  if (postOpen) {
+    return (
+      <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
+        <div className="px-5 sm:px-8 py-12 sm:py-16">
+          <Work />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950">
-      <div className={`${postOpen ? 'max-w-6xl' : 'max-w-2xl'} mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24`}>
+      <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-16 lg:py-24">
         <Header
           activeView={activeView}
           setActiveView={setActiveView}
