@@ -14,7 +14,7 @@ from src.game.engine import (
 )
 from src.game.world import World, load_model_world, load_reference_world
 from src.model import runner as rn
-from src.model.prompts import REVEAL_TURN, game_messages
+from src.model.prompts import REVEAL_TURN, game_messages, subset_orders
 
 RESULTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 
@@ -56,6 +56,7 @@ def main() -> None:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--questioner", choices=["optimal", "random"], default="optimal")
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--subset-size", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--world", default=os.path.join(RESULTS, "model_matrix.npy"))
     parser.add_argument("--tag", default="base")
@@ -71,7 +72,7 @@ def main() -> None:
     questions = [[] for _ in range(args.games)]
     answers = [[] for _ in range(args.games)]
     died_at = [None] * args.games
-    orders = [list(generator.permutation(world.object_count)) for _ in range(args.games)]
+    orders = subset_orders(world, args.games, args.subset_size, generator)
 
     for turn in range(args.turns):
         chosen = []
@@ -135,6 +136,7 @@ def main() -> None:
         "questioner": args.questioner,
         "seed": args.seed,
         "catalogue_shuffled_per_game": True,
+        "subset_size": args.subset_size,
         "world_source": world.source,
         "perfect_play_questions": optimal_game_length(world),
         "survival_curve": survival,

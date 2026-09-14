@@ -41,6 +41,7 @@ const feed: FeedItem[] = [
 const BlogPrefetch = lazy(() => import('./BlogPrefetch'));
 const BlogSimdjson = lazy(() => import('./BlogSimdjson'));
 const BlogThesis = lazy(() => import('./BlogThesis'));
+const BlogSecret = lazy(() => import('./BlogSecret'));
 
 const PostFallback: React.FC = () => (
   <div style={{ padding: '3rem 0', color: 'var(--color-text-muted)', fontSize: '13px' }}>Loading…</div>
@@ -139,7 +140,7 @@ const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }
 );
 
 function slugFromHash(): PostSlug | null {
-  const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis)$/i);
+  const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis|secret)$/i);
   return match ? (match[1].toLowerCase() as PostSlug) : null;
 }
 
@@ -170,6 +171,7 @@ const Work: React.FC = () => {
 
   return (
     <Suspense fallback={<PostFallback />}>
+      {selected === 'secret' && <BlogSecret onBack={handleBack} />}
       {selected === 'thesis' && <BlogThesis onBack={handleBack} />}
       {selected === 'jax' && <BlogPrefetch onBack={handleBack} />}
       {selected === 'simd' && <BlogSimdjson onBack={handleBack} />}

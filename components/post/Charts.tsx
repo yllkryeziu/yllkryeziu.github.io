@@ -291,14 +291,22 @@ export const LineChart: React.FC<{
             />
           ))
         )}
-        {series.map((s, si) => {
-          const last = s.points[s.points.length - 1];
-          return s.endLabel ? (
-            <text key={`e-${s.label}`} className="chart-value" x={px(last.x) + 12} y={py(last.y) + 4}>
-              {s.endLabel}
-            </text>
-          ) : null;
-        })}
+        {(() => {
+          const labelled = series
+            .map((s, si) => ({ s, si, y: py(s.points[s.points.length - 1].y), x: px(s.points[s.points.length - 1].x) }))
+            .filter(entry => entry.s.endLabel)
+            .sort((a, b) => a.y - b.y);
+          let previous = -Infinity;
+          return labelled.map(entry => {
+            const y = Math.max(entry.y, previous + 14);
+            previous = y;
+            return (
+              <text key={`e-${entry.s.label}`} className="chart-value" x={entry.x + 12} y={y + 4}>
+                {entry.s.endLabel}
+              </text>
+            );
+          });
+        })()}
       </svg>
     </Frame>
   );

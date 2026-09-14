@@ -1,0 +1,11 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "transcripts": "transcripts_subset10.json",
+  "comparisons": 3600,
+  "games": 300,
+  "named_context_vs_elicited_beliefs": 0.8986111111111111,
+  "in_game_vs_elicited_beliefs": 0.7413888888888889,
+  "named_context_vs_in_game_answers": 0.7555555555555555,
+  "games_where_named_context_fully_matches_beliefs": 59,
+  "interpretation": "If naming the animal restores agreement with the model's own elicited beliefs while the in-game agreement stays low, the beliefs are stable and the failure is in holding the commitment. If naming does not restore agreement, the elicited beliefs simply do not transfer across prompt context and the game measurement is confounded."
+}

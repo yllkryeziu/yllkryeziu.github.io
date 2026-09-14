@@ -24,6 +24,16 @@ def catalogue(world: World, order: list[int] | None = None) -> str:
     return ", ".join(world.display(i) for i in indices)
 
 
+def subset_orders(world: World, count: int, size: int,
+                  generator) -> list[list[int]]:
+    if size >= world.object_count:
+        return [list(generator.permutation(world.object_count)) for _ in range(count)]
+    return [
+        [int(i) for i in generator.choice(world.object_count, size=size, replace=False)]
+        for _ in range(count)
+    ]
+
+
 def commit_messages(world: World, order: list[int] | None = None) -> list[dict]:
     return [
         {"role": "system", "content": ANSWER_RULES.format(catalogue=catalogue(world, order))},

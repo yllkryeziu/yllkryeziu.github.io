@@ -1,0 +1,55 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "samples": 3000,
+  "parsed": 2992,
+  "distinct_animals_chosen": 49,
+  "chance_accuracy": 0.02,
+  "subset_size": 10,
+  "most_common_baseline": 0.1352253756260434,
+  "transfer_most_common_baseline": 0.13333333333333333,
+  "transfer_games": 300,
+  "layers": {
+    "8": {
+      "accuracy": 0.4257095158597663,
+      "top5_accuracy": 0.7579298831385642,
+      "mean_confidence": 0.9626882672309875,
+      "train_examples": 2393,
+      "test_examples": 599,
+      "transfer_accuracy": 0.17333333333333334,
+      "transfer_top5_accuracy": 0.46,
+      "transfer_mean_confidence": 0.9927612543106079
+    },
+    "16": {
+      "accuracy": 0.4574290484140234,
+      "top5_accuracy": 0.8113522537562604,
+      "mean_confidence": 0.7562446594238281,
+      "train_examples": 2393,
+      "test_examples": 599,
+      "transfer_accuracy": 0.17333333333333334,
+      "transfer_top5_accuracy": 0.5,
+      "transfer_mean_confidence": 0.9826194047927856
+    },
+    "24": {
+      "accuracy": 0.48580968280467446,
+      "top5_accuracy": 0.8096828046744574,
+      "mean_confidence": 0.9347264170646667,
+      "train_examples": 2393,
+      "test_examples": 599,
+      "transfer_accuracy": 0.17,
+      "transfer_top5_accuracy": 0.44,
+      "transfer_mean_confidence": 0.9890234470367432
+    },
+    "32": {
+      "accuracy": 0.4991652754590985,
+      "top5_accuracy": 0.8530884808013356,
+      "mean_confidence": 0.9616462588310242,
+      "train_examples": 2393,
+      "test_examples": 599,
+      "transfer_accuracy": 0.17333333333333334,
+      "transfer_top5_accuracy": 0.48,
+      "transfer_mean_confidence": 0.9819340109825134
+    }
+  },
+  "question": "A probe is trained on commitment-turn activations to predict the animal the model reveals when asked immediately, with no questions in between. Transfer accuracy applies that probe to the commitment turn of full 20-question games and asks whether it predicts the animal revealed at the end. High probe accuracy with low transfer accuracy means a commitment is represented and then abandoned.",
+  "wall_clock_seconds": 255.23392311501084
+}

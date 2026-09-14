@@ -1,4 +1,4 @@
-export type PostSlug = 'thesis' | 'jax' | 'simd';
+export type PostSlug = 'thesis' | 'jax' | 'simd' | 'secret';
 
 export interface PostMeta {
   slug: PostSlug;
@@ -14,6 +14,16 @@ export interface PostMeta {
 const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/projects';
 
 export const POSTS: PostMeta[] = [
+  {
+    slug: 'secret',
+    kicker: 'Interpretability · LLM Evaluation · Games',
+    title: 'Can a model keep a secret it never wrote down?',
+    dek: 'Asked to think of an animal and not reveal it, Qwen3.5-9B contradicts itself in 99.5% of games. Naming the animal in the prompt restores 15 points of self-consistency, which separates a shifting belief from a commitment that was never held.',
+    date: 'September 2026',
+    sortDate: 202609,
+    readingMinutes: 16,
+    repo: { label: 'latent-commitment', url: `${REPO_ROOT}/latent-commitment` },
+  },
   {
     slug: 'thesis',
     kicker: 'Machine Learning · LLM Reasoning · Distillation',
