@@ -1,0 +1,131 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "tag": "sampled",
+  "games": 200,
+  "turns": 20,
+  "temperature": 0.7,
+  "questioner": "optimal",
+  "seed": 0,
+  "catalogue_shuffled_per_game": true,
+  "world_source": "/fast/project/HFMI_SynergyUnit/yll/blog-benchmarks/latent-commitment/results/model_matrix.npy",
+  "perfect_play_questions": 5.643856189774724,
+  "survival_curve": [
+    {
+      "turn": 1,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 2,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 3,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 4,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 5,
+      "alive_fraction": 1.0
+    },
+    {
+      "turn": 6,
+      "alive_fraction": 0.985
+    },
+    {
+      "turn": 7,
+      "alive_fraction": 0.64
+    },
+    {
+      "turn": 8,
+      "alive_fraction": 0.395
+    },
+    {
+      "turn": 9,
+      "alive_fraction": 0.235
+    },
+    {
+      "turn": 10,
+      "alive_fraction": 0.165
+    },
+    {
+      "turn": 11,
+      "alive_fraction": 0.115
+    },
+    {
+      "turn": 12,
+      "alive_fraction": 0.085
+    },
+    {
+      "turn": 13,
+      "alive_fraction": 0.055
+    },
+    {
+      "turn": 14,
+      "alive_fraction": 0.045
+    },
+    {
+      "turn": 15,
+      "alive_fraction": 0.025
+    },
+    {
+      "turn": 16,
+      "alive_fraction": 0.025
+    },
+    {
+      "turn": 17,
+      "alive_fraction": 0.02
+    },
+    {
+      "turn": 18,
+      "alive_fraction": 0.01
+    },
+    {
+      "turn": 19,
+      "alive_fraction": 0.005
+    },
+    {
+      "turn": 20,
+      "alive_fraction": 0.005
+    }
+  ],
+  "contradicted_fraction": 0.995,
+  "median_death_turn": 8.0,
+  "reveal_parsed_fraction": 0.995,
+  "reveal_consistent_fraction": 0.0,
+  "reveal_distribution": {
+    "antelope": 1,
+    "grizzly bear": 3,
+    "killer whale": 2,
+    "dalmatian": 13,
+    "horse": 2,
+    "siamese cat": 1,
+    "skunk": 2,
+    "tiger": 23,
+    "hippopotamus": 1,
+    "leopard": 23,
+    "spider monkey": 8,
+    "elephant": 1,
+    "gorilla": 14,
+    "fox": 5,
+    "sheep": 5,
+    "chimpanzee": 5,
+    "squirrel": 1,
+    "rhinoceros": 5,
+    "giraffe": 14,
+    "wolf": 1,
+    "chihuahua": 1,
+    "weasel": 1,
+    "buffalo": 2,
+    "zebra": 37,
+    "giant panda": 1,
+    "bobcat": 4,
+    "pig": 1,
+    "lion": 10,
+    "raccoon": 9,
+    "cow": 3
+  },
+  "wall_clock_seconds": 142.61122362600872
+}
