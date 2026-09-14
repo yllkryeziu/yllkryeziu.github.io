@@ -26,8 +26,9 @@ function niceTicks(max: number, count = 4): number[] {
   const raw = max / count;
   const mag = Math.pow(10, Math.floor(Math.log10(raw)));
   const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw) ?? mag * 10;
+  const ceiling = Math.ceil(max / step) * step;
   const ticks: number[] = [];
-  for (let t = 0; t <= max + step * 0.001; t += step) ticks.push(t);
+  for (let t = 0; t <= ceiling + step * 1e-9; t += step) ticks.push(t);
   return ticks;
 }
 
@@ -228,7 +229,7 @@ export const LineChart: React.FC<{
   const height = 280;
   const left = 54;
   const right = 66;
-  const top = 14;
+  const top = 26;
   const bottom = 44;
   const plotW = width - left - right;
   const plotH = height - top - bottom;
@@ -260,7 +261,7 @@ export const LineChart: React.FC<{
           <text key={t.v} className="chart-axis" x={px(t.v)} y={height - bottom + 22} textAnchor="middle">{t.label}</text>
         ))}
         <text className="chart-axis" x={left} y={height - 6} textAnchor="start">{xLabel}</text>
-        <text className="chart-axis" x={left - 10} y={top - 4} textAnchor="end">{yLabel}</text>
+        <text className="chart-axis" x={left - 10} y={11} textAnchor="end">{yLabel}</text>
         {series.map((s, si) => (
           <path
             key={s.label}
@@ -364,7 +365,7 @@ export const ScatterChart: React.FC<{
           <text key={t} className="chart-axis" x={px(t)} y={height - bottom + 22} textAnchor="middle">{t.toLocaleString()}</text>
         ))}
         <text className="chart-axis" x={left + plotW / 2} y={height - 6} textAnchor="middle">{xLabel}</text>
-        <text className="chart-axis" x={left - 10} y={top - 4} textAnchor="end">{yLabel}</text>
+        <text className="chart-axis" x={left - 10} y={11} textAnchor="end">{yLabel}</text>
         {frontier && (
           <path
             d={frontier.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p.x)},${py(p.y)}`).join(' ')}

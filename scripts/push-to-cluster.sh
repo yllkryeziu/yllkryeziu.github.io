@@ -16,4 +16,5 @@ rsync -az --itemize-changes \
   --exclude 'dependency-reduced-pom.xml' \
   --exclude '/simdjson-jni/data/' \
   --exclude '/jax-prefetch/data/' \
-  simdjson-jni jax-prefetch "${HOST}:${REMOTE}/"
+  --exclude '/latent-commitment/data/' \
+  simdjson-jni jax-prefetch latent-commitment "${HOST}:${REMOTE}/"

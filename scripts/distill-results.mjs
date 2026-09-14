@@ -210,6 +210,7 @@ function distillSecret() {
   const control = readIf(`${root}control_subset10.json`);
   const controlFull = readIf(`${root}control.json`);
   const analysis = readIf(`${root}analysis.json`);
+  const steering = readIf(`${root}steering.json`);
   const arms = {};
   for (const tag of ['greedy', 'sampled', 'sampled_t1', 'random', 'subset10']) {
     const row = readIf(`${root}play_${tag}.json`);
@@ -231,7 +232,7 @@ function distillSecret() {
   if (!elicitation || !probe || !control || Object.keys(arms).length === 0) {
     throw new Error('latent-commitment has not produced a complete run yet');
   }
-  return { elicitation, probe, control, controlFull, analysis, arms };
+  return { elicitation, probe, control, controlFull, analysis, arms, steering };
 }
 
 const targets = [

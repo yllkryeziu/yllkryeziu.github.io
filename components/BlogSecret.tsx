@@ -21,6 +21,7 @@ const TOC = [
   { id: 'control', label: 'The control that makes it mean something' },
   { id: 'wrong', label: 'Two things that turned out not to be true' },
   { id: 'probe', label: 'Is anything represented at all' },
+  { id: 'causal', label: 'Steering the representation' },
   { id: 'limits', label: 'Limitations' },
 ];
 
@@ -42,6 +43,16 @@ const probeStats = bestLayer[1];
 
 const randomArm = ANALYSIS.arms.random;
 const greedyArm = ANALYSIS.arms.greedy;
+
+const STEER = results.steering;
+const STEER_LAYER = 24;
+const SL = STEER.layers['24'];
+const SU = SL.unsteered;
+const SP = SL.probe_alpha1;
+const SR = SL.random_alpha1;
+const STEER_ALPHAS = [1, 2, 4, 8];
+const PROBE_SWEEP = [SL.probe_alpha1, SL.probe_alpha2, SL.probe_alpha4, SL.probe_alpha8];
+const RANDOM_SWEEP = [SL.random_alpha1, SL.random_alpha2, SL.random_alpha4, SL.random_alpha8];
 
 const ARM_LABEL: Record<string, string> = {
   greedy: 'Optimal questioner, greedy',
@@ -520,6 +531,138 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       the start.
     </p>
 
+    <H2 id="causal">Steering the representation</H2>
+    <p>
+      A probe that reads a variable does not show the model uses it. The probe could be picking up
+      a trace that nothing downstream consults. The way to tell is to stop reading and start
+      writing.
+    </p>
+    <p>
+      In each game the animal the model names when asked immediately is the <em>source</em>. A
+      different animal from the same catalogue is the <em>target</em>. Adding the probe's
+      source-to-target direction into the residual stream should push the model toward the target
+      if that direction is load-bearing. Two things then get measured: whether the model names the
+      target, and whether its Yes/No answers move onto the target's attribute profile. Questions
+      are restricted to attributes where source and target disagree, so agreeing with one is
+      disagreeing with the other. A random direction of the same norm is the control, because a
+      large enough perturbation changes behaviour no matter what it encodes, and that would prove
+      nothing.
+    </p>
+
+    <Table
+      n={4}
+      caption={
+        <>
+          Steering at layer {STEER_LAYER}, {num(STEER.eval_pairs)} games and{' '}
+          {num(STEER.questions_per_condition)} attribute questions per condition. The random
+          direction is drawn to the same norm as the probe direction.
+        </>
+      }
+      columns={[
+        { key: 'condition', label: 'condition' },
+        { key: 'target', label: 'reveals target', numeric: true },
+        { key: 'source', label: 'reveals source', numeric: true },
+        { key: 'coherent', label: 'coherent', numeric: true },
+        { key: 'answers', label: 'answers → target', numeric: true },
+      ]}
+      rows={[
+        {
+          condition: 'unsteered',
+          target: pct(SU.reveal_is_target),
+          source: pct(SU.reveal_is_source),
+          coherent: pct(SU.reveal_is_animal),
+          answers: pct(SU.answer_matches_target),
+        },
+        {
+          condition: 'probe direction',
+          target: pct(SP.reveal_is_target),
+          source: pct(SP.reveal_is_source),
+          coherent: pct(SP.reveal_is_animal),
+          answers: pct(SP.answer_matches_target),
+          highlight: true,
+        },
+        {
+          condition: 'random direction',
+          target: pct(SR.reveal_is_target),
+          source: pct(SR.reveal_is_source),
+          coherent: pct(SR.reveal_is_animal),
+          answers: pct(SR.answer_matches_target),
+        },
+      ]}
+    />
+
+    <p>
+      The report moves. Steering along the probe direction makes the model name the target in{' '}
+      {pct(SP.reveal_is_target)} of games, up from {pct(SU.reveal_is_target)}, while still
+      producing a valid animal name {pct(SP.reveal_is_animal)} of the time. The random direction at
+      the same norm reaches {pct(SR.reveal_is_target)}. It also clears out the original choice,
+      which falls from {pct(SU.reveal_is_source)} to {pct(SP.reveal_is_source)} under the probe
+      direction and only to {pct(SR.reveal_is_source)} under the random one.
+    </p>
+    <p>
+      The answers do not move. Agreement with the target's attribute profile goes from{' '}
+      {pct(SU.answer_matches_target)} to {pct(SP.answer_matches_target)}, and the random control
+      sits at {pct(SR.answer_matches_target)}. On the questions built to separate the two animals,
+      steering does nothing.
+    </p>
+    <p>
+      The unsteered row is what makes this sharp. Before any intervention the model's answers match
+      its own revealed animal {pct(SU.answer_matches_source)} of the time on these attributes,
+      which is chance. So there is a direction that decides what the model says it was thinking of,
+      and that direction has no grip on what it actually answers. The commitment is a label
+      attached to the report rather than a state that drives behaviour.
+    </p>
+
+    <Figure
+      n={4}
+      caption={
+        <>
+          The effect lives in a narrow band. At{' '}
+          <M>{'\\alpha = 1'}</M> the model is still coherent{' '}
+          {pct(SP.reveal_is_animal)} of the time; by <M>{'\\alpha = 2'}</M> that has fallen to{' '}
+          {pct(SL.probe_alpha2.reveal_is_animal)} and the apparent drop in target naming is mostly
+          the model no longer producing animal names at all.
+        </>
+      }
+    >
+      <LineChart
+        title="Naming the target under steering, layer 24"
+        sub="Fraction of games where the model names the target animal instead of its own choice"
+        xLabel="steering strength α"
+        yLabel="%"
+        unit="% name target"
+        xTicks={STEER_ALPHAS.map(v => ({ v, label: String(v) }))}
+        series={[
+          {
+            label: 'Probe direction',
+            points: PROBE_SWEEP.map((row, i) => ({
+              x: STEER_ALPHAS[i],
+              y: Number((row.reveal_is_target * 100).toFixed(1)),
+            })),
+            endLabel: pct(PROBE_SWEEP[PROBE_SWEEP.length - 1].reveal_is_target),
+          },
+          {
+            label: 'Random direction',
+            points: RANDOM_SWEEP.map((row, i) => ({
+              x: STEER_ALPHAS[i],
+              y: Number((row.reveal_is_target * 100).toFixed(1)),
+            })),
+            endLabel: pct(RANDOM_SWEEP[RANDOM_SWEEP.length - 1].reveal_is_target),
+          },
+        ]}
+      />
+    </Figure>
+
+    <Note label="Which layer">
+      Layer {STEER_LAYER} is the one to read. At layer 16 the model stops producing animal names at
+      all once steering is strong enough to do anything, with coherence at{' '}
+      {pct(STEER.layers['16'].probe_alpha1.reveal_is_animal)} even at the weakest setting. Layer 32
+      gives a larger effect, {pct(STEER.layers['32'].probe_alpha1.reveal_is_target)}, but it is the
+      final residual stream and only the next token's logits sit downstream of it, so steering
+      there is close to editing the output distribution directly. Layer 24 is the one with real
+      computation left to propagate through.
+    </Note>
+
     <H2 id="limits">Limitations</H2>
     <p>
       One model and one family. Whether a larger model holds a commitment is the obvious next
@@ -539,9 +682,18 @@ const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       The probe is linear and trained on the last token of the commitment turn. A representation
       that is distributed differently, or nonlinear, would be missed, so{' '}
       {pct(probeStats.accuracy)} is a lower bound on what is encoded rather than a measurement of
-      it. The honest next step is activation steering: if adding the probe direction changes which
-      animal the model subsequently answers about, the representation is causal rather than
-      correlational. That experiment is written and not yet run.
+      it.
+    </p>
+    <p>
+      The steering result inherits that bound. A linear write along a linear probe's direction is
+      the crudest possible intervention, so the answers failing to move is evidence that this
+      direction does not drive them, and not evidence that nothing does. A nonlinear or
+      multi-direction edit could land differently.
+    </p>
+    <p>
+      Steering also works over a narrow range of strengths, and the failure mode outside it is the
+      model producing text that is not an animal name. Reporting coherence alongside the effect
+      keeps that visible, but it does mean the intervention is blunt.
     </p>
 
     <References refs={SECRET_REFS} bibtex={SECRET_BIBTEX} />
