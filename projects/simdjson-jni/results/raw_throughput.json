@@ -1,0 +1,3564 @@
+[
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitter.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 483.0132292443206,
+            "scoreError" : 4.465596248479031,
+            "scoreConfidence" : [
+                478.5476329958416,
+                487.4788254927996
+            ],
+            "scorePercentiles" : {
+                "0.0" : 469.9509906909848,
+                "50.0" : 482.1265659672788,
+                "90.0" : 493.5010533050515,
+                "95.0" : 494.4261275039391,
+                "99.0" : 494.9232977771571,
+                "99.9" : 494.9232977771571,
+                "99.99" : 494.9232977771571,
+                "99.999" : 494.9232977771571,
+                "99.9999" : 494.9232977771571,
+                "100.0" : 494.9232977771571
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    475.320643217475,
+                    476.95795085421685,
+                    469.9509906909848,
+                    484.9492589857079,
+                    478.08934784055634,
+                    483.60943556900617,
+                    472.8650192616567,
+                    476.72418311954505,
+                    480.15849438938994,
+                    478.2651752107296
+                ],
+                [
+                    476.8701649445414,
+                    490.9810909999213,
+                    474.41303768766437,
+                    483.4190395671432,
+                    482.68389176733325,
+                    482.8223537229277,
+                    485.97973754086485,
+                    480.4839031104749,
+                    493.5081983529969,
+                    481.325189304473
+                ],
+                [
+                    488.56381852840275,
+                    494.01935182585163,
+                    481.1867875923539,
+                    481.56924016722434,
+                    490.9114538101648,
+                    480.65530861984007,
+                    494.9232977771571,
+                    487.28110103505327,
+                    488.4726639624201,
+                    493.4367478735433
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitter.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 750.3809617292089,
+            "scoreError" : 5.943553451658925,
+            "scoreConfidence" : [
+                744.43740827755,
+                756.3245151808678
+            ],
+            "scorePercentiles" : {
+                "0.0" : 735.5117342128015,
+                "50.0" : 749.0107470657081,
+                "90.0" : 764.9190842906298,
+                "95.0" : 765.187974571325,
+                "99.0" : 765.4432617325682,
+                "99.9" : 765.4432617325682,
+                "99.99" : 765.4432617325682,
+                "99.999" : 765.4432617325682,
+                "99.9999" : 765.4432617325682,
+                "100.0" : 765.4432617325682
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    744.6177408027282,
+                    736.1063404029226,
+                    753.1832337907958,
+                    736.8927150527228,
+                    737.4533435353175,
+                    753.3972897022111,
+                    744.3251516466584,
+                    745.3374345235926,
+                    735.5117342128015,
+                    753.3890090475526
+                ],
+                [
+                    754.8753776239081,
+                    764.7440248799921,
+                    747.2181356011055,
+                    748.0335279652988,
+                    765.4432617325682,
+                    764.9385353362562,
+                    746.8794962214412,
+                    764.9791032575804,
+                    748.3989091964995,
+                    746.3998944848342
+                ],
+                [
+                    757.1126745450107,
+                    756.5742779235353,
+                    757.4743294797763,
+                    740.9716758034616,
+                    750.5814562648688,
+                    759.0858541602388,
+                    748.6918182329363,
+                    758.9809269351372,
+                    740.5019036160384,
+                    749.3296758984799
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitter.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 3931.139049735158,
+            "scoreError" : 26.9736317198804,
+            "scoreConfidence" : [
+                3904.1654180152777,
+                3958.1126814550385
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3856.054418335536,
+                "50.0" : 3927.9530632280344,
+                "90.0" : 3989.7767954979317,
+                "95.0" : 3993.980330957036,
+                "99.0" : 3996.6397988414897,
+                "99.9" : 3996.6397988414897,
+                "99.99" : 3996.6397988414897,
+                "99.999" : 3996.6397988414897,
+                "99.9999" : 3996.6397988414897,
+                "100.0" : 3996.6397988414897
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3897.107044171648,
+                    3952.9657499941372,
+                    3991.3045630755387,
+                    3909.140497278863,
+                    3903.9228764470054,
+                    3991.804402687938,
+                    3889.3420050089344,
+                    3996.6397988414897,
+                    3882.4294847520746,
+                    3956.5010083759585
+                ],
+                [
+                    3972.0146305544813,
+                    3885.9398456631857,
+                    3927.542083940891,
+                    3969.592021210428,
+                    3890.587187730996,
+                    3976.026887299468,
+                    3881.712889106157,
+                    3928.045198269521,
+                    3932.277436156551,
+                    3885.0755113164028
+                ],
+                [
+                    3919.821188254235,
+                    3964.0243307274536,
+                    3918.560866476498,
+                    3964.2922430129784,
+                    3959.3381214055826,
+                    3927.860928186548,
+                    3960.35602234863,
+                    3873.5574770467074,
+                    3970.3347743788877,
+                    3856.054418335536
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitter.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 4231.320036141918,
+            "scoreError" : 40.48043143727274,
+            "scoreConfidence" : [
+                4190.839604704644,
+                4271.800467579191
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4141.651480027956,
+                "50.0" : 4257.137506995714,
+                "90.0" : 4309.0017758886215,
+                "95.0" : 4317.299483880066,
+                "99.0" : 4323.033797623198,
+                "99.9" : 4323.033797623198,
+                "99.99" : 4323.033797623198,
+                "99.999" : 4323.033797623198,
+                "99.9999" : 4323.033797623198,
+                "100.0" : 4323.033797623198
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4161.331486258064,
+                    4269.952149472568,
+                    4175.063040702532,
+                    4287.520886690996,
+                    4171.025744319719,
+                    4177.039088865763,
+                    4258.359866311456,
+                    4163.083896736188,
+                    4256.696829292499,
+                    4177.550808849279
+                ],
+                [
+                    4189.688744734183,
+                    4158.718307969793,
+                    4237.628512534077,
+                    4147.197417766924,
+                    4263.875262191713,
+                    4191.276543755783,
+                    4141.651480027956,
+                    4154.041002248262,
+                    4257.578184698929,
+                    4165.4986239236305
+                ],
+                [
+                    4302.956317945082,
+                    4309.591091242087,
+                    4272.045321759901,
+                    4262.806576145329,
+                    4323.033797623198,
+                    4303.697937707437,
+                    4274.235146991621,
+                    4276.142885643859,
+                    4297.706359213007,
+                    4312.607772635686
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitterescaped.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 515.4092957465832,
+            "scoreError" : 4.1769636850010485,
+            "scoreConfidence" : [
+                511.23233206158216,
+                519.5862594315843
+            ],
+            "scorePercentiles" : {
+                "0.0" : 503.8857111624227,
+                "50.0" : 515.8103142494275,
+                "90.0" : 523.1500171550697,
+                "95.0" : 524.3614116720169,
+                "99.0" : 524.7536675096293,
+                "99.9" : 524.7536675096293,
+                "99.99" : 524.7536675096293,
+                "99.999" : 524.7536675096293,
+                "99.9999" : 524.7536675096293,
+                "100.0" : 524.7536675096293
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    519.0791162740335,
+                    514.6634502472874,
+                    508.31909183523305,
+                    520.8453516398818,
+                    509.73982624398593,
+                    515.2702994501634,
+                    517.6347770890422,
+                    511.47219854004936,
+                    516.3503290486916,
+                    521.8377674219995
+                ],
+                [
+                    514.2457696143424,
+                    503.8857111624227,
+                    512.1454336173207,
+                    506.3960771024084,
+                    517.4899448332042,
+                    505.09426244311567,
+                    506.1138093970462,
+                    518.8292335837167,
+                    507.3230448705852,
+                    508.6052750063045
+                ],
+                [
+                    518.8118591050379,
+                    524.7536675096293,
+                    519.9301052760177,
+                    523.1623804076008,
+                    515.1332321873225,
+                    524.0404750776067,
+                    520.9129075291644,
+                    522.8013684164879,
+                    523.0387478822895,
+                    514.3533595855093
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitterescaped.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 802.5551277973597,
+            "scoreError" : 8.281177043793228,
+            "scoreConfidence" : [
+                794.2739507535664,
+                810.8363048411529
+            ],
+            "scorePercentiles" : {
+                "0.0" : 785.7798873379589,
+                "50.0" : 806.9176928477083,
+                "90.0" : 820.8347571800585,
+                "95.0" : 821.465992803972,
+                "99.0" : 822.2295150328073,
+                "99.9" : 822.2295150328073,
+                "99.99" : 822.2295150328073,
+                "99.999" : 822.2295150328073,
+                "99.9999" : 822.2295150328073,
+                "100.0" : 822.2295150328073
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    790.1143765975593,
+                    807.8619977820908,
+                    787.7457062330794,
+                    808.4059857069205,
+                    808.1978805756842,
+                    788.5901231861628,
+                    808.5046227496043,
+                    790.355290592003,
+                    789.8619976813511,
+                    808.9368568157676
+                ],
+                [
+                    820.8412927985613,
+                    820.8101933884503,
+                    820.1862227124318,
+                    822.2295150328073,
+                    800.201654013622,
+                    811.2675308843905,
+                    811.5570570276167,
+                    802.2948886957618,
+                    812.5059695578119,
+                    820.8374864902372
+                ],
+                [
+                    787.5053812576235,
+                    787.6605419362418,
+                    805.9879024531677,
+                    798.4328779174125,
+                    807.8950762427631,
+                    788.60994957589,
+                    788.2794432203057,
+                    807.8474832422488,
+                    787.3486422152681,
+                    785.7798873379589
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitterescaped.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 1966.0735453664806,
+            "scoreError" : 13.371798584863821,
+            "scoreConfidence" : [
+                1952.7017467816167,
+                1979.4453439513445
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1938.808112283511,
+                "50.0" : 1968.6578216393013,
+                "90.0" : 1992.4518732779686,
+                "95.0" : 1994.991602602712,
+                "99.0" : 1995.6677293057414,
+                "99.9" : 1995.6677293057414,
+                "99.99" : 1995.6677293057414,
+                "99.999" : 1995.6677293057414,
+                "99.9999" : 1995.6677293057414,
+                "100.0" : 1995.6677293057414
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1938.808112283511,
+                    1942.6561013036667,
+                    1990.4646903975586,
+                    1944.1112592583863,
+                    1988.7376825645329,
+                    1989.4950502402887,
+                    1967.0520363156068,
+                    1988.758338019314,
+                    1944.2246743074809,
+                    1969.5471932220894
+                ],
+                [
+                    1992.5739060033663,
+                    1944.389453933907,
+                    1942.7809748783789,
+                    1991.353578749388,
+                    1943.9524545649988,
+                    1968.5889035164564,
+                    1968.063152737718,
+                    1944.126191098023,
+                    1970.3399085458784,
+                    1969.1257928203968
+                ],
+                [
+                    1945.06432680559,
+                    1971.0096169427268,
+                    1968.726739762146,
+                    1995.6677293057414,
+                    1994.438408027506,
+                    1948.6001160785788,
+                    1947.7026909750334,
+                    1990.4547487593081,
+                    1947.1111048384191,
+                    1974.2814247384008
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "twitterescaped.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 2033.008445798409,
+            "scoreError" : 13.709843600893684,
+            "scoreConfidence" : [
+                2019.2986021975153,
+                2046.7182893993026
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2004.941775691256,
+                "50.0" : 2030.8886123596117,
+                "90.0" : 2064.351664138161,
+                "95.0" : 2065.518072192544,
+                "99.0" : 2065.6502750801774,
+                "99.9" : 2065.6502750801774,
+                "99.99" : 2065.6502750801774,
+                "99.999" : 2065.6502750801774,
+                "99.9999" : 2065.6502750801774,
+                "100.0" : 2065.6502750801774
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2064.427726183308,
+                    2015.0529392239353,
+                    2015.868986658688,
+                    2065.6502750801774,
+                    2013.629778056266,
+                    2063.6671057318404,
+                    2019.355338982228,
+                    2042.6330266783261,
+                    2039.6074856978073,
+                    2065.409906193571
+                ],
+                [
+                    2004.941775691256,
+                    2054.1391698439543,
+                    2008.4784463509654,
+                    2007.146868245093,
+                    2027.969197452719,
+                    2032.265703788173,
+                    2029.3865428301276,
+                    2056.1494552724816,
+                    2008.2892704437686,
+                    2029.5115209310502
+                ],
+                [
+                    2060.8398851059665,
+                    2013.7332007180923,
+                    2035.545694698583,
+                    2038.0310894496092,
+                    2013.5190609047077,
+                    2037.7605672088741,
+                    2037.5658151004602,
+                    2014.8391493461902,
+                    2061.7292351612755,
+                    2013.1091569227694
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "github_events.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 5702.260752960621,
+            "scoreError" : 42.9902767313208,
+            "scoreConfidence" : [
+                5659.270476229301,
+                5745.251029691942
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5563.395692833053,
+                "50.0" : 5708.711331459848,
+                "90.0" : 5803.722364675314,
+                "95.0" : 5814.606554610007,
+                "99.0" : 5819.864038197977,
+                "99.9" : 5819.864038197977,
+                "99.99" : 5819.864038197977,
+                "99.999" : 5819.864038197977,
+                "99.9999" : 5819.864038197977,
+                "100.0" : 5819.864038197977
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5714.426111614463,
+                    5810.304977128941,
+                    5782.980778552684,
+                    5819.864038197977,
+                    5752.343680595419,
+                    5754.740563518193,
+                    5752.689019699301,
+                    5727.998745819231,
+                    5806.026985355606,
+                    5679.946983268877
+                ],
+                [
+                    5740.556887144698,
+                    5650.078681220004,
+                    5707.250894783805,
+                    5685.244135421707,
+                    5631.103365042288,
+                    5762.368558213799,
+                    5710.1717681358905,
+                    5712.5543809883475,
+                    5679.856553997975,
+                    5695.0914335881425
+                ],
+                [
+                    5576.787690008007,
+                    5660.05202052729,
+                    5643.415511455479,
+                    5728.946040068063,
+                    5613.114392095378,
+                    5679.268385390026,
+                    5563.395692833053,
+                    5714.028335195629,
+                    5640.766189570589,
+                    5672.449789387779
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "github_events.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 8068.057200965899,
+            "scoreError" : 134.55588126187675,
+            "scoreConfidence" : [
+                7933.5013197040225,
+                8202.613082227776
+            ],
+            "scorePercentiles" : {
+                "0.0" : 7736.967509422835,
+                "50.0" : 8058.997487384688,
+                "90.0" : 8333.715072801673,
+                "95.0" : 8438.632162889025,
+                "99.0" : 8439.16774615521,
+                "99.9" : 8439.16774615521,
+                "99.99" : 8439.16774615521,
+                "99.999" : 8439.16774615521,
+                "99.9999" : 8439.16774615521,
+                "100.0" : 8439.16774615521
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    7869.974583341232,
+                    7837.966289815868,
+                    7736.967509422835,
+                    7951.15261329952,
+                    7852.798435458592,
+                    7962.1982703317635,
+                    7766.529399891601,
+                    7964.858070333598,
+                    7962.629631440429,
+                    7760.174317452623
+                ],
+                [
+                    8115.693470739532,
+                    8125.142602452019,
+                    8035.868919306132,
+                    7997.160370135579,
+                    7932.967992260918,
+                    8139.458793477455,
+                    8082.1260554632445,
+                    7907.73227190083,
+                    7925.434179477625,
+                    8153.467563924828
+                ],
+                [
+                    8332.56991435588,
+                    8327.507102819156,
+                    8333.842312628984,
+                    8193.924064025077,
+                    8439.16774615521,
+                    8251.004194554764,
+                    8298.65286308343,
+                    8169.724869342393,
+                    8176.827663687374,
+                    8438.193958398511
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "github_events.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 43322.85399454874,
+            "scoreError" : 386.14935345490386,
+            "scoreConfidence" : [
+                42936.70464109384,
+                43709.00334800364
+            ],
+            "scorePercentiles" : {
+                "0.0" : 42329.841474218716,
+                "50.0" : 43376.75389415615,
+                "90.0" : 44096.37002867488,
+                "95.0" : 44193.3805631878,
+                "99.0" : 44210.55338946831,
+                "99.9" : 44210.55338946831,
+                "99.99" : 44210.55338946831,
+                "99.999" : 44210.55338946831,
+                "99.9999" : 44210.55338946831,
+                "100.0" : 44210.55338946831
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    43182.75619771994,
+                    43660.054921097384,
+                    43639.3496120443,
+                    43686.529094635494,
+                    44108.988066990365,
+                    43121.384703106494,
+                    43116.590881954784,
+                    44179.33006895828,
+                    43152.20536766879,
+                    44210.55338946831
+                ],
+                [
+                    43903.972118658865,
+                    42990.606174615845,
+                    43982.8076838355,
+                    42904.86654515704,
+                    43895.78200022157,
+                    43921.948550769914,
+                    43407.31979720564,
+                    43918.26991449367,
+                    43500.188930790915,
+                    43491.94743068568
+                ],
+                [
+                    42359.49216124985,
+                    43355.30491407278,
+                    42419.20576207804,
+                    43348.92472423775,
+                    42347.79960739247,
+                    42849.24768700174,
+                    42859.54384924354,
+                    42442.6053326492,
+                    43398.20287423952,
+                    42329.841474218716
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "github_events.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 46060.95984428285,
+            "scoreError" : 425.9417063776118,
+            "scoreConfidence" : [
+                45635.01813790524,
+                46486.90155066046
+            ],
+            "scorePercentiles" : {
+                "0.0" : 44882.555981949285,
+                "50.0" : 46053.91630027625,
+                "90.0" : 47063.21702933434,
+                "95.0" : 47098.6436255601,
+                "99.0" : 47103.06764750052,
+                "99.9" : 47103.06764750052,
+                "99.99" : 47103.06764750052,
+                "99.999" : 47103.06764750052,
+                "99.9999" : 47103.06764750052,
+                "100.0" : 47103.06764750052
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    45177.71043019274,
+                    45251.56996372138,
+                    46255.08862345091,
+                    45514.67934002471,
+                    46272.11032013438,
+                    45842.6342805796,
+                    46427.897687876495,
+                    45343.19407486,
+                    46428.42190080937,
+                    46317.394931882875
+                ],
+                [
+                    45771.12219484568,
+                    47006.00519464853,
+                    47103.06764750052,
+                    46512.676300040504,
+                    47069.57389985498,
+                    47095.02397124521,
+                    46572.17264997059,
+                    46522.73419093383,
+                    46621.4941102644,
+                    46618.84980351509
+                ],
+                [
+                    45490.84407269246,
+                    46034.083978918985,
+                    46016.57866737608,
+                    44882.555981949285,
+                    45974.92878280745,
+                    45037.712087505424,
+                    45537.56328009925,
+                    45589.28834704933,
+                    45468.06999210164,
+                    46073.74862163352
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "citm_catalog.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 318.1676038582257,
+            "scoreError" : 2.3841289385334066,
+            "scoreConfidence" : [
+                315.78347491969225,
+                320.5517327967591
+            ],
+            "scorePercentiles" : {
+                "0.0" : 308.6616907365448,
+                "50.0" : 319.71978093593975,
+                "90.0" : 323.4103268115104,
+                "95.0" : 324.0542096091931,
+                "99.0" : 324.24764785842643,
+                "99.9" : 324.24764785842643,
+                "99.99" : 324.24764785842643,
+                "99.999" : 324.24764785842643,
+                "99.9999" : 324.24764785842643,
+                "100.0" : 324.24764785842643
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    324.24764785842643,
+                    319.8465711990287,
+                    323.8959419507295,
+                    319.8858755957072,
+                    319.8229805388556,
+                    323.69169660665005,
+                    319.83471293853523,
+                    320.34328377487344,
+                    320.8779986552533,
+                    320.7349401551666
+                ],
+                [
+                    314.9276497814498,
+                    318.7105330706018,
+                    319.40510894280936,
+                    319.7295228917326,
+                    320.501140295631,
+                    319.86504062287014,
+                    313.05920324805663,
+                    320.3651407301088,
+                    320.6589449015901,
+                    319.710038980147
+                ],
+                [
+                    315.87617906481603,
+                    315.11022389101936,
+                    315.3644413109594,
+                    315.4451723188732,
+                    314.004623394138,
+                    314.07015792311984,
+                    315.2555011204525,
+                    315.44930343218533,
+                    315.676849816441,
+                    308.6616907365448
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "citm_catalog.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 474.94848217900864,
+            "scoreError" : 3.2447086949553783,
+            "scoreConfidence" : [
+                471.7037734840533,
+                478.193190873964
+            ],
+            "scorePercentiles" : {
+                "0.0" : 467.9660518707331,
+                "50.0" : 474.3647323024201,
+                "90.0" : 482.9076257053901,
+                "95.0" : 483.2852536459005,
+                "99.0" : 483.35582733870325,
+                "99.9" : 483.35582733870325,
+                "99.99" : 483.35582733870325,
+                "99.999" : 483.35582733870325,
+                "99.9999" : 483.35582733870325,
+                "100.0" : 483.35582733870325
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    483.35582733870325,
+                    471.662965681265,
+                    471.2436120619591,
+                    483.1590876984516,
+                    472.46291172136176,
+                    483.22751153360736,
+                    477.299092010971,
+                    476.6754412255783,
+                    477.77504201034463,
+                    472.0059841896616
+                ],
+                [
+                    467.9660518707331,
+                    468.02594767388274,
+                    479.635010227727,
+                    468.2231919722425,
+                    473.1687834517727,
+                    474.251022000469,
+                    468.3142455769447,
+                    476.54625791016963,
+                    471.6708105645492,
+                    473.1618099411907
+                ],
+                [
+                    480.3890992706286,
+                    468.92397851352735,
+                    480.39584985565887,
+                    474.8829166671299,
+                    474.81949831735363,
+                    474.25128574191194,
+                    480.60827157730205,
+                    480.6444677678366,
+                    474.4781788629283,
+                    469.2303121343997
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "citm_catalog.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 1477.3901156121121,
+            "scoreError" : 9.09641402624811,
+            "scoreConfidence" : [
+                1468.293701585864,
+                1486.4865296383603
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1450.101496811155,
+                "50.0" : 1478.9931134658386,
+                "90.0" : 1497.408204235701,
+                "95.0" : 1498.4303569884007,
+                "99.0" : 1499.4151845949675,
+                "99.9" : 1499.4151845949675,
+                "99.99" : 1499.4151845949675,
+                "99.999" : 1499.4151845949675,
+                "99.9999" : 1499.4151845949675,
+                "100.0" : 1499.4151845949675
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1478.5247770017504,
+                    1459.4367435237677,
+                    1479.671080956072,
+                    1480.5171174979912,
+                    1480.4220343552554,
+                    1480.223254327515,
+                    1478.8423539262292,
+                    1476.9658462380544,
+                    1462.441613468029,
+                    1462.9741756747844
+                ],
+                [
+                    1464.558753345116,
+                    1481.7807063732957,
+                    1465.6812729503843,
+                    1451.7802193479336,
+                    1469.8700620166476,
+                    1466.4730214532678,
+                    1450.101496811155,
+                    1483.784245900372,
+                    1466.4670917247356,
+                    1474.1672090377688
+                ],
+                [
+                    1480.775074708477,
+                    1497.624588946664,
+                    1497.0267335186572,
+                    1496.1678254708017,
+                    1499.4151845949675,
+                    1497.450589870928,
+                    1474.3544391652672,
+                    1493.2702403268224,
+                    1491.7918428252115,
+                    1479.1438730054483
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "citm_catalog.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 1767.9729164377316,
+            "scoreError" : 10.418830889390998,
+            "scoreConfidence" : [
+                1757.5540855483405,
+                1778.3917473271226
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1743.7341642391934,
+                "50.0" : 1767.976491004249,
+                "90.0" : 1789.8536383743976,
+                "95.0" : 1790.6641611135094,
+                "99.0" : 1791.1726591399158,
+                "99.9" : 1791.1726591399158,
+                "99.99" : 1791.1726591399158,
+                "99.999" : 1791.1726591399158,
+                "99.9999" : 1791.1726591399158,
+                "100.0" : 1791.1726591399158
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1743.8092342450104,
+                    1786.9622252616039,
+                    1744.3013619527026,
+                    1785.375882581974,
+                    1764.8355068226977,
+                    1790.2481172737225,
+                    1788.580272078971,
+                    1768.7401296251949,
+                    1787.2976367112135,
+                    1768.8901894506878
+                ],
+                [
+                    1769.3029477176876,
+                    1767.8796964042683,
+                    1789.914808659891,
+                    1769.2767126027811,
+                    1764.2979893586303,
+                    1768.07328560423,
+                    1789.3031058049573,
+                    1749.7807419743463,
+                    1767.559911165758,
+                    1765.2456011094187
+                ],
+                [
+                    1745.9481238716555,
+                    1791.1726591399158,
+                    1743.7341642391934,
+                    1769.0361689479275,
+                    1764.7824482084795,
+                    1765.939899214742,
+                    1749.5099762517316,
+                    1750.144209234136,
+                    1777.6545786058673,
+                    1751.5899090125524
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "canada.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 31.138591319414367,
+            "scoreError" : 0.4826935377126543,
+            "scoreConfidence" : [
+                30.65589778170171,
+                31.621284857127023
+            ],
+            "scorePercentiles" : {
+                "0.0" : 29.83066192215292,
+                "50.0" : 31.3966134321073,
+                "90.0" : 32.07355954917373,
+                "95.0" : 32.12200743469064,
+                "99.0" : 32.1375847633911,
+                "99.9" : 32.1375847633911,
+                "99.99" : 32.1375847633911,
+                "99.999" : 32.1375847633911,
+                "99.9999" : 32.1375847633911,
+                "100.0" : 32.1375847633911
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    30.127238865546147,
+                    30.563419131670095,
+                    29.84875979656693,
+                    30.248924793430213,
+                    30.29550073094541,
+                    30.0328422014531,
+                    30.634646215783235,
+                    29.83066192215292,
+                    30.70554706841028,
+                    30.022845603503107
+                ],
+                [
+                    31.295150558920483,
+                    31.66769839533231,
+                    31.31264204123857,
+                    31.377156016682868,
+                    31.75135639810073,
+                    31.393740594741896,
+                    30.98262778886493,
+                    31.732753823700893,
+                    31.399486269472703,
+                    31.442762465288382
+                ],
+                [
+                    32.10926234757208,
+                    31.736843142817815,
+                    32.07587982104447,
+                    31.462842442068748,
+                    31.425678627513026,
+                    32.1375847633911,
+                    31.401416773047142,
+                    31.664328135643434,
+                    32.05267710233713,
+                    31.425465745190568
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "canada.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 38.4723235918219,
+            "scoreError" : 0.5229654838376794,
+            "scoreConfidence" : [
+                37.94935810798422,
+                38.99528907565958
+            ],
+            "scorePercentiles" : {
+                "0.0" : 36.92952885726284,
+                "50.0" : 38.713989888255796,
+                "90.0" : 39.432969093093384,
+                "95.0" : 39.45809111431071,
+                "99.0" : 39.47075079366577,
+                "99.9" : 39.47075079366577,
+                "99.99" : 39.47075079366577,
+                "99.999" : 39.47075079366577,
+                "99.9999" : 39.47075079366577,
+                "100.0" : 39.47075079366577
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    37.61438596638143,
+                    36.92952885726284,
+                    38.1281202330501,
+                    37.32775112925067,
+                    37.347244450671475,
+                    37.39405208416571,
+                    37.679923630886066,
+                    37.75737450956524,
+                    37.32026657827132,
+                    37.47782879453798
+                ],
+                [
+                    38.378338311712334,
+                    39.28515826392832,
+                    39.231247040952546,
+                    38.867438713523654,
+                    39.400541330735436,
+                    39.223012633368576,
+                    39.436572177799825,
+                    39.47075079366577,
+                    39.44773319483839,
+                    38.931941982126666
+                ],
+                [
+                    38.322407223621255,
+                    39.13809308643198,
+                    38.47999561533277,
+                    38.68970239642826,
+                    38.73827738008334,
+                    39.22302301787319,
+                    38.66625860742891,
+                    38.7425563330478,
+                    38.75516594437372,
+                    38.765017473341565
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "canada.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 333.67824817926584,
+            "scoreError" : 2.27514957550429,
+            "scoreConfidence" : [
+                331.4030986037615,
+                335.95339775477015
+            ],
+            "scorePercentiles" : {
+                "0.0" : 327.2528310624955,
+                "50.0" : 334.5435372457707,
+                "90.0" : 337.86784359080855,
+                "95.0" : 338.39723540042326,
+                "99.0" : 338.6437569270255,
+                "99.9" : 338.6437569270255,
+                "99.99" : 338.6437569270255,
+                "99.999" : 338.6437569270255,
+                "99.9999" : 338.6437569270255,
+                "100.0" : 338.6437569270255
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    335.88478547265674,
+                    327.2528310624955,
+                    328.5545391846826,
+                    336.3213314677686,
+                    331.5724247585217,
+                    331.83196328028254,
+                    332.64377411081114,
+                    331.74888732422437,
+                    335.96524002837094,
+                    336.09766448405776
+                ],
+                [
+                    330.028937704999,
+                    337.89705966077435,
+                    328.40134110363647,
+                    334.2614476600878,
+                    338.1955359695669,
+                    334.1344990920952,
+                    338.6437569270255,
+                    330.16155308513254,
+                    337.6048989611164,
+                    329.4934121162066
+                ],
+                [
+                    336.6902241190166,
+                    336.4902270642143,
+                    334.8256268314537,
+                    327.93725642060355,
+                    331.2463225297671,
+                    335.5920881524428,
+                    336.27783427140065,
+                    336.06739282087847,
+                    332.1024290896165,
+                    336.42216062406777
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "canada.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 351.0554390998723,
+            "scoreError" : 2.2663844283075467,
+            "scoreConfidence" : [
+                348.7890546715647,
+                353.32182352817983
+            ],
+            "scorePercentiles" : {
+                "0.0" : 346.45951449589853,
+                "50.0" : 351.3932926202216,
+                "90.0" : 355.6572279023736,
+                "95.0" : 356.1551833222919,
+                "99.0" : 356.7071284658302,
+                "99.9" : 356.7071284658302,
+                "99.99" : 356.7071284658302,
+                "99.999" : 356.7071284658302,
+                "99.9999" : 356.7071284658302,
+                "100.0" : 356.7071284658302
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    355.6602928495862,
+                    351.26888510091965,
+                    351.5177001395236,
+                    351.2445873982419,
+                    347.2365251491337,
+                    355.70359184121514,
+                    350.97146461604086,
+                    347.4260164359681,
+                    355.57795918657206,
+                    346.89540756566487
+                ],
+                [
+                    347.23506268547777,
+                    355.1968562188758,
+                    346.45951449589853,
+                    355.05705226265474,
+                    346.69319039422874,
+                    347.054547407915,
+                    349.64146668263874,
+                    351.9606233493809,
+                    346.580014684785,
+                    355.62964337746064
+                ],
+                [
+                    352.3031109776906,
+                    352.4932060654183,
+                    353.04809302005043,
+                    353.1461551038284,
+                    348.7362413647773,
+                    352.9505138673022,
+                    352.02363323526043,
+                    347.5873446520165,
+                    356.7071284658302,
+                    347.6573444018121
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "gsoc-2018.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 194.65472397411926,
+            "scoreError" : 1.4131615250338005,
+            "scoreConfidence" : [
+                193.24156244908545,
+                196.06788549915308
+            ],
+            "scorePercentiles" : {
+                "0.0" : 190.5958942014086,
+                "50.0" : 194.6934743797538,
+                "90.0" : 197.43594632159795,
+                "95.0" : 197.7854977676227,
+                "99.0" : 198.09591934421314,
+                "99.9" : 198.09591934421314,
+                "99.99" : 198.09591934421314,
+                "99.999" : 198.09591934421314,
+                "99.9999" : 198.09591934421314,
+                "100.0" : 198.09591934421314
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    193.40118024186785,
+                    197.53151647768505,
+                    193.3927768499643,
+                    197.51212904278188,
+                    196.00402495160688,
+                    193.39198044827015,
+                    196.18956484276146,
+                    195.7343221708789,
+                    193.12636603865926,
+                    198.09591934421314
+                ],
+                [
+                    196.36695711283357,
+                    194.04960596157648,
+                    194.33225823114037,
+                    194.61004855832087,
+                    196.47000448061314,
+                    196.0814257761677,
+                    196.72840640181357,
+                    194.45861263801982,
+                    196.57245628359038,
+                    194.77690020118675
+                ],
+                [
+                    191.05998639541446,
+                    195.85898388191282,
+                    191.48517544660154,
+                    190.5958942014086,
+                    196.26401993470986,
+                    192.33279369202648,
+                    192.511702921079,
+                    196.75030183094273,
+                    191.78765213619184,
+                    192.16875272933768
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "gsoc-2018.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 267.5953612805226,
+            "scoreError" : 2.1718913812420966,
+            "scoreConfidence" : [
+                265.42346989928046,
+                269.7672526617647
+            ],
+            "scorePercentiles" : {
+                "0.0" : 262.51394964692184,
+                "50.0" : 267.4930788386225,
+                "90.0" : 272.1921663077933,
+                "95.0" : 272.2298094566222,
+                "99.0" : 272.25213834982065,
+                "99.9" : 272.25213834982065,
+                "99.99" : 272.25213834982065,
+                "99.999" : 272.25213834982065,
+                "99.9999" : 272.25213834982065,
+                "100.0" : 272.25213834982065
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    266.2675525477893,
+                    272.2014833385522,
+                    265.7207068109266,
+                    272.09158957720575,
+                    265.6028862350716,
+                    269.0566899356525,
+                    268.7473782706677,
+                    272.21154036218707,
+                    272.1083130309633,
+                    265.3662104882507
+                ],
+                [
+                    262.51394964692184,
+                    268.8425835266973,
+                    265.1732621608829,
+                    262.5896149713175,
+                    269.1141185725757,
+                    263.1135040371822,
+                    266.36818186455815,
+                    266.12250256290923,
+                    263.37820856050587,
+                    263.07769799711855
+                ],
+                [
+                    268.61797581268684,
+                    268.9261343276104,
+                    265.51534554673646,
+                    272.25213834982065,
+                    265.46937053075516,
+                    272.1060597576962,
+                    268.9755571152227,
+                    269.08651532306885,
+                    265.21753374931257,
+                    272.0262334048316
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "gsoc-2018.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 943.2148504831101,
+            "scoreError" : 6.301665875192843,
+            "scoreConfidence" : [
+                936.9131846079173,
+                949.516516358303
+            ],
+            "scorePercentiles" : {
+                "0.0" : 926.6366879939181,
+                "50.0" : 946.7786318174503,
+                "90.0" : 959.0683474591006,
+                "95.0" : 960.0732549234102,
+                "99.0" : 960.2158013571895,
+                "99.9" : 960.2158013571895,
+                "99.99" : 960.2158013571895,
+                "99.999" : 960.2158013571895,
+                "99.9999" : 960.2158013571895,
+                "100.0" : 960.2158013571895
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    938.9208930979938,
+                    936.5661029729841,
+                    926.6385655541442,
+                    947.150532890169,
+                    946.4067307447317,
+                    947.3527676417943,
+                    927.3292849840739,
+                    926.6366879939181,
+                    936.7200171970198,
+                    935.8253207172855
+                ],
+                [
+                    948.1373078781705,
+                    937.2928406704993,
+                    935.4731368519593,
+                    947.8409864047568,
+                    936.2855205192917,
+                    948.6168052928851,
+                    938.0477970616806,
+                    936.6995461269834,
+                    936.872751132323,
+                    947.3009913349989
+                ],
+                [
+                    960.2158013571895,
+                    935.2157692054382,
+                    957.3673879053177,
+                    959.9566260230454,
+                    947.7908386743488,
+                    959.2573429650764,
+                    947.7183049496283,
+                    948.1517455223859,
+                    948.8106050686904,
+                    949.8465057545166
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "gsoc-2018.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 1219.0848230867784,
+            "scoreError" : 8.15281559809317,
+            "scoreConfidence" : [
+                1210.9320074886853,
+                1227.2376386848716
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1183.376890531537,
+                "50.0" : 1223.6612865365355,
+                "90.0" : 1232.029077481806,
+                "95.0" : 1233.2950601674586,
+                "99.0" : 1233.6927636215332,
+                "99.9" : 1233.6927636215332,
+                "99.99" : 1233.6927636215332,
+                "99.999" : 1233.6927636215332,
+                "99.9999" : 1233.6927636215332,
+                "100.0" : 1233.6927636215332
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1200.1949344420698,
+                    1229.2932977225387,
+                    1215.5787290356654,
+                    1199.882259153556,
+                    1214.814191739745,
+                    1217.5363207728149,
+                    1202.2354804244658,
+                    1229.7462750592908,
+                    1212.5221886562495,
+                    1228.9061555465726
+                ],
+                [
+                    1231.4547438572433,
+                    1215.0003681670935,
+                    1215.7346476771247,
+                    1201.6893128416793,
+                    1231.9515550208089,
+                    1218.1822099188373,
+                    1232.0376910885836,
+                    1233.6927636215332,
+                    1220.5619452001154,
+                    1232.9696664323064
+                ],
+                [
+                    1183.376890531537,
+                    1206.8374016369949,
+                    1225.4845428190222,
+                    1223.9896503991401,
+                    1225.553245398795,
+                    1224.7701975925959,
+                    1223.3329226739306,
+                    1224.530397490684,
+                    1226.3972772469187,
+                    1224.2874304354384
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "marine_ik.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 54.61483672972101,
+            "scoreError" : 0.38196344945708516,
+            "scoreConfidence" : [
+                54.23287328026393,
+                54.996800179178095
+            ],
+            "scorePercentiles" : {
+                "0.0" : 53.54717547261553,
+                "50.0" : 54.671717852765866,
+                "90.0" : 55.2162433510022,
+                "95.0" : 55.592777063429615,
+                "99.0" : 55.69358752635892,
+                "99.9" : 55.69358752635892,
+                "99.99" : 55.69358752635892,
+                "99.999" : 55.69358752635892,
+                "99.9999" : 55.69358752635892,
+                "100.0" : 55.69358752635892
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    55.015365413329306,
+                    54.87540227124521,
+                    55.174201274148274,
+                    54.989714393881485,
+                    55.51029577557837,
+                    54.39241426855317,
+                    54.570596743743124,
+                    55.69358752635892,
+                    55.154496026393346,
+                    55.17594853288414
+                ],
+                [
+                    53.7050151079766,
+                    54.09641662562601,
+                    54.77283896178861,
+                    53.603373735989514,
+                    54.86553144063045,
+                    53.54717547261553,
+                    54.85301744519137,
+                    53.68969066129932,
+                    54.36200500856722,
+                    54.902967679295735
+                ],
+                [
+                    55.04297478782194,
+                    54.29500337950857,
+                    54.279414608395705,
+                    54.43467084885142,
+                    54.47517575204622,
+                    54.337155064355926,
+                    55.08447975168987,
+                    54.511464061696344,
+                    53.813988719152924,
+                    55.22072055301532
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "marine_ik.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 74.86502503188112,
+            "scoreError" : 0.8938306682218282,
+            "scoreConfidence" : [
+                73.9711943636593,
+                75.75885570010294
+            ],
+            "scorePercentiles" : {
+                "0.0" : 69.77351204010976,
+                "50.0" : 75.24112684950146,
+                "90.0" : 76.23891495812063,
+                "95.0" : 76.450038898543,
+                "99.0" : 76.47299773061611,
+                "99.9" : 76.47299773061611,
+                "99.99" : 76.47299773061611,
+                "99.999" : 76.47299773061611,
+                "99.9999" : 76.47299773061611,
+                "100.0" : 76.47299773061611
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    75.30809050135507,
+                    75.19542348146506,
+                    76.23194289760977,
+                    74.60591343599411,
+                    75.30700565536587,
+                    76.23968963151073,
+                    75.3521267096219,
+                    76.2302169778781,
+                    75.59493662727262,
+                    76.1936086760637
+                ],
+                [
+                    76.16704481461188,
+                    74.26316179978052,
+                    75.33692932423489,
+                    76.43125439957409,
+                    75.38285720765239,
+                    75.28683021753784,
+                    75.37745152230372,
+                    74.33133942818932,
+                    76.47299773061611,
+                    74.38837395410503
+                ],
+                [
+                    73.88318270875372,
+                    73.16803061565554,
+                    74.93564242273294,
+                    74.10097884043684,
+                    69.77351204010976,
+                    74.85939392103933,
+                    73.3273603508019,
+                    74.15859671004502,
+                    74.069719213516,
+                    73.97713914059993
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "marine_ik.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 239.5419606644438,
+            "scoreError" : 1.4568164972411217,
+            "scoreConfidence" : [
+                238.08514416720266,
+                240.99877716168493
+            ],
+            "scorePercentiles" : {
+                "0.0" : 235.54126430891597,
+                "50.0" : 239.25966680500403,
+                "90.0" : 242.69171879436604,
+                "95.0" : 242.80213666624329,
+                "99.0" : 242.84097437372648,
+                "99.9" : 242.84097437372648,
+                "99.99" : 242.84097437372648,
+                "99.999" : 242.84097437372648,
+                "99.9999" : 242.84097437372648,
+                "100.0" : 242.84097437372648
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    239.23252245091064,
+                    239.23821719034606,
+                    235.54126430891597,
+                    241.65041449466798,
+                    236.18870784936954,
+                    241.60706380142892,
+                    239.07140434986655,
+                    238.67876749775766,
+                    238.89492923222508,
+                    236.4451615669895
+                ],
+                [
+                    239.27185983972873,
+                    239.2686149434657,
+                    239.25071866654233,
+                    242.06970482223414,
+                    239.2119234944054,
+                    241.90473283620972,
+                    239.25014220430327,
+                    235.98493910264267,
+                    242.30277159401328,
+                    236.96304419148007
+                ],
+                [
+                    239.8289113308926,
+                    242.84097437372648,
+                    239.71011089217455,
+                    242.7703603601207,
+                    240.09273564978471,
+                    239.83727232942266,
+                    237.0028394672878,
+                    242.2496001289031,
+                    237.16417581353838,
+                    242.7349351499608
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "marine_ik.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 251.61087256554546,
+            "scoreError" : 1.6508158120630072,
+            "scoreConfidence" : [
+                249.96005675348246,
+                253.26168837760846
+            ],
+            "scorePercentiles" : {
+                "0.0" : 248.271488777521,
+                "50.0" : 251.58147799381447,
+                "90.0" : 254.83188475534587,
+                "95.0" : 255.31516744087875,
+                "99.0" : 255.39950697778937,
+                "99.9" : 255.39950697778937,
+                "99.99" : 255.39950697778937,
+                "99.999" : 255.39950697778937,
+                "99.9999" : 255.39950697778937,
+                "100.0" : 255.39950697778937
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    255.2461623652246,
+                    248.79577126403825,
+                    255.39950697778937,
+                    249.53884871403258,
+                    254.5591735152443,
+                    249.6958030939647,
+                    249.41294701949528,
+                    253.56239201262477,
+                    250.81140637595811,
+                    252.08352488484513
+                ],
+                [
+                    251.3690363196128,
+                    251.7994243843176,
+                    251.0774335458561,
+                    254.7709298520096,
+                    251.85699836675434,
+                    251.59133491128557,
+                    248.87429235056226,
+                    254.83711881681128,
+                    251.57162107634338,
+                    254.4612170509995
+                ],
+                [
+                    254.1652762455557,
+                    248.51714882455147,
+                    248.271488777521,
+                    254.78477820215707,
+                    248.81772409749334,
+                    248.6042560830988,
+                    254.59654111589018,
+                    248.86755567328134,
+                    248.72188913244767,
+                    251.6645759165977
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "mesh.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 205.29958171651955,
+            "scoreError" : 1.4083203620243763,
+            "scoreConfidence" : [
+                203.89126135449519,
+                206.70790207854392
+            ],
+            "scorePercentiles" : {
+                "0.0" : 202.11631110690462,
+                "50.0" : 206.08484436269018,
+                "90.0" : 207.5865219574011,
+                "95.0" : 208.07157444146426,
+                "99.0" : 208.14127300694417,
+                "99.9" : 208.14127300694417,
+                "99.99" : 208.14127300694417,
+                "99.999" : 208.14127300694417,
+                "99.9999" : 208.14127300694417,
+                "100.0" : 208.14127300694417
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    207.58743989160965,
+                    207.38124032610133,
+                    207.57826054952415,
+                    207.4091198326462,
+                    202.88584161484104,
+                    203.2425187908319,
+                    208.01454834243523,
+                    202.899044536905,
+                    202.86610188104325,
+                    207.53227496542578
+                ],
+                [
+                    207.12886570178605,
+                    205.8885667251428,
+                    203.63879060419603,
+                    206.71973909356467,
+                    203.0785673517052,
+                    204.2278528830854,
+                    206.36303017200865,
+                    206.52460576006683,
+                    206.4812202701768,
+                    204.30465564227052
+                ],
+                [
+                    202.2530959015893,
+                    202.39290325934778,
+                    206.27585376350174,
+                    202.11631110690462,
+                    206.78877250649165,
+                    203.06688451602403,
+                    207.54991576222457,
+                    202.7563217753134,
+                    205.8938349618786,
+                    208.14127300694417
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "mesh.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 256.8972323593633,
+            "scoreError" : 1.6976919797228238,
+            "scoreConfidence" : [
+                255.19954037964044,
+                258.5949243390861
+            ],
+            "scorePercentiles" : {
+                "0.0" : 252.25061362479286,
+                "50.0" : 257.0033716608541,
+                "90.0" : 260.74863261406165,
+                "95.0" : 261.01818832487714,
+                "99.0" : 261.0333465317904,
+                "99.9" : 261.0333465317904,
+                "99.99" : 261.0333465317904,
+                "99.999" : 261.0333465317904,
+                "99.9999" : 261.0333465317904,
+                "100.0" : 261.0333465317904
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    254.06158264060213,
+                    253.11855664416709,
+                    259.4690635045563,
+                    252.25061362479286,
+                    253.4050816500255,
+                    259.8531517868622,
+                    254.5600067745306,
+                    253.55167753034118,
+                    259.74965276516565,
+                    256.7263723037021
+                ],
+                [
+                    255.58539295374592,
+                    257.34536973802244,
+                    258.1871838860542,
+                    256.06635537586334,
+                    259.22564142316634,
+                    255.073330324305,
+                    256.2356444603332,
+                    260.4244312767954,
+                    255.24397958418268,
+                    261.0333465317904
+                ],
+                [
+                    260.784654984869,
+                    254.08294351363512,
+                    257.1901127073166,
+                    256.81663061439167,
+                    257.4238799507687,
+                    257.8703028418342,
+                    255.2383885571398,
+                    257.50466685538834,
+                    261.0057861555845,
+                    257.8331698209669
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "mesh.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 980.8502112695583,
+            "scoreError" : 6.662371476739199,
+            "scoreConfidence" : [
+                974.1878397928191,
+                987.5125827462974
+            ],
+            "scorePercentiles" : {
+                "0.0" : 956.8111254838295,
+                "50.0" : 980.8311163448889,
+                "90.0" : 992.9830004534726,
+                "95.0" : 994.6519436639134,
+                "99.0" : 996.0316779233565,
+                "99.9" : 996.0316779233565,
+                "99.99" : 996.0316779233565,
+                "99.999" : 996.0316779233565,
+                "99.9999" : 996.0316779233565,
+                "100.0" : 996.0316779233565
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    989.9147990231629,
+                    978.9342802589932,
+                    968.9478824760316,
+                    991.190069849414,
+                    991.2082822965984,
+                    991.5642590694804,
+                    961.1957991942755,
+                    976.7456173481635,
+                    996.0316779233565,
+                    993.5230701789144
+                ],
+                [
+                    968.0182803888705,
+                    990.5988827380062,
+                    976.2589238034586,
+                    978.866853551713,
+                    990.5032972640375,
+                    984.7041771405118,
+                    993.1406383850274,
+                    984.2603195115443,
+                    986.1480893470192,
+                    987.0898084360005
+                ],
+                [
+                    981.5472417038193,
+                    977.3451572430537,
+                    968.5773341600739,
+                    980.8660029144759,
+                    980.7962297753019,
+                    974.3494288350657,
+                    971.1187835089931,
+                    975.2215099252719,
+                    956.8111254838295,
+                    980.0285163522818
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "mesh.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 990.8798167555415,
+            "scoreError" : 5.44505099677799,
+            "scoreConfidence" : [
+                985.4347657587634,
+                996.3248677523195
+            ],
+            "scorePercentiles" : {
+                "0.0" : 976.6134583464134,
+                "50.0" : 991.4696237493167,
+                "90.0" : 1001.5486399086608,
+                "95.0" : 1003.8850132817095,
+                "99.0" : 1006.6738890003322,
+                "99.9" : 1006.6738890003322,
+                "99.99" : 1006.6738890003322,
+                "99.999" : 1006.6738890003322,
+                "99.9999" : 1006.6738890003322,
+                "100.0" : 1006.6738890003322
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    994.0416116788073,
+                    991.2940994717661,
+                    1001.550208808975,
+                    981.5831098742391,
+                    1000.2625244454518,
+                    1001.5345198058334,
+                    991.6112814363979,
+                    991.3293963945504,
+                    986.7858062993131,
+                    989.5006593767528
+                ],
+                [
+                    978.2126904071893,
+                    1001.6032058755635,
+                    979.5274250347371,
+                    993.4312596104418,
+                    987.0779990663341,
+                    991.6098511040831,
+                    992.164095796307,
+                    982.1160376212946,
+                    1006.6738890003322,
+                    992.0412288578344
+                ],
+                [
+                    987.4928444124595,
+                    1000.5793124315641,
+                    976.6134583464134,
+                    1000.677120519616,
+                    980.0282206768566,
+                    991.8278910815443,
+                    999.820317291678,
+                    980.1748897579766,
+                    987.8818325388372,
+                    987.3477156430944
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "update-center.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 421.94556866727055,
+            "scoreError" : 2.9467685452320693,
+            "scoreConfidence" : [
+                418.99880012203846,
+                424.89233721250264
+            ],
+            "scorePercentiles" : {
+                "0.0" : 412.89477872038043,
+                "50.0" : 421.52380067806024,
+                "90.0" : 427.297954003305,
+                "95.0" : 429.344957379118,
+                "99.0" : 429.98595766624635,
+                "99.9" : 429.98595766624635,
+                "99.99" : 429.98595766624635,
+                "99.999" : 429.98595766624635,
+                "99.9999" : 429.98595766624635,
+                "100.0" : 429.98595766624635
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    421.6738074794434,
+                    427.30122703930175,
+                    418.2593446794043,
+                    427.08484473013647,
+                    417.31369174494796,
+                    421.2261372411231,
+                    427.26849667933413,
+                    416.61227187354774,
+                    420.817265993684,
+                    426.22521419900727
+                ],
+                [
+                    421.0065777229681,
+                    428.82050259874023,
+                    420.18056721925353,
+                    423.0247266453127,
+                    424.1707538113723,
+                    418.51190630415374,
+                    429.98595766624635,
+                    418.9511021221158,
+                    423.78506045518776,
+                    424.9964537487807
+                ],
+                [
+                    416.08055392961796,
+                    412.89477872038043,
+                    424.0212724029544,
+                    414.51172922465366,
+                    420.04051992212476,
+                    425.1378688676534,
+                    426.4906703407962,
+                    423.8685036979663,
+                    416.731459081231,
+                    421.3737938766771
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "update-center.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 694.7317401065669,
+            "scoreError" : 5.486538148518269,
+            "scoreConfidence" : [
+                689.2452019580486,
+                700.2182782550852
+            ],
+            "scorePercentiles" : {
+                "0.0" : 665.9424672324284,
+                "50.0" : 694.8013969504462,
+                "90.0" : 704.787753800291,
+                "95.0" : 706.38666326457,
+                "99.0" : 707.5925314255935,
+                "99.9" : 707.5925314255935,
+                "99.99" : 707.5925314255935,
+                "99.999" : 707.5925314255935,
+                "99.9999" : 707.5925314255935,
+                "100.0" : 707.5925314255935
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    707.5925314255935,
+                    699.2801742749247,
+                    698.2966400110522,
+                    695.9932026807437,
+                    665.9424672324284,
+                    704.8923664601034,
+                    705.4000438600962,
+                    688.2024978696212,
+                    695.7371219900901,
+                    694.3947585844702
+                ],
+                [
+                    686.3093997938387,
+                    693.7879707644666,
+                    694.785336343342,
+                    692.8726243753528,
+                    692.8126613779255,
+                    692.3281045747756,
+                    692.3504969982096,
+                    691.9384548421956,
+                    683.8864386052103,
+                    699.9525888461928
+                ],
+                [
+                    702.0033461933157,
+                    686.5216166340538,
+                    693.2307010940749,
+                    703.8462398619785,
+                    686.8899011653018,
+                    695.7432832518591,
+                    703.3577984587595,
+                    694.8174575575505,
+                    703.6683048344671,
+                    695.1176732350093
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "update-center.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 3642.927349061702,
+            "scoreError" : 26.305003513580036,
+            "scoreConfidence" : [
+                3616.6223455481218,
+                3669.232352575282
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3562.124287365194,
+                "50.0" : 3646.4741953215425,
+                "90.0" : 3699.647199589147,
+                "95.0" : 3701.2945707189406,
+                "99.0" : 3701.79372239224,
+                "99.9" : 3701.79372239224,
+                "99.99" : 3701.79372239224,
+                "99.999" : 3701.79372239224,
+                "99.9999" : 3701.79372239224,
+                "100.0" : 3701.79372239224
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3644.407175218029,
+                    3645.9285308774174,
+                    3647.019859765668,
+                    3606.739654711504,
+                    3692.285900829922,
+                    3601.602617175234,
+                    3652.7234632647665,
+                    3647.0856500979207,
+                    3607.620806584641,
+                    3690.5370305251927
+                ],
+                [
+                    3601.980560257875,
+                    3621.163551052506,
+                    3661.1270774709187,
+                    3574.9012505257497,
+                    3664.039069113734,
+                    3619.032791772202,
+                    3628.590125820973,
+                    3662.6806767814587,
+                    3562.124287365194,
+                    3662.765645265719
+                ],
+                [
+                    3699.9294254207543,
+                    3611.7626462350263,
+                    3695.245441966487,
+                    3605.815139962454,
+                    3697.1071671046802,
+                    3656.8340404072205,
+                    3701.79372239224,
+                    3610.194619733257,
+                    3700.886173895332,
+                    3613.896370256969
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "update-center.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 3879.9262694603703,
+            "scoreError" : 28.869063235930657,
+            "scoreConfidence" : [
+                3851.0572062244396,
+                3908.795332696301
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3809.5306086860505,
+                "50.0" : 3877.421756267924,
+                "90.0" : 3942.131773599753,
+                "95.0" : 3945.6560895775174,
+                "99.0" : 3946.198712512828,
+                "99.9" : 3946.198712512828,
+                "99.99" : 3946.198712512828,
+                "99.999" : 3946.198712512828,
+                "99.9999" : 3946.198712512828,
+                "100.0" : 3946.198712512828
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3858.49321778379,
+                    3943.4674857222312,
+                    3833.01709559316,
+                    3946.198712512828,
+                    3921.9727216070023,
+                    3927.2906959546945,
+                    3901.2116002464945,
+                    3844.8757698595205,
+                    3945.2121253577175,
+                    3855.9285068746526
+                ],
+                [
+                    3875.440925016716,
+                    3921.924196583256,
+                    3901.9458034983772,
+                    3874.654845746341,
+                    3879.4025875191323,
+                    3869.5729964894103,
+                    3900.6172168300436,
+                    3847.000614639327,
+                    3928.852884965471,
+                    3930.110364497451
+                ],
+                [
+                    3819.3728513390643,
+                    3813.25061998816,
+                    3909.8393368239886,
+                    3841.8028711745246,
+                    3863.923058956777,
+                    3895.4196370099603,
+                    3814.277930487813,
+                    3899.022889267858,
+                    3809.5306086860505,
+                    3824.15791277929
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "vpic_makes.json",
+            "engine" : "jackson-tree"
+        },
+        "primaryMetric" : {
+            "score" : 329.0735186167764,
+            "scoreError" : 5.298877575766929,
+            "scoreConfidence" : [
+                323.7746410410095,
+                334.37239619254336
+            ],
+            "scorePercentiles" : {
+                "0.0" : 314.1598266675516,
+                "50.0" : 330.7533957748208,
+                "90.0" : 338.89369822555756,
+                "95.0" : 340.46342854749975,
+                "99.0" : 340.53479099506933,
+                "99.9" : 340.53479099506933,
+                "99.99" : 340.53479099506933,
+                "99.999" : 340.53479099506933,
+                "99.9999" : 340.53479099506933,
+                "100.0" : 340.53479099506933
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    333.8656841659316,
+                    324.0254238722381,
+                    329.7891770576976,
+                    330.4338214729354,
+                    331.33589022179285,
+                    331.31240483699827,
+                    330.48205596357576,
+                    335.5739030231929,
+                    328.1227988065302,
+                    331.0247355860658
+                ],
+                [
+                    337.8558791283608,
+                    332.5336136260827,
+                    338.1837573160557,
+                    332.27316242538933,
+                    336.71182484799203,
+                    337.63748471014145,
+                    335.3202103673255,
+                    338.97258054883554,
+                    340.40504109039733,
+                    340.53479099506933
+                ],
+                [
+                    324.10211172301,
+                    318.6042966496042,
+                    323.5707365002756,
+                    314.1598266675516,
+                    316.73900452635826,
+                    318.46692076906004,
+                    316.7470344154226,
+                    323.7541491929566,
+                    319.18735601371094,
+                    320.47988198273436
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "vpic_makes.json",
+            "engine" : "jackson-stream"
+        },
+        "primaryMetric" : {
+            "score" : 549.2834950269935,
+            "scoreError" : 4.2532539759958095,
+            "scoreConfidence" : [
+                545.0302410509977,
+                553.5367490029893
+            ],
+            "scorePercentiles" : {
+                "0.0" : 540.6089283666998,
+                "50.0" : 549.2698387067114,
+                "90.0" : 556.9895119959298,
+                "95.0" : 557.1749736830507,
+                "99.0" : 557.3070499871166,
+                "99.9" : 557.3070499871166,
+                "99.99" : 557.3070499871166,
+                "99.999" : 557.3070499871166,
+                "99.9999" : 557.3070499871166,
+                "100.0" : 557.3070499871166
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    557.3070499871166,
+                    544.0548738577379,
+                    557.0157642848241,
+                    544.2078863741065,
+                    557.0669112524514,
+                    543.3898894395957,
+                    541.8257688802815,
+                    556.7532413958809,
+                    550.2787359038824,
+                    550.7916140515314
+                ],
+                [
+                    556.3570148597845,
+                    542.38791903009,
+                    542.1299383725556,
+                    556.4858949578304,
+                    543.9148947242522,
+                    542.6598488682127,
+                    556.2704996352618,
+                    542.1294620630557,
+                    542.8800929881015,
+                    555.9843061860713
+                ],
+                [
+                    555.3382750163006,
+                    555.013627561044,
+                    542.6582051015422,
+                    555.5628870094412,
+                    541.6010896750118,
+                    548.2193674175207,
+                    552.984709014555,
+                    548.2609415095404,
+                    540.6089283666998,
+                    554.3652130255209
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "vpic_makes.json",
+            "engine" : "simdjson-jni-copy"
+        },
+        "primaryMetric" : {
+            "score" : 2119.420053261502,
+            "scoreError" : 13.97220511496312,
+            "scoreConfidence" : [
+                2105.4478481465385,
+                2133.392258376465
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2084.0415138790613,
+                "50.0" : 2117.8540049191943,
+                "90.0" : 2153.2748192057848,
+                "95.0" : 2155.3944106579966,
+                "99.0" : 2155.426947414626,
+                "99.9" : 2155.426947414626,
+                "99.99" : 2155.426947414626,
+                "99.999" : 2155.426947414626,
+                "99.9999" : 2155.426947414626,
+                "100.0" : 2155.426947414626
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2143.5762964220967,
+                    2092.485987094728,
+                    2093.5984394449206,
+                    2143.8318849912425,
+                    2118.451912002875,
+                    2144.642447355819,
+                    2119.145397401572,
+                    2094.8425704859856,
+                    2120.650260238431,
+                    2117.256097835513
+                ],
+                [
+                    2111.991380500397,
+                    2110.5576714337785,
+                    2135.258655276957,
+                    2137.2469004469363,
+                    2112.2371022034263,
+                    2111.5455700547773,
+                    2084.0415138790613,
+                    2135.5177616500996,
+                    2085.9770931548983,
+                    2110.7130401193435
+                ],
+                [
+                    2129.7536194525337,
+                    2127.797348580521,
+                    2101.5078352710107,
+                    2154.2339716335587,
+                    2105.6175229994174,
+                    2100.2960689701163,
+                    2155.3677896753,
+                    2099.680556699784,
+                    2129.35195515532,
+                    2155.426947414626
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "dev.yll.simdjsonjni.bench.ThroughputBenchmark.checksum",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 3,
+        "jvm" : "/tmp/toolchain-152522/jdk21/bin/java",
+        "jvmArgs" : [
+            "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+            "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+            "-Xms2g",
+            "-Xmx2g",
+            "-XX:+UseG1GC"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 10,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "dataset" : "vpic_makes.json",
+            "engine" : "simdjson-jni-direct"
+        },
+        "primaryMetric" : {
+            "score" : 2213.096318931192,
+            "scoreError" : 13.863844937053361,
+            "scoreConfidence" : [
+                2199.2324739941387,
+                2226.960163868245
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2185.7653616923867,
+                "50.0" : 2215.8691042840464,
+                "90.0" : 2249.000504420744,
+                "95.0" : 2250.429161482419,
+                "99.0" : 2250.9938665185005,
+                "99.9" : 2250.9938665185005,
+                "99.99" : 2250.9938665185005,
+                "99.999" : 2250.9938665185005,
+                "99.9999" : 2250.9938665185005,
+                "100.0" : 2250.9938665185005
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2233.9641845284523,
+                    2190.707977393341,
+                    2194.44644164164,
+                    2236.5988727019776,
+                    2190.932253548098,
+                    2220.427971125651,
+                    2214.789012554297,
+                    2192.4174111137622,
+                    2219.0086711901977,
+                    2218.2388268742297
+                ],
+                [
+                    2199.8462862155016,
+                    2221.864023137163,
+                    2218.6263389519936,
+                    2194.3725323406125,
+                    2249.776849133888,
+                    2196.4337769437743,
+                    2195.5735559438026,
+                    2250.9938665185005,
+                    2195.2675292314643,
+                    2249.9671300892614
+                ],
+                [
+                    2219.1912290717123,
+                    2192.2456679958536,
+                    2216.844350924433,
+                    2217.107966563625,
+                    2185.7653616923867,
+                    2240.80615002181,
+                    2188.8245678997073,
+                    2242.013402002449,
+                    2214.8938576436603,
+                    2190.9435029425026
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

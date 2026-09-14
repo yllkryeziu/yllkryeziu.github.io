@@ -1,0 +1,9 @@
+build/
+third_party/
+target/
+.venv/
+__pycache__/
+.DS_Store
+
+data/vehicles.csv
+data/vehicles.ndjson

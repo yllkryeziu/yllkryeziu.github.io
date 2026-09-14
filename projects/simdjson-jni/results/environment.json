@@ -1,0 +1,140 @@
+{
+  "jvm": {
+    "java.runtime.version": "21.0.12.1+1-LTS",
+    "java.vm.name": "OpenJDK 64-Bit Server VM",
+    "java.vm.version": "21.0.12.1+1-LTS",
+    "java.vm.vendor": "Eclipse Adoptium",
+    "java.vendor": "Eclipse Adoptium",
+    "java.vendor.version": "Temurin-21.0.12.1+1",
+    "os.name": "Linux",
+    "os.version": "5.14.0-570.128.1.el9_6.x86_64",
+    "os.arch": "amd64",
+    "available_processors": 220,
+    "max_heap_bytes": 2147483648,
+    "input_arguments": [
+      "-Dsimdjson.jni.library=/tmp/simdjson-jni-152522/build/libsimdjson_jni.so",
+      "-Dsimdjson.data.dir=/tmp/simdjson-jni-152522/data",
+      "-Xms2g",
+      "-Xmx2g",
+      "-XX:+UseG1GC",
+      "-Dbench.cxx.version=g++ (GCC) 13.3.0",
+      "-Dbench.cmake.version=cmake version 3.29.3",
+      "-Dbench.maven.version=Apache Maven 3.9.14 (996c630dbc656c76214ce58821dcc58be960875b)",
+      "-Dbench.python.version=Python 3.12.9",
+      "-Dbench.cpu.brand=Intel(R) Xeon(R) Platinum 8480+",
+      "-Dbench.cpu.logical=220",
+      "-Dbench.cpu.performance_cores=220",
+      "-Dbench.cpu.efficiency_cores=0",
+      "-Dbench.os.build=Linux 5.14.0-570.128.1.el9_6.x86_64 x86_64 Red Hat Enterprise Linux 9.6 (Plow)",
+      "-Dbench.native.tuning_flag=-march=native",
+      "-Dbench.jmh.version=1.37",
+      "-Dbench.jackson.version=2.18.2",
+      "-Dbench.jvm.flags=-Xms2g -Xmx2g -XX:+UseG1GC"
+    ]
+  },
+  "simdjson": {
+    "version": "4.6.11",
+    "active_implementation": "icelake (Intel/AMD AVX512)",
+    "padding_bytes": 64
+  },
+  "jni": {
+    "get_byte_array_elements_is_copy": {
+      "16": true,
+      "1024": true,
+      "65536": true,
+      "1048576": true,
+      "8388608": true
+    }
+  },
+  "toolchain": {
+    "cxx.version": "g++ (GCC) 13.3.0",
+    "cmake.version": "cmake version 3.29.3",
+    "maven.version": "Apache Maven 3.9.14 (996c630dbc656c76214ce58821dcc58be960875b)",
+    "python.version": "Python 3.12.9",
+    "cpu.brand": "Intel(R) Xeon(R) Platinum 8480+",
+    "cpu.logical": "220",
+    "cpu.performance_cores": "220",
+    "cpu.efficiency_cores": "0",
+    "os.build": "Linux 5.14.0-570.128.1.el9_6.x86_64 x86_64 Red Hat Enterprise Linux 9.6 (Plow)",
+    "native.tuning_flag": "-march=native",
+    "jmh.version": "1.37",
+    "jackson.version": "2.18.2",
+    "jvm.flags": "-Xms2g -Xmx2g -XX:+UseG1GC"
+  },
+  "datasets": [
+    {
+      "name": "twitter.json",
+      "mode": "single-document",
+      "bytes": 631515,
+      "sha256": "30721e496a8d73cfc50658923c34eb2c0fbe15ee6835005e43ee624d8dedf200"
+    },
+    {
+      "name": "twitterescaped.json",
+      "mode": "single-document",
+      "bytes": 562408,
+      "sha256": "2a288b5af4691c55b6f40fa534225b3e08b8d8b7f7ca4ed29bc5c7c81566ed4a"
+    },
+    {
+      "name": "github_events.json",
+      "mode": "single-document",
+      "bytes": 65132,
+      "sha256": "c9eebb2cf2d46649059e9d48700919bacb3e8e0fb58452065a1a9de7778fd22e"
+    },
+    {
+      "name": "citm_catalog.json",
+      "mode": "single-document",
+      "bytes": 1727204,
+      "sha256": "a73e7a883f6ea8de113dff59702975e60119b4b58d451d518a929f31c92e2059"
+    },
+    {
+      "name": "canada.json",
+      "mode": "single-document",
+      "bytes": 2251051,
+      "sha256": "f83b3b354030d5dd58740c68ac4fecef64cb730a0d12a90362a7f23077f50d78"
+    },
+    {
+      "name": "gsoc-2018.json",
+      "mode": "single-document",
+      "bytes": 3327831,
+      "sha256": "72f1ef4898d88049da856c2ab8f4ec3e2c968ce209b2bbfd16cef842eb2e185f"
+    },
+    {
+      "name": "marine_ik.json",
+      "mode": "single-document",
+      "bytes": 2983466,
+      "sha256": "61590a397542ae274ccd8a47ba9f64e7c9216a223a5e7e702dea5b2375411d62"
+    },
+    {
+      "name": "mesh.json",
+      "mode": "single-document",
+      "bytes": 723597,
+      "sha256": "45bc8bf429340a874a7af8ea7056d60497402f80f55dba1e6ecc4ca8f1e46aff"
+    },
+    {
+      "name": "update-center.json",
+      "mode": "single-document",
+      "bytes": 533178,
+      "sha256": "e7b6a037bfdb5abdf122fa3445ddfacea78522a23df31c4799884c4ebf4c01fa"
+    },
+    {
+      "name": "vpic_makes.json",
+      "mode": "single-document",
+      "bytes": 612133,
+      "sha256": "21706a0de79abb3b02537e0f700c2a547564b2f32f0f706e78a1c8ebb98824bf"
+    },
+    {
+      "name": "vehicles-latency-batch",
+      "mode": "ndjson-stream",
+      "bytes": 354484,
+      "sha256": "d7490354a0240c44c779f4a4f214699301d507a62e5d600edc816f0343abf987"
+    },
+    {
+      "name": "vehicles-pipeline-batch",
+      "mode": "ndjson-stream",
+      "bytes": 5693383,
+      "sha256": "e775c75798d420a1ccdf5126f191f0c29cb59e399b0c7ecbb17f36607971c3e2"
+    }
+  ],
+  "latency_batch_records": 256,
+  "pipeline_batch_records": 4096
+}
