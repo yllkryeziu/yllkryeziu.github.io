@@ -479,20 +479,20 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </p>
 
       {/* ---- 01 ---- */}
-      <h2 style={h2s}>The compute you spend where it isn't needed</h2>
+      <h2 style={h2s}>Compute spent where it is not needed</h2>
       <p style={p}>
-        Reasoning models earned their reputation by <em>thinking longer</em>. Train a model with RL to produce long
+        Reasoning models get their accuracy from <em>thinking longer</em>. Train a model with RL to produce long
         chains of thought before answering, and accuracy on hard benchmarks climbs with the number of tokens it is
-        allowed to spend at inference time.<Cite ids={[1, 2, 3]} /> The flip side is less flattering: the same models
+        allowed to spend at inference time.<Cite ids={[1, 2, 3]} /> The same models, however,
         keep thinking long after the problem has been solved. They allocate a wall of reasoning to <code style={ic}>2+3</code>,
         re-derive the obvious, and second-guess correct answers, a pattern documented as <em>overthinking</em>.<Cite ids={[4]} />
       </p>
       <p style={p}>
         Every extra token costs latency and money without buying accuracy. So you want the opposite of a fixed budget:
         spend less on easy problems, keep the budget for hard ones. The catch is that &ldquo;how hard is this problem&rdquo;
-        is exactly the thing you don't know in advance.
+        is exactly the thing you do not know in advance.
       </p>
-      <Pull>The target is not shorter reasoning in general, but reasoning whose length matches the difficulty of the problem in front of it.</Pull>
+      <Pull>The target is reasoning whose length matches the difficulty of the problem in front of it, which sometimes means going longer.</Pull>
       <p style={p}>
         Plenty of methods chase this, and most lean on something external: a token budget conditioned on an estimated
         difficulty, a verifier, a reward model, or preference pairs curated by a stronger teacher. Those signals are
@@ -543,7 +543,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </CodeBlock>
 
       <p style={p}>
-        It works, and not by a little. Across Qwen3 models from 1.7B to 14B<Cite ids={[7]} /> on a math subset of
+        The effect is large. Across Qwen3 models from 1.7B to 14B<Cite ids={[7]} /> on a math subset of
         OpenThoughts-114k,<Cite ids={[8]} /> self-refinement strips <strong>78–83%</strong> of the reasoning trace while
         final-answer accuracy goes <em>up</em>, by +1 to +6 points. The load-bearing steps survive; what gets cut is the
         redundancy. Self-refinement is a strong test-time compression operator, and because the rewrites stay in
@@ -598,8 +598,9 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </Eq>
 
       <p style={p}>
-        Reverse KL is mode-seeking, which is what we want here: a trace can be rewritten many valid ways, and we'd rather
-        the student commit to one consistent concise style than smear probability across all of them. The teacher is the
+        Reverse KL is mode-seeking, which suits this setting: a trace can be rewritten in many valid
+        ways, and it is better for the student to commit to one consistent concise style than to
+        spread probability across all of them. The teacher is the
         same model frozen at its initial weights; the static trace is precomputed once, offline, per instance. The
         training loop then alternates four steps:
       </p>
@@ -643,15 +644,16 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </FigCard>
 
       <p style={p}>
-        Scale is the lever. As the underlying model gets stronger, the rewrite-conditioned teacher delivers sharper
-        token-level guidance, and the student internalizes conciseness while keeping the robustness hard problems demand.
-        Stronger models compress harder <em>and</em> hold their accuracy.
+        The effect strengthens with scale. As the underlying model gets stronger, the
+        rewrite-conditioned teacher gives sharper token-level guidance, and the student internalises
+        conciseness while keeping the robustness that hard problems require. Stronger models compress
+        harder <em>and</em> hold their accuracy.
       </p>
 
       {/* ---- 06 ---- */}
       <h2 style={h2s}>What it adds up to</h2>
       <p style={p}>
-        Two results stand on their own. First, a model can rewrite its own reasoning to the right length with no external
+        There are two separate results. First, a model can rewrite its own reasoning to the right length with no external
         signal, cutting ~80% of the trace while improving correctness, which makes self-refinement a self-contained
         test-time compression operator. Second, that behaviour is distillable: token-level on-policy self-distillation
         bakes the conciseness into the model's default policy, and the trade improves as models scale.
