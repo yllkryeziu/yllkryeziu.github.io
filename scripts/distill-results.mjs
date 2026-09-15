@@ -240,10 +240,159 @@ function distillSecret() {
   return { elicitation, probe, control, controlFull, analysis, arms, steering };
 }
 
+function distillMario() {
+  const root = 'projects/mario-blj/results/';
+  const episodes = read(`${root}episode_stats.json`);
+  const curves = read(`${root}curves_page.json`);
+  const media = read(`${root}media_summary.json`);
+  const tas = read(`${root}tas_validation.json`);
+  const env = read(`${root}env_validation.json`);
+  const occupancy = readIf(`${root}action_occupancy.json`);
+  const runaway = readIf(`${root}blj_runaway.json`);
+
+  // One row per training run. first_success is null for a seed that never found the exploit, and
+  // those seeds all stop at exactly the same episode count because every episode times out, so the
+  // count is itself a discovery signal and worth keeping rather than collapsing to a rate.
+  const seeds = episodes.runs.map(run => ({
+    rung: run.rung,
+    seed: run.seed,
+    episodes: run.episodes,
+    successes: run.successes,
+    rate: round(run.success_rate, 4),
+    firstSuccess: run.first_success ? run.first_success.timesteps : null,
+    firstSuccessEpisode: run.first_success ? run.first_success.episode : null,
+    finalRate: round(run.final_rate_1000, 4),
+    bestPeak: round(run.best_peak, 1),
+    warps: round(run.mean_warps_last_1000, 1),
+    medianLength: run.length_quantiles.q50,
+  }));
+
+  const rungs = curves.rungs.map(rung => ({
+    name: rung.name,
+    title: rung.title,
+    subtitle: rung.subtitle,
+    solved: rung.solved,
+    total: rung.total,
+    light: rung.light,
+    dark: rung.dark,
+    // Curves arrive as [timesteps, value] pairs. Keep that shape; the chart wants xy pairs and
+    // the x axis is not uniform across rungs once a run ends early.
+    medianRate: rung.median_rate.map(([x, y]) => [x, round(y, 4)]),
+    medianReturn: rung.median_return.map(([x, y]) => [x, round(y, 4)]),
+    seeds: rung.seeds.map(seed => ({
+      seed: seed.seed,
+      firstSuccess: seed.first_success ? seed.first_success.timesteps : null,
+      successes: seed.successes,
+      episodes: seed.episodes,
+      bestPeak: round(seed.best_peak, 1),
+      rate: seed.rate.map(([x, y]) => [x, round(y, 4)]),
+    })),
+  }));
+
+  const chain = tas.comparisons.castle_area1_longest;
+  const validation = {
+    movie: tas.reference_movie,
+    framesCompared: chain.frames_compared,
+    framesBitExact: chain.frames_bit_exact_in_pos_vel_forwardvel,
+    actionsMatch: chain.action_sequence_matches_every_frame,
+    peakReference: chain.peak_forward_vel_reference,
+    peakLibsm64: chain.peak_forward_vel_libsm64,
+    knownGaps: tas.verdict.known_gaps,
+  };
+
+  const random = occupancy ? occupancy.rows.find(row => row.policy === 'uniform random') : null;
+
+  // Action occupancy across one run's checkpoints. Rows without a step count are the two
+  // reference policies (uniform random, untrained network) and are kept separately from the
+  // checkpoint curve so the chart's x axis stays a step count.
+  const occ = occupancy && {
+    frames: occupancy.frames,
+    rollouts: occupancy.rollouts,
+    rung: occupancy.rung,
+    groundPoundActions: occupancy.ground_pound_actions,
+    longJumpActions: occupancy.long_jump_actions,
+    reference: occupancy.rows
+      .filter(row => row.steps === null || row.steps === 0)
+      .map(row => ({
+        policy: row.policy,
+        groundPound: row.ground_pound,
+        longJump: row.long_jump,
+        bestPeak: row.best_peak,
+        medianPeak: row.median_peak,
+        bestHeight: row.best_height,
+        successes: row.successes,
+        episodes: row.episodes,
+        topActions: row.top_actions,
+      })),
+    checkpoints: occupancy.rows
+      .filter(row => row.steps)
+      .map(row => ({
+        steps: row.steps,
+        groundPound: row.ground_pound,
+        longJump: row.long_jump,
+        bestPeak: row.best_peak,
+        medianPeak: row.median_peak,
+        bestHeight: row.best_height,
+        successes: row.successes,
+        episodes: row.episodes,
+      })),
+  };
+
+  // Scripted probe of the chain condition across 15 floor shapes at four stick magnitudes. The
+  // table the post shows is the full deflection slice; the magnitude summary is what justifies
+  // restricting the action space to full deflection rather than treating that as a simplification.
+  const magnitudes = runaway
+    ? [...new Set(runaway.runs.map(row => row.air_stick_magnitude))].sort((a, b) => a - b)
+    : [];
+  const geometry = runaway && {
+    approachStick: runaway.approach_stick,
+    full: runaway.runs
+      .filter(row => row.air_stick_magnitude === 1)
+      .map(row => ({
+        geometry: row.geometry,
+        degrees: row.envelope_degrees,
+        cycles: row.cycles,
+        backwardsCycles: row.backwards_cycles,
+        peak: row.peak_velocity,
+        launch: row.best_launch_velocity,
+        minAirFrames: row.min_air_frames,
+        meanAirFrames: row.mean_air_frames,
+        runaway: row.runaway,
+      })),
+    byMagnitude: magnitudes.map(magnitude => {
+      const rows = runaway.runs.filter(row => row.air_stick_magnitude === magnitude);
+      return {
+        magnitude,
+        total: rows.length,
+        runaway: rows.filter(row => row.runaway).length,
+        bestPeak: Math.min(...rows.map(row => row.peak_velocity)),
+      };
+    }),
+  };
+
+  return {
+    escapeSpeed: env.minimum_escape_speed,
+    curveBin: curves.bin,
+    totals: {
+      episodes: episodes.total_episodes,
+      successes: episodes.total_successes,
+      maxTimesteps: episodes.max_timesteps,
+    },
+    seeds,
+    rungs,
+    validation,
+    media,
+    randomPolicy: random ? random.rollouts : null,
+    occupancy: occ,
+    geometry,
+  };
+}
+
 const targets = [
   ['components/post/results/prefetch.json', distillPrefetch],
   ['components/post/results/simdjson.json', distillSimd],
   ['components/post/results/secret.json', distillSecret],
+  ['components/post/results/mario.json', distillMario],
 ];
 
 for (const [out, build] of targets) {

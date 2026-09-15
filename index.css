@@ -28,6 +28,7 @@
   --series-1: #2a78d6;
   --series-2: #eb6834;
   --series-3: #1baf7a;
+  --series-4: #eda100;
   --series-mute: #B3ADA2;
   --series-grid: #E4E0D5;
 
@@ -55,6 +56,7 @@
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
+  --series-4: #c98500;
   --series-mute: #6E675B;
   --series-grid: #3A382F;
 }
@@ -489,6 +491,43 @@ a {
   padding: 0;
 }
 
+/* Game footage. Only the Mario post carries media inside a figure, so the rules live with the
+   figure rather than behind a post scoped class. */
+.post-figure video,
+.post-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: #000;
+}
+
+.post-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.post-strip figcaption,
+.post-strip .cell-label {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  margin-top: 0.4rem;
+  display: block;
+}
+
+.post-strip .cell-label .step {
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+  margin-right: 0.4rem;
+}
+
+@media (max-width: 700px) {
+  .post-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .post-caption {
   font-family: var(--font-sans);
   font-size: 12.5px;
@@ -542,6 +581,13 @@ a {
   padding-right: 0;
   padding-left: 1.25rem;
 }
+
+/* Cells carry their gutter on the right and numeric ones carry it on the left instead, so a
+   numeric column followed by a text one has no gutter on either side of the seam and the right
+   aligned number butts into the text. Only that seam needs fixing: numeric followed by numeric
+   already has the rule above, and a numeric column at the right edge should stay flush. */
+.post-table .num + td:not(.num),
+.post-table th.num + th:not(.num) { padding-left: 1rem; }
 
 .post-table th.num { font-family: var(--font-sans); }
 

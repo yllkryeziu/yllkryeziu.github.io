@@ -11,3 +11,9 @@ projects/**/.venv
 projects/**/__pycache__
 projects/**/artifacts
 projects/**/results-m3
+
+# The deploy workflow runs `npm run build` on push and uploads its own ./dist, so the tracked dist
+# is a convenience copy that is never served. Keeping the post's 24 MB of castle footage in it
+# would put a second copy of every video in git history for nothing; the source of truth is
+# public/blj.
+dist/blj
