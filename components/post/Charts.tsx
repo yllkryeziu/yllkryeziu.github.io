@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SERIES = ['var(--series-1)', 'var(--series-2)', 'var(--series-3)'];
+const SERIES = ['var(--series-1)', 'var(--series-2)', 'var(--series-3)', 'var(--series-4)'];
 const MUTE = 'var(--series-mute)';
 const GRID = 'var(--series-grid)';
 
