@@ -1,4 +1,4 @@
-export type PostSlug = 'thesis' | 'jax' | 'simd' | 'secret';
+export type PostSlug = 'thesis' | 'jax' | 'simd' | 'secret' | 'blj';
 
 export interface PostMeta {
   slug: PostSlug;
@@ -14,6 +14,16 @@ export interface PostMeta {
 const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/projects';
 
 export const POSTS: PostMeta[] = [
+  {
+    slug: 'blj',
+    kicker: 'Reinforcement Learning · Reward Design · Exploration',
+    title: 'Discovery cost',
+    dek: "Super Mario 64's long jump multiplies backwards speed without bound, which is how a 1996 sign bug became a 70-star skip. I wired the decompiled game up as an environment and asked PPO to find that bug from a reward that pays only for standing on the top of the stairs. One seed in six finds it, after 6.3M steps. Adding the obvious bonus for climbing takes that to zero in six.",
+    date: 'September 2026',
+    sortDate: 202610,
+    readingMinutes: 32,
+    repo: { label: 'mario-blj', url: 'https://github.com/yllkryeziu/mario-blj' },
+  },
   {
     slug: 'secret',
     kicker: 'Interpretability · LLM Evaluation · Games',

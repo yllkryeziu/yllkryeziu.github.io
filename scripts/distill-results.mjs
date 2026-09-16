@@ -240,6 +240,10 @@ function distillSecret() {
   return { elicitation, probe, control, controlFull, analysis, arms, steering };
 }
 
+// The twelve SURFACE_INSTANT_WARP_1B triangles in the castle's staircase span this z range; its
+// width is the per-frame displacement an escape has to beat.
+const BAND_Z = [905, 1059];
+
 function distillMario() {
   const root = 'projects/mario-blj/results/';
   const episodes = read(`${root}episode_stats.json`);
@@ -249,6 +253,8 @@ function distillMario() {
   const env = read(`${root}env_validation.json`);
   const occupancy = readIf(`${root}action_occupancy.json`);
   const runaway = readIf(`${root}blj_runaway.json`);
+  const replay = readIf(`${root}replay_model_endless.json`);
+  const swarmManifest = readIf(`${root}swarm_render_manifest.json`);
 
   // One row per training run. first_success is null for a seed that never found the exploit, and
   // those seeds all stop at exactly the same episode count because every episode times out, so the
@@ -370,6 +376,98 @@ function distillMario() {
     }),
   };
 
+  // The filmed episode, reduced to the events the prose and the clip cuts both refer to. Cutting
+  // footage on these frames rather than on round numbers is the difference between a clip that
+  // shows the escape and a clip that happens to contain it.
+  const escapeOf = () => {
+    if (!replay) return null;
+    const frames = replay.frames;
+    const at = frame => frames.find(row => row.frame === frame);
+    // The warp fires on the frame whose sampled floor is a trigger, and the displacement lands on
+    // the frame after it, so each event is read as a pair.
+    const warps = frames
+      .filter(row => row.warped)
+      .map(row => {
+        const next = at(row.frame + 1);
+        return {
+          frame: row.frame,
+          velocity: round(row.forward_velocity, 2),
+          from: [round(row.position[1], 1), round(row.position[2], 1)],
+          to: next ? [round(next.position[1], 1), round(next.position[2], 1)] : null,
+        };
+      });
+
+    const peakFrame = frames.reduce((best, row) =>
+      row.forward_velocity < best.forward_velocity ? row : best);
+    const landing = frames.find(row => row.position[1] >= replay.goal_y);
+    const lastWarp = frames.filter(row => row.warped).at(-1);
+
+    // INPUT_A_PRESSED is an edge, so a chain is a sequence of press frames with a release between
+    // them, and a press frame's amplification is measured against the frame before it rather than
+    // against the previous press.
+    const describe = row => {
+      const prev = at(row.frame - 1);
+      const next = at(row.frame + 1);
+      return {
+        frame: row.frame,
+        velocity: round(row.forward_velocity, 2),
+        ratio: prev && prev.forward_velocity !== 0
+          ? round(row.forward_velocity / prev.forward_velocity, 3) : null,
+        z: next ? round(next.position[2], 1) : null,
+        y: next ? round(next.position[1], 1) : null,
+        // The crossing frame is the one whose displacement carries Mario over the whole band,
+        // from above its far edge to below its near one, so the once-per-frame floor sample
+        // never lands on a trigger triangle.
+        crossed: next ? row.position[2] > BAND_Z[1] && next.position[2] < BAND_Z[0] : false,
+      };
+    };
+
+    const pressed = frames
+      .filter(row => row.frame > lastWarp.frame && row.frame <= peakFrame.frame && row.inputs.a === 1)
+      .map(describe);
+
+    // Two frames are worth naming separately. The chain leaves the -16 air attractor at the first
+    // press that amplifies rather than pays drag, and it becomes the escape at the first press of
+    // the run over which speed grows monotonically all the way to the peak.
+    const launch = pressed.find(row => row.ratio !== null && row.ratio >= 1.3) ?? pressed[0];
+    let startIndex = pressed.length - 1;
+    while (startIndex > 0 && pressed[startIndex - 1].velocity > pressed[startIndex].velocity) {
+      startIndex -= 1;
+    }
+    const start = pressed[startIndex].frame;
+
+    // The table shows the monotone run, plus the drag frame inside it that does the crossing.
+    const presses = frames
+      .filter(row => row.frame >= start && row.frame <= peakFrame.frame
+        && (row.inputs.a === 1 || describe(row).crossed))
+      .map(describe);
+
+    // A warp that fired on a frame already faster than the escape speed. There is one, and it is
+    // the whole argument that speed alone does not buy the crossing.
+    const inPhase = warps.find(warp => Math.abs(warp.velocity) > env.minimum_escape_speed) ?? null;
+
+    return {
+      frames: frames.length,
+      goalY: replay.goal_y,
+      peak: round(replay.peak_velocity, 2),
+      band: { zLow: BAND_Z[0], zHigh: BAND_Z[1], depth: BAND_Z[1] - BAND_Z[0] },
+      warpCount: replay.warps,
+      warps,
+      chain: {
+        launch: launch.frame,
+        start,
+        peakFrame: peakFrame.frame,
+        escapeFrame: presses.find(row => row.crossed)?.frame ?? null,
+        landingFrame: landing ? landing.frame : null,
+        cycles: presses.filter(row => row.ratio !== null && row.ratio >= 1.3).length,
+      },
+      presses,
+      inPhase,
+    };
+  };
+  const escape = escapeOf();
+
+
   return {
     escapeSpeed: env.minimum_escape_speed,
     curveBin: curves.bin,
@@ -383,6 +481,8 @@ function distillMario() {
     validation,
     media,
     randomPolicy: random ? random.rollouts : null,
+    escape,
+    swarm: swarmManifest,
     occupancy: occ,
     geometry,
   };
