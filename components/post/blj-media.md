@@ -48,6 +48,12 @@ Regenerate with `PROJECTS_ROOT=/Users/yll/Desktop node scripts/distill-results.m
 - `escape` — the filmed episode's mechanical events, from `results/replay_model_endless.json`. The
   press table, the crossing frame and the clip cut points all read from it, so re-recording the
   episode moves the prose and the cuts together.
+- The four RMS figures in the silence section's first paragraph — 3263 over the chain, 5073 for the
+  ordinary long jump before it, 5867 for the flight, 5108 for the whole episode — are the only
+  numbers in the post typed rather than read from JSON. They were measured on `episode.mp4`'s own
+  audio track, one bucket per game frame at 32 kHz. They belong in `media_summary.json` next to the
+  rest of the audio work, and should be swapped for derived values once
+  `tools/summarise_media.py` reports per-phase levels for the filmed episode.
 - `media` — `results/media_summary.json`, from `tools/summarise_media.py`. Table 4 and Fig. 12 are
   this file. The crowd captures write a different container and do not touch the audio it reads, so
   it does not go stale when footage is re-rendered.

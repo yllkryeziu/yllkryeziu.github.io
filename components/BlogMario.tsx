@@ -672,8 +672,12 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         <>
           Press frames of that chain, each against the frame immediately before it, which is not
           always the row above because the release frames are omitted.
-          Frame {escape.chain.start} is a drag frame, included because the growth is measured from
-          it. The band spans <M>{`z \\in [${escape.band.zLow}, ${escape.band.zHigh}]`}</M>.
+          Frame {escape.chain.start} is a drag frame, included because the growth is measured
+          from it. It is a drag frame for a reason worth naming: it presses A without
+          holding Z, and <code>act_long_jump_land</code> opens
+          with <code>if (!(m-&gt;input &amp; INPUT_Z_DOWN)) m-&gt;input &amp;= ~INPUT_A_PRESSED</code>,
+          so the press is discarded and the frame pays friction instead of multiplying. Every other
+          press in the chain holds Z. The band spans <M>{`z \\in [${escape.band.zLow}, ${escape.band.zHigh}]`}</M>.
         </>
       }
       columns={[
@@ -955,14 +959,35 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </p>
 
     <p>
-      The failure is also inaudible, which is worth a paragraph because it is the one diagnostic that
-      needed no instrumentation. The decompilation's audio engine keeps its state in a file-scope
-      global rather than per Mario, so one audio tick per frame renders the whole
-      crowd. <code>act_long_jump</code> plays <code>SOUND_MARIO_YAHOO</code> on entry and a working
-      chain re-enters that action on nearly every frame, so a policy doing the exploit screams
-      continuously. The instant warp plays nothing at all — there is no sound on
-      the <code>SURFACE_INSTANT_WARP</code> path. The trapped crowd's warps are silent, and what
-      you hear instead is 64 Marios calmly jogging up a staircase.
+      The failure is also inaudible, which is worth a paragraph because it is the one diagnostic
+      that needed no instrumentation. The decompilation's audio engine keeps its state in a
+      file-scope global rather than per Mario, so one audio tick per frame renders the whole crowd.
+      And <code>act_long_jump</code> plays <code>SOUND_MARIO_YAHOO</code> on entry, while a working
+      chain re-enters that action on nearly every frame, so the obvious guess is that a policy doing
+      the exploit screams continuously. It does the opposite. The chain is the quietest stretch of
+      the whole run: RMS 3263 over frames {escape.chain.start}–{escape.chain.peakFrame}, against
+      5073 for the ordinary long jump immediately before it, 5867 for the flight it launches and
+      5108 for the episode as a whole.
+    </p>
+
+    <p>
+      Three lines of the decompilation explain that, and they are the funniest thing I found in
+      it. <code>include/sounds.h</code> declares <code>SOUND_MARIO_YAHOO</code> with
+      the <code>SOUND_DISCRETE</code> flag, whose own comment reads "Every call
+      to <code>play_sound</code> restarts the sound". <code>set_mario_action</code> clears
+      Mario's <code>MARIO_MARIO_SOUND_PLAYED</code> flag on every transition, so re-entering the
+      action requests the yell again. And <code>process_sound_request</code> will not stack a
+      request from a source that already holds a slot in that bank: it finds the entry by source
+      pointer and, for a discrete sound, overwrites it and sets its status back to waiting. So
+      Mario asks to yell eight times in seventeen frames, and each request restarts the sample from
+      the top before the previous one has been audible. He is yelling the entire way up the
+      staircase. You never hear more than the attack of any of them.
+    </p>
+
+    <p>
+      The instant warp plays nothing at all either — there is no sound on
+      the <code>SURFACE_INSTANT_WARP</code> path. So the trapped crowd's warps are silent too, and
+      what you hear instead is 64 Marios calmly jogging up a staircase.
     </p>
 
     <Table
@@ -1023,9 +1048,9 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           the speed: the four panels peak
           at {swarmManifest.rungs.speed.map(row => signed(row.peakBackward, 1)).join(', ')}, which
           does not trend, because a panel's peak is the single fastest of 64 policies and one
-          runaway chain moves it. Unmute one panel to hear it; a chain
-          re-enters <code>ACT_LONG_JUMP</code> almost every frame, so the exploit sounds like
-          continuous yahoo.
+          runaway chain moves it. Unmute one panel and the striking thing is how little there is to
+          hear: a chain re-enters <code>ACT_LONG_JUMP</code> on nearly every frame and is quieter
+          than the crowd walking.
         </>
       }
     />
