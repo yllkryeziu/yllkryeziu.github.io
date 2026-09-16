@@ -285,6 +285,10 @@ function distillMario() {
     // the x axis is not uniform across rungs once a run ends early.
     medianRate: rung.median_rate.map(([x, y]) => [x, round(y, 4)]),
     medianReturn: rung.median_return.map(([x, y]) => [x, round(y, 4)]),
+    // Return on this task is bimodal, not continuous, so the median across six seeds is not a
+    // level anybody reached. These are the two values the seeds actually take: 1.0 for the
+    // landing plus whatever the rung's shaping is worth, or the shaping alone.
+    returnModes: rung.return_modes,
     seeds: rung.seeds.map(seed => ({
       seed: seed.seed,
       firstSuccess: seed.first_success ? seed.first_success.timesteps : null,
@@ -471,6 +475,7 @@ function distillMario() {
   return {
     escapeSpeed: env.minimum_escape_speed,
     curveBin: curves.bin,
+    heightOverTerminal: curves.height_over_terminal,
     totals: {
       episodes: episodes.total_episodes,
       successes: episodes.total_successes,

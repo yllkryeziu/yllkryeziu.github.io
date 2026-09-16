@@ -53,6 +53,16 @@ const seedsOf = (name: string) =>
     return a.firstSuccess - b.firstSuccess;
   });
 const solvedIn = (name: string) => seedsOf(name).filter(seed => seed.firstSuccess !== null);
+
+// Return is bimodal on this task, so a rung has two levels rather than one: 1.0 for the landing
+// plus its shaping ceiling, or the shaping alone. `plateau` is where the median curve actually
+// ends, which for a rung whose seeds disagree is neither of them.
+const modeOf = (name: string, half: 'solved' | 'never') =>
+  rungByName(name).returnModes[half].return!.toFixed(2);
+const plateau = (name: string) => {
+  const curve = rungByName(name).medianReturn;
+  return curve[curve.length - 1][1].toFixed(2);
+};
 const fastestIn = (name: string) => {
   const solved = solvedIn(name);
   return solved.length ? Math.min(...solved.map(seed => seed.firstSuccess!)) : null;
@@ -233,18 +243,12 @@ const MEDIA = {
   swarm: (rung: string, label: string) => `swarm-${rung.replace(/_/g, '-')}-${label}.mp4`,
 };
 
-// Episodes each 64-policy population finishes inside a fifteen second window, per checkpoint,
-// measured during the crowd captures. Read from the capture manifest once that file exists; until
-// then these are the numbers the capture run reported.
-const SWARM_FALLBACK: Record<string, number[]> = {
-  speed: [77, 124, 183, 187],
-  height_speed: [0, 144, 158, 205],
-  terminal: [0, 0, 191, 232],
-  height: [0, 0, 0, 0],
-};
-const swarmManifest = results.swarm as { solved: Record<string, number[]> } | null;
-const solvedAt = (rung: string): number[] =>
-  swarmManifest?.solved?.[rung] ?? SWARM_FALLBACK[rung];
+// Episodes each 64-policy population finished inside the fifteen second window that was filmed,
+// per checkpoint, measured during the crowd captures themselves. Every termination inside a window
+// that short is an escape — an episode otherwise runs to a 1200 frame timeout, and the window is
+// 450 — so this is escapes completed by a population of sixty four and not a rate over attempts.
+const swarmManifest = results.swarm as { solved: Record<string, number[]> };
+const solvedAt = (rung: string): number[] => swarmManifest.solved[rung];
 
 // A clip that waits for a click carries preload="none", so the browser never requests the file and
 // never fires an error for a missing one; it would draw as a dead black rectangle instead. Each
@@ -1011,7 +1015,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <Figure
       n={7}
-      caption={`Median episode return across six seeds per reward, binned at ${results.curveBin / 1000}k timesteps. A curve's plateau is the fraction of its seeds that discovered the exploit, because return is essentially 0 or 1: speed reaches 1.0, height and speed 0.5. The landing-only curve stays at zero for the opposite reason to height's — one seed of six discovered it, and a median across seeds cannot show a minority.`}
+      caption={`Median episode return across six seeds per reward, binned at ${results.curveBin / 1000}k timesteps. The four curves are not on a common scale: a seed that has the exploit scores 1.0 for the landing plus whatever its shaping terms are worth, so a solver plateaus at ${modeOf('terminal', 'solved')} on landing-only, ${modeOf('speed', 'solved')} on speed and ${modeOf('height_speed', 'solved')} on both. Return is also bimodal rather than continuous — a seed either has the exploit or does not — so the median reports which side of three seeds the population fell on and not a level anybody reached: speed at ${solvedIn('speed').length} of 6 sits on its solving mode, height and speed at ${solvedIn('height_speed').length} of 6 sits at ${plateau('height_speed')}, between its modes of ${modeOf('height_speed', 'solved')} and ${modeOf('height_speed', 'never')} and describing neither, and landing-only at ${solvedIn('terminal').length} of 6 stays flat at zero because a median cannot show a minority. Height, which never once reaches the landing, is nonetheless above the landing-only curve on ${results.heightOverTerminal.leadingBins} of ${results.heightOverTerminal.bins} bins, ending at ${plateau('height')} against zero.`}
     >
       <LineChart
         title="Median return by reward"
