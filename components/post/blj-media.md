@@ -7,6 +7,32 @@ four to a row. Stems are stable: a re-render replaces a file rather than adding 
 never needs a prose edit. Only the two clips that wait for a click carry a poster — the looping
 ones autoplay, so their stills would be weight in git that nothing requests.
 
+## One locked camera, and no door
+
+The sixteen panels and the cold open are one vantage, `DEFAULT_CAM` in
+`tools/render_swarm_shots.py` in the measurement repo: eye at (-204, 3450, 3900) looking at
+(-204, 3700, 1800) through a 55 degree lens, which is behind the bottom landing at hip height. That
+file records why every direction around it fails, so the sweep does not have to be repeated. Two
+consequences belong to the footage rather than to the code:
+
+- The room's own entrance, a 70 star door at z 3772, stands between that eye and the crowd, so
+  these renders set `SM64_HIDE_DOORS=1` and star doors are not drawn. Ordinary and warp doors are
+  still drawn, because hiding those desynchronises the movie that walks the game to the staircase
+  and every shot comes out as the castle grounds. No caption refers to a door, so the hidden door
+  is invisible in the prose; what it buys is the whole population in frame at panel size.
+- The two encodes are a display-size decision. Against a lossless encode of the same frames, the
+  panels at the 176 px they are shown at score 0.995 SSIM at crf 28 and 0.985 at crf 34, which is
+  indistinguishable and 38% smaller, so the panels ship at crf 34. The cold open is shown eight
+  times that area, where the same step costs 0.976 → 0.949 and is visible, so it ships at crf 28
+  and is the heaviest file in the set.
+
+Which makes the two commands that produce all seventeen:
+
+    PYTHONPATH=. python tools/render_swarm_shots.py --manifest <shots>/manifest.json \
+        --out_dir <out> --prefix "" --crf 28 --only untrained --no_poster
+    PYTHONPATH=. python tools/render_swarm_shots.py --manifest <shots>/manifest.json \
+        --out_dir <out> --out_width 640 --crf 34 --audio_bitrate 64k --no_poster <sixteen --only>
+
 ## The four-panel sets
 
 Four separate video elements per reward, left to right, **not** a 2×2 composite — they autoplay
