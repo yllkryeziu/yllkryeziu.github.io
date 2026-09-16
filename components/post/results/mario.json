@@ -12392,5 +12392,207 @@
         "episodes": 48
       }
     ]
+  },
+  "transfer": {
+    "episodesPerRun": 8,
+    "totalPolicies": 24,
+    "castleSolvers": 10,
+    "rows": [
+      {
+        "scene": "castle",
+        "rise": 25.6,
+        "run": 51.25,
+        "risers": true,
+        "synthetic": false,
+        "triangles": 1923,
+        "escapeSpeed": 154,
+        "policiesSolving": 10,
+        "totalPolicies": 24,
+        "meanRate": 1,
+        "bestPeak": -655.9
+      },
+      {
+        "scene": "rebuilt_rise26_run51",
+        "rise": 25.6,
+        "run": 51.25,
+        "risers": true,
+        "synthetic": true,
+        "triangles": 284,
+        "escapeSpeed": 154,
+        "policiesSolving": 9,
+        "totalPolicies": 24,
+        "meanRate": 0.775,
+        "bestPeak": -834.6
+      },
+      {
+        "scene": "rise50_run51",
+        "rise": 50,
+        "run": 51.25,
+        "risers": true,
+        "synthetic": true,
+        "triangles": 148,
+        "escapeSpeed": 153,
+        "policiesSolving": 0,
+        "totalPolicies": 24,
+        "meanRate": 0,
+        "bestPeak": -40.8
+      },
+      {
+        "scene": "rise26_run100",
+        "rise": 25.6,
+        "run": 100,
+        "risers": true,
+        "synthetic": true,
+        "triangles": 284,
+        "escapeSpeed": 300,
+        "policiesSolving": 0,
+        "totalPolicies": 24,
+        "meanRate": 0,
+        "bestPeak": -52.8
+      },
+      {
+        "scene": "rise75_run100",
+        "rise": 75,
+        "run": 100,
+        "risers": true,
+        "synthetic": true,
+        "triangles": 100,
+        "escapeSpeed": 300,
+        "policiesSolving": 0,
+        "totalPolicies": 24,
+        "meanRate": 0,
+        "bestPeak": -40.9
+      },
+      {
+        "scene": "rise100_run100",
+        "rise": 100,
+        "run": 100,
+        "risers": true,
+        "synthetic": true,
+        "triangles": 76,
+        "escapeSpeed": 300,
+        "policiesSolving": 0,
+        "totalPolicies": 24,
+        "meanRate": 0,
+        "bestPeak": -40.5
+      },
+      {
+        "scene": "rise100_run100_norisers",
+        "rise": 100,
+        "run": 100,
+        "risers": false,
+        "synthetic": true,
+        "triangles": 40,
+        "escapeSpeed": 300,
+        "policiesSolving": 0,
+        "totalPolicies": 24,
+        "meanRate": 0,
+        "bestPeak": -595.6
+      },
+      {
+        "scene": "rise75_run100_norisers",
+        "rise": 75,
+        "run": 100,
+        "risers": false,
+        "synthetic": true,
+        "triangles": 52,
+        "escapeSpeed": 300,
+        "policiesSolving": 5,
+        "totalPolicies": 24,
+        "meanRate": 0.212,
+        "bestPeak": -649
+      },
+      {
+        "scene": "rise50_run51_norisers",
+        "rise": 50,
+        "run": 51.25,
+        "risers": false,
+        "synthetic": true,
+        "triangles": 76,
+        "escapeSpeed": 153,
+        "policiesSolving": 9,
+        "totalPolicies": 24,
+        "meanRate": 0.325,
+        "bestPeak": -633.4
+      },
+      {
+        "scene": "rebuilt_rise26_run51_norisers",
+        "rise": 25.6,
+        "run": 51.25,
+        "risers": false,
+        "synthetic": true,
+        "triangles": 144,
+        "escapeSpeed": 154,
+        "policiesSolving": 9,
+        "totalPolicies": 24,
+        "meanRate": 0.825,
+        "bestPeak": -913.5
+      }
+    ]
+  },
+  "transferExpert": {
+    "runawayThreshold": -200,
+    "rows": [
+      {
+        "scene": "castle",
+        "peak": -31.2,
+        "minAirFrames": 21,
+        "runaway": false
+      },
+      {
+        "scene": "rebuilt_rise26_run51",
+        "peak": -32.8,
+        "minAirFrames": 18,
+        "runaway": false
+      },
+      {
+        "scene": "rise50_run51",
+        "peak": -22.1,
+        "minAirFrames": 15,
+        "runaway": false
+      },
+      {
+        "scene": "rise26_run100",
+        "peak": -33.2,
+        "minAirFrames": 24,
+        "runaway": false
+      },
+      {
+        "scene": "rise75_run100",
+        "peak": -22.2,
+        "minAirFrames": 19,
+        "runaway": false
+      },
+      {
+        "scene": "rise100_run100",
+        "peak": -22.7,
+        "minAirFrames": 21,
+        "runaway": false
+      },
+      {
+        "scene": "rise100_run100_norisers",
+        "peak": -578.5,
+        "minAirFrames": 1,
+        "runaway": true
+      },
+      {
+        "scene": "rise75_run100_norisers",
+        "peak": -454.1,
+        "minAirFrames": 1,
+        "runaway": true
+      },
+      {
+        "scene": "rise50_run51_norisers",
+        "peak": -23,
+        "minAirFrames": 13,
+        "runaway": false
+      },
+      {
+        "scene": "rebuilt_rise26_run51_norisers",
+        "peak": -32.8,
+        "minAirFrames": 18,
+        "runaway": false
+      }
+    ]
   }
 }

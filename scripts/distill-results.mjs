@@ -255,6 +255,8 @@ function distillMario() {
   const replay = readIf(`${root}replay_model_endless.json`);
   const swarmManifest = readIf(`${root}swarm_render_manifest.json`);
   const throughput = readIf(`${root}throughput.json`);
+  const transfer = readIf(`${root}transfer.json`);
+  const transferExpert = readIf(`${root}transfer_expert.json`);
 
   // One row per training run. first_success is null for a seed that never found the exploit, and
   // those seeds all stop at exactly the same episode count because every episode times out, so the
@@ -474,6 +476,81 @@ function distillMario() {
   const escape = escapeOf();
 
 
+  // Transfer test: all 24 final policies dropped on ten flights of stairs, unchanged, to separate
+  // "the policy learned the exploit" from "the policy learned this staircase". Rows are per-scene.
+  // The rate column is the mean success rate over the ten policies that solve the castle at all,
+  // because averaging over policies that never solved anything drags every row toward zero and
+  // hides the split between transfer failure and policy failure. "policiesSolving" is the count of
+  // the 24 whose success rate on the scene is above zero.
+  const transferSummary = () => {
+    if (!transfer) return null;
+    const runsByScene = {};
+    const runsByPolicy = {};
+    for (const run of transfer.runs) {
+      (runsByScene[run.scene] ??= []).push(run);
+      const policyKey = `${run.rung}-${run.seed}`;
+      (runsByPolicy[policyKey] ??= {})[run.scene] = run;
+    }
+    const successRate = run =>
+      run.episodes.filter(ep => ep.success).length / run.episodes.length;
+    const castleSolvers = Object.entries(runsByPolicy)
+      .filter(([, byScene]) => byScene.castle && successRate(byScene.castle) > 0)
+      .map(([key]) => key);
+
+    const rows = Object.entries(transfer.scenes).map(([name, meta]) => {
+      const sceneRuns = runsByScene[name] ?? [];
+      const rates = sceneRuns.map(successRate);
+      const policiesSolving = rates.filter(rate => rate > 0).length;
+      const castleSolverRates = sceneRuns
+        .filter(run => castleSolvers.includes(`${run.rung}-${run.seed}`))
+        .map(successRate);
+      const meanRate = castleSolverRates.length
+        ? castleSolverRates.reduce((sum, r) => sum + r, 0) / castleSolverRates.length
+        : 0;
+      const peaks = sceneRuns.flatMap(run =>
+        run.episodes.map(ep => ep.peak_backward_velocity).filter(v => v !== null));
+      const bestPeak = peaks.length ? Math.min(...peaks) : 0;
+      return {
+        scene: name,
+        rise: meta.rise,
+        run: meta.run,
+        risers: meta.risers,
+        synthetic: meta.synthetic,
+        triangles: meta.triangles,
+        escapeSpeed: meta.escape_speed,
+        policiesSolving,
+        totalPolicies: sceneRuns.length,
+        meanRate: round(meanRate, 3),
+        bestPeak: round(bestPeak, 1),
+      };
+    });
+
+    return {
+      episodesPerRun: transfer.episodes_per_run,
+      totalPolicies: Object.keys(runsByPolicy).length,
+      castleSolvers: castleSolvers.length,
+      rows,
+    };
+  };
+
+  // The project's hand-written scripted expert run against the same ten scenes: a fixed action
+  // program that "should" work if the exploit is purely a physics property. It runs away on
+  // exactly the two flights with no risers and a steep rise, which proves those admit a chain, and
+  // fails on the castle where ten learned policies succeed — so its successes are informative
+  // about the geometry and its failures are informative about the fixed program, not the game.
+  const expertSummary = () => {
+    if (!transferExpert) return null;
+    return {
+      runawayThreshold: transferExpert.runaway_threshold,
+      rows: Object.values(transferExpert.best_per_scene).map(row => ({
+        scene: row.scene,
+        peak: round(row.peak_velocity, 1),
+        minAirFrames: row.min_air_frames,
+        runaway: row.runaway,
+      })),
+    };
+  };
+
   return {
     escapeSpeed: env.minimum_escape_speed,
     curveBin: curves.bin,
@@ -492,6 +569,8 @@ function distillMario() {
     speed,
     swarm: swarmManifest,
     occupancy: occ,
+    transfer: transferSummary(),
+    transferExpert: expertSummary(),
   };
 }
 

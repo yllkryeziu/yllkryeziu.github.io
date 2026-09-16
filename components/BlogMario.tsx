@@ -16,11 +16,13 @@ const meta = POST_BY_SLUG.blj;
 const TOC = [
   { id: 'crowd', label: 'Sixty-four Marios, no policy' },
   { id: 'exploit', label: 'The bug they have to find' },
-  { id: 'training', label: 'How this was trained' },
-  { id: 'height', label: 'The helpful reward' },
-  { id: 'speed', label: 'The reward that points at the bug' },
-  { id: 'curves', label: 'Reward against steps' },
-  { id: 'silence', label: 'Saying nothing at all' },
+  { id: 'mistakes', label: 'Three ways I fooled myself' },
+  { id: 'experiment', label: 'The experiment' },
+  { id: 'helpful', label: 'The helpful reward fails' },
+  { id: 'mechanism', label: 'Point at the mechanism' },
+  { id: 'silence', label: 'Say nothing at all' },
+  { id: 'audio', label: 'The silent exploit' },
+  { id: 'transfer', label: 'The bug, or the staircase?' },
   { id: 'limits', label: 'What this does not show' },
 ];
 
@@ -182,6 +184,48 @@ const DISCOVERY_BARS = results.seeds
     subject: seed.firstSuccess !== null,
     note: seed.firstSuccess === null ? `peak ${signed(seed.bestPeak)}` : undefined,
   }));
+
+// Transfer test. Ten flights, twenty-four policies, eight episodes each. The rows come out of the
+// distilled results in the order the report needs them: the castle first as the reference, the
+// synthetic rebuild as the control, then the ablations paired by geometry so a reader can read
+// riser-height and tread-depth as separate effects.
+const transfer = results.transfer!;
+const transferExpert = results.transferExpert!;
+const TRANSFER_ORDER = [
+  'castle',
+  'rebuilt_rise26_run51',
+  'rebuilt_rise26_run51_norisers',
+  'rise50_run51_norisers',
+  'rise75_run100_norisers',
+  'rise100_run100_norisers',
+  'rise50_run51',
+  'rise75_run100',
+  'rise100_run100',
+  'rise26_run100',
+];
+const SCENE_LABEL: Record<string, string> = {
+  castle: 'the castle (real)',
+  rebuilt_rise26_run51: 'rebuilt · rise 25.6, run 51',
+  rebuilt_rise26_run51_norisers: 'rebuilt · faces removed',
+  rise50_run51_norisers: 'rise 50, run 51 · faces removed',
+  rise75_run100_norisers: 'rise 75, run 100 · faces removed',
+  rise100_run100_norisers: 'rise 100, run 100 · faces removed',
+  rise50_run51: 'rise 50, run 51',
+  rise75_run100: 'rise 75, run 100',
+  rise100_run100: 'rise 100, run 100',
+  rise26_run100: 'rise 26, run 100',
+};
+const transferRow = (name: string) => transfer.rows.find(row => row.scene === name)!;
+const expertRow = (name: string) => transferExpert.rows.find(row => row.scene === name)!;
+
+const castleRow = transferRow('castle');
+const rebuiltRow = transferRow('rebuilt_rise26_run51');
+const rise50NoFaces = transferRow('rise50_run51_norisers');
+const rise50Faces = transferRow('rise50_run51');
+const rise100NoFaces = transferRow('rise100_run100_norisers');
+const rise26Run100 = transferRow('rise26_run100');
+const expertCastle = expertRow('castle');
+const expertRunaway = transferExpert.rows.filter(row => row.runaway);
 
 const LAUNCH_CODE = `//! (BLJ's) This properly handles long jumps from getting forward speed with
 //  too much velocity, but misses backwards longs allowing high negative speeds.
@@ -518,6 +562,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     repo={meta.repo}
     toc={TOC}
   >
+    {/* 1. COLD OPEN --------------------------------------------------------- */}
     <H2 id="crowd">Sixty-four Marios, no policy</H2>
 
     <p>
@@ -549,29 +594,44 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <p>
       They are not failing because the staircase is long. They are failing because it does not end.
-      Standing on one of those twelve triangles displaces Mario 205 units down and 410 units back,
-      once per frame, forever, and no amount of ordinary movement gets past it. Getting to the top
-      of these stairs requires a bug — specifically, a sign error in a 1996 velocity clamp that lets
-      a long jump taken backwards multiply Mario's speed without limit.
+      Twelve of the triangles under the carpet are typed as instant warps, and standing on one of
+      them displaces Mario 205 units down and 410 units back, once per frame, forever — unless the
+      save holds seventy stars. This is Nintendo's own gate: no ordinary movement gets past it, and
+      the endless staircase was where they put it because they thought no one would.
     </p>
 
     <p>
-      This post is about what it costs to make an agent find that bug, and about a pattern I did not
-      expect going in. I trained 24 agents on this one staircase under four rewards, from one that
-      explains the goal in detail to one that says almost nothing. The more helpful the reward, the
-      worse the outcome. The reward that describes the goal most sensibly — climb, get paid — is the
-      only one of the four that never solves it, at {rungByName('height').solved} of{' '}
-      {rungByName('height').total} seeds. The reward that says nothing except <em>you are standing
-      on the landing</em> solves it. The ranking is not noise; it follows from the shape of the
-      task, and the rest of this post is that argument.
+      Someone did. Getting to the top of these stairs unlocked requires <strong>a bug</strong> —
+      specifically, a sign error in a 1996 velocity clamp that lets a long jump taken backwards
+      multiply Mario's speed without limit. Human speedrunners spent years finding it and years
+      more turning it into a routine, and the exploit is now the whole reason a 70-star run in a
+      120-star game exists. It is called the <strong>backwards long jump</strong>.
     </p>
 
+    <p>
+      This post is a measurement of one question: <em>how much hand-holding does an RL agent need
+      before it can rediscover that glitch on its own?</em> The staircase is unusually clean as a
+      test rig for it. Success is <strong>self-certifying</strong> — reaching the top landing
+      cannot be faked, because the only per-frame movement large enough to skip the warp band{' '}
+      <em>is</em> the exploit, so there is no judgement call about whether the agent cheated.
+      Standing on the landing means the bug was found.
+    </p>
+
+    <p>
+      I trained 24 agents on this one staircase under four rewards, from one that describes the
+      goal in detail to one that says almost nothing. The counterintuitive result is the whole
+      point of the post — the more helpful the reward, the worse the outcome — but that ranking
+      is only interesting once the mechanism behind it is on the page. The rest of this post is
+      that argument. The reason it holds is the same reason the exploit exists at all.
+    </p>
+
+    {/* 2. THE BUG ---------------------------------------------------------- */}
     <H2 id="exploit">The bug they have to find</H2>
 
     <p>
-      A <strong>backwards long jump</strong> is a speed exploit: every long jump multiplies Mario's
-      forward velocity by 1.5 before clamping it, and the clamp tests only the upper side, so a long
-      jump taken while moving backwards multiplies a negative number without bound. The
+      A backwards long jump is a speed exploit: every long jump multiplies Mario's forward velocity
+      by 1.5 before clamping it, and the clamp tests only the upper side. So a long jump taken
+      while moving <em>backwards</em> multiplies a negative number without bound. The
       decompilation <Cite ids={[2]} /> carries a comment saying exactly that, and it is the reason
       speedrunners can cross the castle doors a save file has not earned <Cite ids={[1]} />:
     </p>
@@ -591,20 +651,20 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Code>
 
     <p>
-      So a chain of long jumps is a small dynamical system. A launch at speed <M>v</M> that
-      spends <M>k</M> frames in the air at decay <M>d</M> lands and relaunches
-      at <M>{`v' = 1.5\\,(v - dk)`}</M>, which grows only when <M>{`|v| > 3dk`}</M>. Air time is the
-      only term the level controls, and it is why the exploit needs stairs rather than a hill: a
-      staircase lands Mario on the next tread almost immediately, and stair treads are flat. The
-      flatness matters as much as the shortness, because the game diverts any landing with backwards
-      speed on a slope into a slide, and treats anything past about 38° as a slope:
+      So a chain of long jumps is a small dynamical system. A launch at speed <M>v</M> that spends{' '}
+      <M>k</M> frames in the air at decay <M>d</M> lands and relaunches at{' '}
+      <M>{`v' = 1.5\\,(v - dk)`}</M>, which grows only when <M>{`|v| > 3dk`}</M>. Air time is the
+      only term the level controls, and it is the reason the exploit needs stairs rather than a
+      hill: a staircase lands Mario on the next tread almost immediately, and stair treads are
+      flat. Flatness matters as much as shortness, because the game diverts any landing with
+      backwards speed on a slope into a slide, and treats anything past about 38° as a slope:
     </p>
 
     <Code language="c" file="src/game/mario_actions_moving.c — should_begin_sliding">{SLIDE_CODE}</Code>
 
     <p>
-      What all that speed is <em>for</em> is one line of level logic. The check that sends Mario back
-      down the stairs samples the floor he is standing on, once, at a fixed point in the frame:
+      What all that speed is <em>for</em> is one line of level logic. The check that sends Mario
+      back down the stairs samples the floor he is standing on, once, at a fixed point in the frame:
     </p>
 
     <Code language="c" file="src/game/level_update.c — check_instant_warp">{WARP_CODE}</Code>
@@ -614,9 +674,9 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       so the band is {escape.band.depth} units deep and the only way over it is a single frame's
       displacement larger than that. Mario's fastest legitimate movement is a long jump at the
       clamp, 48 units per frame. Nothing in the game closes the gap between 48
-      and {escape.band.depth}, which is the property the whole post turns on: there is no partial
-      version of this trick and nothing to climb toward. A policy either compounds a chain or sits
-      at the attractor.
+      and {escape.band.depth}, which is the property the whole post turns on: <strong>there is no
+      partial version of this trick</strong> and nothing to climb toward. A policy either compounds
+      a chain or sits at the attractor.
     </p>
 
     <KeyNumbers
@@ -695,8 +755,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      Speed alone is not the condition, which took me a while to accept. Earlier in the same episode
-      the policy reached <M>{signed(escape.inPhase!.velocity, 2)}</M> on
+      Speed alone is not the condition, which took me a while to accept. Earlier in the same
+      episode the policy reached <M>{signed(escape.inPhase!.velocity, 2)}</M> on
       frame {escape.inPhase!.frame} — already faster than the {escape.band.depth} it supposedly
       needs — and warped anyway, because that frame put it
       at <M>{`z = ${escape.inPhase!.from[1]}`}</M>, inside the band. Crossing means arriving in
@@ -704,6 +764,11 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       floor's normal, its height and whether it is a trigger, never where the step edge is.
       Overshooting by {overshoot.toFixed(1)}× is how it buys robustness against a variable it
       cannot see.
+    </p>
+
+    <p>
+      This is the behaviour the rest of the post is about — the target the reward has to
+      elicit — so here it is uncut before any results:
     </p>
 
     <Hero
@@ -715,19 +780,87 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           at <M>{`y = ${escape.goalY}`}</M>, with the measured state burned in. It is thrown
           back {escape.warpCount} times before the chain that works — twice while already moving
           backwards, once while walking. The chapter marks are the episode's own mechanical events,
-          taken from the recorded state rather than from round numbers.
+          taken from the recorded state rather than from round numbers. This clip is what a solved
+          policy looks like; the question is what it takes to teach one.
         </>
       }
     />
 
-    <H2 id="training">How this was trained</H2>
+    {/* 3. THREE WAYS I FOOLED MYSELF -------------------------------------- */}
+    <H2 id="mistakes">Three ways I fooled myself</H2>
+
+    <p>
+      Before any of the results below, three things almost buried the project. Every one of them is
+      a case of blaming the algorithm for a fact about the environment, which is the failure mode
+      that reward-design work invites and the one I want to name out loud, because the measurements
+      later in the post only mean anything if these were caught first.
+    </p>
+
+    <H3>1. The week the project was wrong</H3>
+
+    <p>
+      The exploit was believed not to reproduce at all: a scripted sweep over launch angles and
+      air-stick settings had found no growth on any geometry, and I read that as the exploit needing
+      frame-perfect inputs no policy would ever land on. It did not. libsm64 takes stick axes
+      in <M>[-1, 1]</M> and scales them itself:
+    </p>
+
+    <Code language="c" file="src/libsm64.c:241">{STICK_CODE}</Code>
+
+    <p>
+      The sweep had passed <M>{`\\pm 64`}</M> and <M>0</M>. So it tested two useless regimes — no
+      backwards drive, and a stick magnitude of 4,096 that drove forward velocity to <M>-6142</M>{' '}
+      in one frame and threw Mario out of the level — and never the range between them, which is
+      the only range where a chain exists. <strong>The project's central negative result was an
+      input bug.</strong> Every measurement in this post postdates finding it, and it is the reason
+      I now write scripted controls that pass through the same input path as the policy rather
+      than a shortcut around it.
+    </p>
+
+    <H3>2. The reward that paid sixty times too much</H3>
+
+    <p>
+      The first speed term paid <M>0.01</M> per unit of record backwards speed, uncapped. At the
+      episode peak of <M>-6000</M> that is a return of about 59 against a goal worth 1.0, so the
+      agent was paid roughly sixty times more for going fast than for finishing the task — and it
+      learned exactly that: long chains, no interest in the landing. The boat farming turbo pads
+      instead of finishing the race <Cite ids={[9]} />, with my own reward as the flaw being
+      exploited <Cite ids={[8]} />. Bounding every shaping term at 0.25 took the speed variant
+      from 2 of 3 seeds with a fastest discovery at 3.7M steps to{' '}
+      {rungByName('speed').solved} of {rungByName('speed').total} at {millions(earliest)}. The
+      bound is not hygiene; it is the difference between a reward that points at the goal and one
+      that points past it.
+    </p>
+
+    <H3>3. Action repeat, and a fact about the game's input handling</H3>
+
+    <p>
+      Action repeat was the natural next axis, and it was measuring the wrong
+      thing. <code>INPUT_A_PRESSED</code> is an edge that never re-latches on a held button, so
+      holding one action for <M>k</M> frames produces one press and forces a minimum A-press period
+      of <M>2k</M>. Measured with a scripted press cycle: period 2 reaches
+      peak <M>-715</M>, period 4 reaches <M>-31.6</M>, period 6 reaches <M>-20.8</M>. Above a
+      repeat of 1 the exploit is not harder to learn, <strong>it is inexpressible</strong>. Nine
+      runs at repeat 2, 4 and 6 confirmed that with zero successes at every setting.
+    </p>
+
+    <p>
+      Filing those zeros as "shaping insufficient" would have blamed PPO for something PPO cannot
+      touch. So the axis was dropped, and the paragraph above is what belongs on the page in place
+      of it. The general shape: <em>a negative result is only informative if the environment
+      supports the positive one</em>, and the environment gets the same suspicion as the
+      algorithm.
+    </p>
+
+    {/* 4. THE EXPERIMENT --------------------------------------------------- */}
+    <H2 id="experiment">The experiment</H2>
 
     <p>
       Three processes, and the interesting part is that two of them are the same 1996 code reached
       different ways. The policy acts in <strong>libsm64</strong> <Cite ids={[3]} />, which compiles
       the decompilation's Mario as a shared library stepped one frame at a
-      time. <strong>sm64-port</strong> <Cite ids={[4]} /> is the same game as a native binary, and it
-      is used only as a renderer: it is patched to stamp recorded state onto Mario instead of
+      time. <strong>sm64-port</strong> <Cite ids={[4]} /> is the same game as a native binary, used
+      here only as a renderer: it is patched to stamp recorded state onto Mario instead of
       simulating him, so a clip cannot drift from the trajectory that was measured the way an
       open-loop input replay would.
     </p>
@@ -739,58 +872,28 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           The training loop and the rendering path. One libsm64 process holds one static surface
           set, so the vectorised environment runs one subprocess per environment; the crowd shots
           exploit the same static list from the other direction, giving each of 64 Marios its own
-          state while they share one staircase. The two rates are worth comparing:
-          one uncontended process steps at {num(speed.single)} steps/s
-          and {speed.envs} of them plus the learner on {speed.machine.cores} cores manage{' '}
-          {num(speed.loop)}, so the vectorisation buys PPO batched rollouts rather than throughput.
-          Measured on {speed.machine.machine}, {speed.machine.cores} cores. The loop rate is
-          fitted across runs of three lengths rather than timed, because
-          the {speed.startupSeconds}s of spawning subprocesses and loading the ROM into each is
-          otherwise charged to the stepping. (Source: <code>results/throughput.json</code>.)
+          state while they share one staircase. One uncontended process steps
+          at {num(speed.single)} steps/s and {speed.envs} of them plus the learner
+          on {speed.machine.cores} cores manage {num(speed.loop)}, so the vectorisation buys PPO
+          batched rollouts rather than throughput. Measured on {speed.machine.machine},{' '}
+          {speed.machine.cores} cores. (Source: <code>results/throughput.json</code>.)
         </>
       }
     >
       <Pipeline />
     </Figure>
 
-    <Note label="Method: is the simulator the game">
-      <p>
-        Two checks. A file-by-file diff of every source file in the chain
-        against <code>n64decomp/sm64</code> at <code>9921382a</code> found them byte identical —
-        the amplifier, the air update, the air step and both landing actions. That says the code is
-        right, not that the harness drives it right, so the second check replays a human artefact:
-        the TASVideos 0-star run <Cite ids={[1]} />,{' '}
-        {num(results.validation.movie.input_samples)} controller samples against a ROM whose SHA-1
-        matches the one the movie was recorded on. It runs with no desync, and the longest backwards
-        long jump chain in it — castle area 1, frames 3709 to 3739, peaking at forward
-        velocity <M>{results.validation.peakReference.toFixed(2)}</M> — reproduces
-        in libsm64 {results.validation.framesBitExact} of {results.validation.framesCompared} frames
-        bit-identically in position, velocity and forward velocity, same action every frame, same
-        peak to the last bit. Per-frame ratios span 1.4952 to 1.4996.
-      </p>
-      <p>
-        Where it stops matters too: libsm64 has no level logic, so it cannot follow a door or an
-        instant warp, and the environment therefore implements <code>check_instant_warp</code>{' '}
-        itself against the level's own collision data.
-      </p>
-    </Note>
-
     <p>
-      The agent sees 24 normalised floats and picks one of 36 actions, nine stick directions at full
-      deflection crossed with A and Z. Two details in that are load-bearing rather than incidental.
-      The last two observation dimensions are the <em>previous</em> frame's A and Z, without which
-      the phase of a two-frame press cycle is not representable at all. And the action repeat is 1,
-      because <code>INPUT_A_PRESSED</code> is an edge: holding A for <M>k</M> frames produces one
-      press, so a repeat of <M>k</M> forces a minimum press period of <M>2k</M>. Measured with a
-      scripted press cycle, period 2 peaks at <M>-715</M>, period 4 at <M>-31.6</M>, period 6
-      at <M>-20.8</M>. Above a repeat of 1 the exploit is not harder to learn, it
-      is <em>inexpressible</em> — nine runs confirmed that with zero successes, and filing those as
-      "shaping insufficient" would have blamed the algorithm for a fact about the game's input
-      handling.
+      The agent sees 24 normalised floats and picks one of 36 actions, nine stick directions at
+      full deflection crossed with A and Z. Two details in that are load-bearing rather than
+      incidental. The last two observation dimensions are the <em>previous</em> frame's A and Z,
+      without which the phase of a two-frame press cycle is not representable at all. And the
+      action repeat is 1, for the reason in the mistakes section above — anything larger makes the
+      exploit inexpressible rather than harder.
     </p>
 
     <p>
-      Every reward pays 1.0 for standing on the landing. Shaping terms are capped
+      Every reward pays 1.0 for standing on the top landing. Shaping terms are capped
       at 0.25 each, which is what makes the four variants comparable without rescaling, and both
       pay only on a new <em>record</em> rather than per frame <Cite ids={[7]} /> — the warp throws
       Mario down the stairs constantly, and a per-frame progress term would pay him forever for
@@ -828,46 +931,33 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       })}
     />
 
-    <Note label="The week the project was wrong">
-      <p>
-        Before any of this ran, the chain was believed not to reproduce at all: a scripted sweep over
-        launch angles and air-stick settings had found no growth on any geometry, and I read that as
-        the exploit needing frame-perfect inputs. It did not. libsm64 takes stick axes
-        in <M>[-1, 1]</M> and scales them itself:
-      </p>
-      <Code language="c" file="src/libsm64.c:241">{STICK_CODE}</Code>
-      <p>
-        The sweep had passed <M>{`\\pm 64`}</M> and <M>0</M>. So it tested two useless regimes — no
-        backwards drive, and a stick magnitude of 4,096 that drove forward velocity
-        to <M>-6142</M> in one frame and threw Mario out of the level — and never the range between
-        them, which is the only range where a chain exists. The project's central negative result
-        was an input bug, and every measurement in this post postdates finding it.
-      </p>
-    </Note>
-
-    <Note label="The reward that paid sixty times too much">
-      The first speed term paid <M>0.01</M> per unit of record backwards speed. At a peak
-      of <M>-6000</M> that is a return of about 59 against a goal worth 1.0, so the agent was paid
-      roughly sixty times more for going fast than for finishing — and it learned exactly that: long
-      chains, no interest in the landing. The boat farming turbo pads instead of finishing the
-      race <Cite ids={[9]} />, with my own reward as the flaw being exploited <Cite ids={[8]} />.
-      Bounding the term at 0.25 took that variant from 2 of 3 seeds with a fastest discovery at 3.7M
-      steps to {rungByName('speed').solved} of {rungByName('speed').total} at{' '}
-      {millions(earliest)}. The bound is not hygiene; it is the difference between a reward that
-      points at the goal and one that points past it.
-    </Note>
-
     <p>
-      One more thing to know before the results: the environment contributes no randomness. Spawn
+      One last thing to know before the results: the environment contributes no randomness. Spawn
       jitter is zero, three different environment seeds produce identical 300-frame trajectories,
-      and an identical reward and seed reproduced a 6.3M-step trajectory exactly across two cluster
-      submissions on different nodes, with bit-identical weights across all 12 tensors. A seed
-      controls initial weights and action sampling, nothing else. So when a variant solves 3 of 6,
-      that is three independently initialised agents getting lucky on a fixed puzzle — which is why
-      nothing in this post is a mean across seeds.
+      and identical settings reproduced a 6.3M-step trajectory bit-exactly across two cluster
+      submissions on different nodes. A seed controls initial weights and action sampling and
+      nothing else, so when a variant solves 3 of 6, that is three independently initialised agents
+      getting lucky on a fixed puzzle — which is why nothing in this post is a mean across seeds.
     </p>
 
-    <H2 id="height">The helpful reward</H2>
+    <Note label="Is the simulator the game?">
+      A file-by-file diff of every source file in the chain against{' '}
+      <code>n64decomp/sm64</code> at <code>9921382a</code> found them byte identical: the
+      amplifier, the air update, the air step and both landing actions. To rule out a right-code /
+      wrong-harness failure, the TASVideos 0-star run <Cite ids={[1]} />{' '}
+      ({num(results.validation.movie.input_samples)} controller samples against a matching-SHA-1
+      ROM) replays with no desync, and the longest backwards-long-jump chain in it reproduces in
+      libsm64 {results.validation.framesBitExact} of {results.validation.framesCompared} frames
+      bit-identically in position, velocity and forward velocity, same action every frame, same
+      peak to the last bit. Peak forward
+      velocity: <M>{results.validation.peakReference.toFixed(2)}</M> both sides. Where the
+      simulator does <em>not</em> match the game matters too: libsm64 has no level logic and
+      cannot follow a door or an instant warp, so the environment implements{' '}
+      <code>check_instant_warp</code> against the level's own collision data.
+    </Note>
+
+    {/* 5. THE HELPFUL REWARD FAILS ---------------------------------------- */}
+    <H2 id="helpful">The helpful reward fails</H2>
 
     <p>
       The obvious thing to pay for is height. The goal is up; pay for getting up. It is bounded, it
@@ -896,8 +986,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       The reason is visible in the panels and in the reward's own shape. The height term goes flat
       at <M>y = 3960</M>, because that is where the barrier is and no ordinary movement gets past
       it. So it is a smooth gradient over exactly the region where ordinary movement works, and a
-      constant over the region where the exploit lives. There is no gradient across the
-      discontinuity — and the discontinuity is the whole task.
+      constant over the region where the exploit lives. <strong>There is no gradient across the
+      discontinuity</strong> — and the discontinuity is the whole task.
     </p>
 
     <p>
@@ -907,94 +997,23 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       between {heightWarpLo.toFixed(0)} and {heightWarpHi.toFixed(0)} times per episode over their
       last 1,000; the sixth never reaches the barrier at all. Climb, collect the record, get thrown
       down, climb again and collect nothing, because the record is already set. Median best
-      backwards speed across the six is <M>{signed(heightMedianPeak)}</M> — the <M>-16</M> attractor
-      plus a couple of failed launches — across {num(heightEpisodes)} episodes and zero successes.
+      backwards speed across the six is <M>{signed(heightMedianPeak)}</M> — the <M>-16</M>{' '}
+      attractor plus a couple of failed launches — across {num(heightEpisodes)} episodes and zero
+      successes.
     </p>
 
-    <p>
-      The failure is also inaudible, which is worth a paragraph because it is the one diagnostic
-      that needed no instrumentation. The decompilation's audio engine keeps its state in a
-      file-scope global rather than per Mario, so one audio tick per frame renders the whole crowd.
-      And <code>act_long_jump</code> plays <code>SOUND_MARIO_YAHOO</code> on entry, while a working
-      chain re-enters that action on nearly every frame, so the obvious guess is that a policy doing
-      the exploit screams continuously. It does the opposite. The chain is the quietest stretch of
-      the whole run: RMS {audioPhases.chain.rms} over
-      frames {audioPhases.chain.first}–{audioPhases.chain.last},
-      against {audioPhases.jumpBefore.rms} for the single ordinary long jump immediately before
-      it, {audioPhases.flightAfter.rms} for the flight it launches
-      and {audioPhases.episode.rms} for the episode as a whole. Widening the window to the chain's
-      first amplifying press at frame {audioPhases.chainFull.first} only
-      reaches {audioPhases.chainFull.rms}, so the result does not depend on where the chain is said
-      to begin. Put the other way round: {audioPhases.chain.presses} yells
-      in {audioPhases.chain.frames} frames are quieter than one yell
-      in {audioPhases.jumpBefore.frames}.
-    </p>
+    {/* 6. POINT AT THE MECHANISM ------------------------------------------ */}
+    <H2 id="mechanism">Point at the mechanism, not the goal</H2>
 
     <p>
-      Three lines of the decompilation explain that, and they are the funniest thing I found in
-      it. <code>include/sounds.h</code> declares <code>SOUND_MARIO_YAHOO</code> with
-      the <code>SOUND_DISCRETE</code> flag, whose own comment reads "Every call
-      to <code>play_sound</code> restarts the sound". <code>set_mario_action</code> clears
-      Mario's <code>MARIO_MARIO_SOUND_PLAYED</code> flag on every transition, so re-entering the
-      action requests the yell again. And <code>process_sound_request</code> will not stack a
-      request from a source that already holds a slot in that bank: it finds the entry by source
-      pointer and, for a discrete sound, overwrites it and sets its status back to waiting. So Mario
-      asks to yell {audioPhases.chain.presses} times
-      in {audioPhases.chain.frames} frames, and each request restarts the sample from the top
-      before the previous one has been audible. He is yelling the entire way up the staircase. You
-      never hear more than the attack of any of them.
-    </p>
-
-    <p>
-      The instant warp plays nothing at all either — there is no sound on
-      the <code>SURFACE_INSTANT_WARP</code> path. So the trapped crowd's warps are silent too, and
-      what you hear instead is 64 Marios calmly jogging up a staircase.
-    </p>
-
-    <Table
-      n={3}
-      caption="Audio over 30 seconds of each converged population, on the dumped 32 kHz stereo stream. Centroid is the spectral centroid; bright is the fraction of energy above 2 kHz. The mix saturates at about eight simultaneous Marios, because the engine has a fixed voice limit and drops the surplus itself, so these are not loudness-of-crowd measurements."
-      columns={[
-        { key: 'name', label: 'Reward' },
-        { key: 'rms', label: 'RMS', numeric: true },
-        { key: 'centroid', label: 'Centroid', numeric: true },
-        { key: 'bright', label: 'Bright', numeric: true },
-        { key: 'loud', label: 'Loud frames', numeric: true },
-      ]}
-      rows={RUNG_ORDER.map(name => {
-        const row = mediaByRung(name);
-        return {
-          name: RUNG_LABEL[name],
-          rms: row.audio.rms.toFixed(1),
-          centroid: `${row.audio.centroid_hz.toFixed(0)} Hz`,
-          bright: pct(row.audio.bands.bright),
-          loud: pct(row.audio.loud_frame_fraction),
-          highlight: name === 'height',
-        };
-      })}
-    />
-
-    <p>
-      The trapped population is the loudest of the four by RMS ({trapped.audio.rms.toFixed(1)}{' '}
-      against {Math.min(...escapingRms).toFixed(0)}–{Math.max(...escapingRms).toFixed(0)}) and the
-      darkest by centroid ({trapped.audio.centroid_hz.toFixed(0)} Hz
-      against {Math.min(...escapingCentroid).toFixed(0)}–
-      {Math.max(...escapingCentroid).toFixed(0)} Hz). Band by band against the mean of the three
-      escaping populations it carries {results.media.trappedOverEscapingByBand.sub.toFixed(2)}× the
-      sub-bass and {results.media.trappedOverEscapingByBand.low_voice.toFixed(2)}× the low-voice
-      energy, but only {results.media.trappedOverEscapingByBand.bright.toFixed(2)}× the bright
-      energy. Footsteps and landings are low and broad. The yahoo is bright and periodic.
-    </p>
-
-    <H2 id="speed">The reward that points at the bug</H2>
-
-    <p>
-      Now pay for speed instead: the fraction of the escape speed the episode has reached, capped
-      at 0.25. This is the one term whose gradient crosses the discontinuity, because it is defined
-      against a number ordinary movement cannot approach — {escape.band.depth} units in one frame —
-      and it saturates exactly when Mario is fast enough to cross rather than paying for speed
-      forever. It solves {rungByName('speed').solved} of {rungByName('speed').total} seeds, fastest
-      at {millions(earliest)}.
+      Now pay for <em>speed</em> instead: the fraction of the escape speed the episode has reached,
+      capped at 0.25. Not "get to the top of the stairs" but "go faster than {results.escapeSpeed}{' '}
+      units per frame". This is the one term whose gradient crosses the discontinuity, because it
+      is defined against a number ordinary movement cannot approach — the {escape.band.depth}{' '}
+      units in one frame that constitute an escape — and it saturates exactly when Mario is fast
+      enough to cross, rather than paying for speed forever.
+      It solves {rungByName('speed').solved} of {rungByName('speed').total} seeds, fastest at{' '}
+      {millions(earliest)}.
     </p>
 
     <SwarmRow
@@ -1009,24 +1028,16 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           the speed: the four panels peak
           at {swarmManifest.rungs.speed.map(row => signed(row.peakBackward, 1)).join(', ')}, which
           does not trend, because a panel's peak is the single fastest of 64 policies and one
-          runaway chain moves it. Unmute one panel and the striking thing is how little there is to
-          hear: a chain re-enters <code>ACT_LONG_JUMP</code> on nearly every frame and is quieter
-          than the crowd walking.
+          runaway chain moves it.
         </>
       }
     />
 
     <p>
       Height shaping rewards the thing you want. Speed shaping rewards the thing that gets it. The
-      distinction is not about density or boundedness — both terms are dense and both are capped at
-      0.25 — it is about whether the gradient survives the point where ordinary movement stops
-      working.
-    </p>
-
-    <H2 id="curves">Reward against steps</H2>
-
-    <p>
-      Four rungs, one axis, {num(results.totals.episodes)} episodes:
+      distinction is not about density or boundedness — both terms are dense and both are capped
+      at 0.25 — it is about whether the gradient survives the point where ordinary movement stops
+      working. The two curves together carry the argument of the whole post:
     </p>
 
     <Figure
@@ -1046,18 +1057,19 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <p>
-      One comparison in that figure carries the argument of the whole post. For
+      Read the picture, not the numbers. For
       all {results.heightOverTerminal.bins} bins of the run, the height curve sits above the
       landing-only curve — {plateau('height')} against zero at the end — and yet height is the
-      variant that never once reaches the landing, and landing-only is the variant that does. What
-      the height curve reports is its shaping term paying out for climbing, which is progress up
-      the stairs rather than progress on the task. The reward that looks like it is working is the
-      one that never works.
+      variant that never once reaches the landing, and landing-only is the variant that
+      does. <strong>The reward that looks like it is working is the one that never works.</strong>{' '}
+      What the height curve reports is its shaping term paying out for climbing, which is progress
+      up the stairs rather than progress on the task.
     </p>
 
     <p>
-      Which is exactly why the discovery step needs its own figure. Every run's first success is a
-      single timestep, and the distribution of those is the real result of the ladder:
+      Which is exactly why the outcome that matters is the discovery step. Every run's first
+      success is a single timestep, and the distribution of those is the real result of the
+      ladder:
     </p>
 
     <Figure
@@ -1075,15 +1087,15 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <p>
-      {discovered.length} of 24 runs found it. Within speed shaping — the variant that always worked
-      — the fastest seed discovered the exploit at {millions(earliest)} and the slowest
+      {discovered.length} of 24 runs found it. Within speed shaping — the variant that always
+      worked — the fastest seed discovered the exploit at {millions(earliest)} and the slowest
       at {millions(latest)}, a spread of {spread.toFixed(1)}× on identical hyperparameters,
       identical geometry and an environment with no randomness in it. Reporting{' '}
       {millions(Math.round(speedDiscovered.reduce((sum, seed) => sum + seed.firstSuccess!, 0) / speedDiscovered.length))}{' '}
       as the average discovery time would describe none of the six runs and would hide that two of
       them spent more than 16M steps finding what another found in {millions(earliest)}. Outcomes
-      here bifurcate rather than cluster, and the summary statistic that survives contact with that
-      is seeds solved out of six <Cite ids={[10]} />.
+      here bifurcate rather than cluster, and the summary statistic that survives contact with
+      that is seeds-solved out of six <Cite ids={[10]} />.
     </p>
 
     <p>
@@ -1092,11 +1104,12 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       of {results.escapeSpeed}. One height-shaped seed got
       to {pct(Math.abs(stalledBestPeak) / results.escapeSpeed, 0)} of what it needed and never
       crossed; the other {stalled.length - 1} never exceeded <M>{signed(stalledSecondPeak)}</M>.
-      That is what a threshold with no gradient across it looks like from below. Ninety-five per cent
-      of the required speed buys nothing at all.
+      That is what a threshold with no gradient across it looks like from below.{' '}
+      <strong>Ninety-five per cent of the required speed buys nothing at all.</strong>
     </p>
 
-    <H2 id="silence">Saying nothing at all</H2>
+    {/* 7. SAY NOTHING AT ALL ---------------------------------------------- */}
+    <H2 id="silence">Say nothing at all</H2>
 
     <p>
       Which leaves the two rewards that are not trying to be helpful in the same way. Adding speed
@@ -1135,11 +1148,11 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      So the ranking of the four rewards is the reverse of how helpful they are, and the landing-only
-      result is the one that needs explaining. Its episode returns take only the values 0.0 and 1.0
-      across all {num(terminalSolver.episodes)} episodes of the seed that solved it. Before step{' '}
-      {num(terminalSolver.firstSuccess!)} that reward had paid out exactly zero, every episode, for
-      six million frames. What was the optimiser doing?
+      So the ranking of the four rewards is the reverse of how helpful they are, and the
+      landing-only result is the one that needs explaining. Its episode returns take only the
+      values 0.0 and 1.0 across all {num(terminalSolver.episodes)} episodes of the seed that solved
+      it. Before step {num(terminalSolver.firstSuccess!)} that reward had paid out exactly zero,
+      every episode, for six million frames. What was the optimiser doing?
     </p>
 
     <p>
@@ -1165,7 +1178,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <Table
-      n={4}
+      n={3}
       caption={
         <>
           The same run at five checkpoints, with two null policies for scale. Mean
@@ -1200,16 +1213,16 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     />
 
     <p>
-      The walk between those checkpoints is large and not monotone. At {ckpt(early.steps)} the policy
-      is indistinguishable from uniform random: {early.groundPound.mean.toFixed(1)}% of its frames
-      are in the ground-pound actions
+      The walk between those checkpoints is large and not monotone. At {ckpt(early.steps)} the
+      policy is indistinguishable from uniform
+      random: {early.groundPound.mean.toFixed(1)}% of its frames are in the ground-pound actions
       against {randomRef.groundPound.mean.toFixed(1)}% for uniform random, a gap smaller than
       the {early.groundPound.min.toFixed(1)}–{early.groundPound.max.toFixed(1)}% spread its own four
-      rollouts cover. Then 3.5M
-      and 5.0M already spend 8% and 22% of their frames in long jump, one 4.0M rollout spends 62%,
-      5.5M is back to 0.0%, {ckpt(rising.steps)} holds {rising.longJump.mean.toFixed(1)}% and reaches
-      a best backwards speed of <M>{signed(rising.bestPeak)}</M> while still solving nothing — and
-      then {ckpt(relapse.steps)}, the last checkpoint before the first success, has reverted
+      rollouts cover. Then 3.5M and 5.0M already spend 8% and 22% of their frames in long jump, one
+      4.0M rollout spends 62%, 5.5M is back to 0.0%, {ckpt(rising.steps)}{' '}
+      holds {rising.longJump.mean.toFixed(1)}% and reaches a best backwards speed
+      of <M>{signed(rising.bestPeak)}</M> while still solving nothing — and then{' '}
+      {ckpt(relapse.steps)}, the last checkpoint before the first success, has reverted
       to {relapse.groundPound.mean.toFixed(1)}% ground pound
       and {relapse.longJump.mean.toFixed(1)}% long jump. Further into the attractor than uniform
       random ever goes.
@@ -1220,31 +1233,105 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       state is <M>{`0 - V(s)`}</M>, and <M>V</M> is a randomly initialised network being dragged
       toward zero, so the advantages are nonzero, meaningless and correlated across a rollout.
       Episodes also end by truncation at 3,000 frames, where the value target bootstraps
-      on <M>{`V(s_T)`}</M> at <M>{`\\gamma = 0.999`}</M> rather than on a terminal zero, which keeps
-      feeding the same noise back in. So PPO spends six million frames on a random walk through
-      policy space, driven by its own critic's initialisation and spread by the entropy
+      on <M>{`V(s_T)`}</M> at <M>{`\\gamma = 0.999`}</M> rather than on a terminal zero, which
+      keeps feeding the same noise back in. So PPO spends six million frames on a random walk
+      through policy space, driven by its own critic's initialisation and spread by the entropy
       bonus <Cite ids={[5]} />. The walk passes near the exploit repeatedly and wanders off again.
     </p>
 
     <p>
       That is the mechanism behind the whole ranking. The landing-only reward does not help, but it
-      does not lie either: it leaves the walk free, and the walk eventually lands a success inside a
-      rollout, at which point the advantage means something and the transition takes 0.5M
+      does not lie either: it leaves the walk free, and the walk eventually lands a success inside
+      a rollout, at which point the advantage means something and the transition takes 0.5M
       frames — {ckpt(relapse.steps)} solves nothing, 6.5M solves one episode in four
       rollouts, {ckpt(breakthrough.steps)} solves {breakthrough.successes}, and from 7.5M on no
-      checkpoint averages more than 10% ground pound again. The height term, by contrast, replaces the walk with a hill to
-      stand on. It converts an undirected search into a directed one, and points it at the one place
-      the answer is not.
+      checkpoint averages more than 10% ground pound again. The height term, by contrast, replaces
+      the walk with a hill to stand on. <strong>It converts an undirected search into a directed
+      one, and points it at the one place the answer is not.</strong>
+    </p>
+
+    {/* 8. THE SILENT EXPLOIT ---------------------------------------------- */}
+    <H2 id="audio">The silent exploit</H2>
+
+    <p>
+      The moment of discovery, it turns out, is <em>audible</em>. That was not on the plan and it
+      is the one diagnostic on the whole project that needed no instrumentation. The set-up is
+      three lines of the 1996 audio engine, arranged in a way that turned out to be the funniest
+      thing I found in the decompilation.
     </p>
 
     <p>
-      The moment of discovery is even audible, which is the last thing I expected to be able to
-      measure. Taking a {results.media.excerpt.seconds}-second excerpt
-      from {results.media.excerpt.startSeconds} seconds into each checkpoint's capture gives a level
-      drop of {pct(levelDrop, 0)} — {preLevel.toFixed(0)} before
-      against {postLevel.toFixed(0)} after — at the boundary between the 6M and 7M checkpoints,
-      where the training log independently puts that run's first success. Flailing is loud. The
-      exploit is quiet.
+      Mario yells "yahoo" when he enters <code>ACT_LONG_JUMP</code>, and a working chain re-enters
+      that action on nearly every frame, so the obvious guess is that a policy doing the exploit
+      screams continuously. It does the opposite. Three files
+      explain that. <code>include/sounds.h</code> declares <code>SOUND_MARIO_YAHOO</code> with
+      the <code>SOUND_DISCRETE</code> flag, whose own comment reads "Every call to{' '}
+      <code>play_sound</code> restarts the sound". <code>set_mario_action</code> clears
+      Mario's <code>MARIO_MARIO_SOUND_PLAYED</code> flag on every transition, so re-entering the
+      action requests the yell again. And <code>process_sound_request</code> refuses to stack a
+      request from a source that already holds a slot in that bank: it finds the entry by source
+      pointer and, for a discrete sound, overwrites it and resets its status to waiting.
+    </p>
+
+    <p>
+      So Mario asks to yell {audioPhases.chain.presses} times
+      in {audioPhases.chain.frames} frames, and each request restarts the sample from the top
+      before the previous one has been audible. He is yelling the entire way up the staircase. You
+      never hear more than the attack of any of them, and the chain becomes the <em>quietest</em>{' '}
+      stretch of the whole run: RMS {audioPhases.chain.rms} over
+      frames {audioPhases.chain.first}–{audioPhases.chain.last},
+      against {audioPhases.jumpBefore.rms} for the single ordinary long jump immediately before
+      it, {audioPhases.flightAfter.rms} for the flight it launches
+      and {audioPhases.episode.rms} for the episode as a whole. The instant warp plays nothing
+      either — there is no sound on the <code>SURFACE_INSTANT_WARP</code> path — so the trapped
+      crowd's resets are silent too, and what you hear from a stuck run is 64 Marios calmly
+      jogging up a staircase.
+    </p>
+
+    <Table
+      n={4}
+      caption="Audio over 30 seconds of each converged population, on the dumped 32 kHz stereo stream. Centroid is the spectral centroid; bright is the fraction of energy above 2 kHz. The mix saturates at about eight simultaneous Marios, because the engine has a fixed voice limit and drops the surplus itself, so these are not loudness-of-crowd measurements."
+      columns={[
+        { key: 'name', label: 'Reward' },
+        { key: 'rms', label: 'RMS', numeric: true },
+        { key: 'centroid', label: 'Centroid', numeric: true },
+        { key: 'bright', label: 'Bright', numeric: true },
+        { key: 'loud', label: 'Loud frames', numeric: true },
+      ]}
+      rows={RUNG_ORDER.map(name => {
+        const row = mediaByRung(name);
+        return {
+          name: RUNG_LABEL[name],
+          rms: row.audio.rms.toFixed(1),
+          centroid: `${row.audio.centroid_hz.toFixed(0)} Hz`,
+          bright: pct(row.audio.bands.bright),
+          loud: pct(row.audio.loud_frame_fraction),
+          highlight: name === 'height',
+        };
+      })}
+    />
+
+    <p>
+      The trapped population is the loudest of the four by RMS ({trapped.audio.rms.toFixed(1)}{' '}
+      against {Math.min(...escapingRms).toFixed(0)}–{Math.max(...escapingRms).toFixed(0)}) and the
+      darkest by centroid ({trapped.audio.centroid_hz.toFixed(0)} Hz
+      against {Math.min(...escapingCentroid).toFixed(0)}–
+      {Math.max(...escapingCentroid).toFixed(0)} Hz). Band by band against the mean of the three
+      escaping populations it carries {results.media.trappedOverEscapingByBand.sub.toFixed(2)}× the
+      sub-bass and {results.media.trappedOverEscapingByBand.low_voice.toFixed(2)}× the low-voice
+      energy, but only {results.media.trappedOverEscapingByBand.bright.toFixed(2)}× the bright
+      energy. Footsteps and landings are low and broad. The yahoo is bright and periodic and
+      swallowed by its own restart.
+    </p>
+
+    <p>
+      Which lets the moment of discovery show up in a plot of audio level.
+      A {results.media.excerpt.seconds}-second excerpt
+      from {results.media.excerpt.startSeconds} seconds into each checkpoint's capture of the
+      landing-only run gives a level drop of {pct(levelDrop, 0)} —{' '}
+      {preLevel.toFixed(0)} before against {postLevel.toFixed(0)} after — at the boundary between
+      the 6M and 7M checkpoints, where the training log independently puts that run's first
+      success:
     </p>
 
     <Figure
@@ -1263,6 +1350,124 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       />
     </Figure>
 
+    <p>
+      Flailing is loud. The exploit is quiet. If I had thought to listen at the start of the
+      project the discovery step of every one of the twenty-four runs would have been on the page
+      six weeks earlier.
+    </p>
+
+    {/* 9. THE BUG OR THE STAIRCASE? --------------------------------------- */}
+    <H2 id="transfer">Did they learn the bug, or the staircase?</H2>
+
+    <p>
+      Every run trained on one flight of stairs, so a success is ambiguous: it could be the
+      backwards long jump, which is a property of Mario's physics, or a sequence of inputs that
+      happens to suit 25.6-unit treads 51.25 units deep, which is a property of one level. The
+      difference matters — the whole point of naming what was learned is knowing whether it
+      transfers. To settle it, all {transfer.totalPolicies} final policies are dropped, unchanged,
+      onto ten flights: the castle's own, a synthetic rebuild of its tread geometry, and eight
+      variations. {transfer.episodesPerRun} episodes each, {transfer.totalPolicies * 10 * transfer.episodesPerRun} episodes total.
+    </p>
+
+    <Table
+      n={5}
+      caption={
+        <>
+          Transfer of {transfer.totalPolicies} final policies to ten flights,
+          {' '}{transfer.episodesPerRun} episodes each. "Policies solving" is the count of
+          the {transfer.totalPolicies} whose success rate on the scene is above zero; "mean rate"
+          averages the success rate over the {transfer.castleSolvers} policies that solve the
+          castle at all, so a row of zeros is transfer failure rather than policy failure. "Faces"
+          is the vertical face between treads. (Source: <code>results/transfer.json</code>.)
+        </>
+      }
+      columns={[
+        { key: 'scene', label: 'Flight' },
+        { key: 'rise', label: 'Rise', numeric: true },
+        { key: 'run', label: 'Run', numeric: true },
+        { key: 'risers', label: 'Faces' },
+        { key: 'policies', label: 'Policies solving', numeric: true },
+        { key: 'rate', label: 'Mean rate', numeric: true },
+        { key: 'peak', label: 'Best peak', numeric: true },
+      ]}
+      rows={TRANSFER_ORDER.map(name => {
+        const row = transferRow(name);
+        return {
+          scene: SCENE_LABEL[name],
+          rise: row.rise,
+          run: row.run,
+          risers: row.risers ? 'yes' : 'no',
+          policies: `${row.policiesSolving} of ${row.totalPolicies}`,
+          rate: row.meanRate.toFixed(3),
+          peak: signed(row.bestPeak),
+          highlight: name === 'castle',
+        };
+      })}
+    />
+
+    <p>
+      Start with the control. The synthetic rebuild uses {rebuiltRow.triangles} triangles to stand
+      in for {castleRow.triangles}, matching only the tread rise and run, and{' '}
+      {rebuiltRow.policiesSolving} of the {castleRow.policiesSolving} castle-solving policies keep
+      the exploit ({(rebuiltRow.meanRate * 100).toFixed(1)}% success rate). So the rebuild does
+      not itself break the exploit, and the failures below it are facts about geometry rather than
+      artefacts of my collision code.
+    </p>
+
+    <p>
+      What they say is that the vertical face between treads decides
+      everything. At the castle's own tread depth of 51, raising the rise
+      from {castleRow.rise} to {rise50Faces.rise} takes {castleRow.policiesSolving} of{' '}
+      {castleRow.totalPolicies} to {rise50Faces.policiesSolving} of {rise50Faces.totalPolicies},
+      and the peak from <M>{signed(castleRow.bestPeak)}</M> to <M>{signed(rise50Faces.bestPeak)}</M>{' '}
+      — about two launches and no compounding. Delete those 50-unit faces and change nothing
+      else, and {rise50NoFaces.policiesSolving} of {rise50NoFaces.totalPolicies} come back
+      at <M>{signed(rise50NoFaces.bestPeak)}</M>. Delete the castle's own 25.6-unit faces and
+      nothing happens either way. <strong>The chain does not need the risers and cannot survive
+      tall ones.</strong> Tread depth matters too and independently: keep the castle's faces,
+      double the run, and all {rise26Run100.totalPolicies} collapse to zero with a peak
+      of <M>{signed(rise26Run100.bestPeak)}</M>.
+    </p>
+
+    <p>
+      One more row worth calling out: on <code>rise 100, faces removed</code> the chain does run
+      away, to <M>{signed(rise100NoFaces.bestPeak)}</M> against a warp band 300 units deep, and
+      still <em>no</em> policy climbs past the band in{' '}
+      {rise100NoFaces.totalPolicies * transfer.episodesPerRun} episodes. Escaping means landing
+      beyond the band, not being fast below it. The learned crossings on the castle carry Mario
+      several times more speed than the geometry demands (<M>-6110</M> against a 154-unit band)
+      exactly because arriving <em>past</em> the band takes overshoot: the speed you need to
+      register is the speed that carries you across in one frame, not the speed that lets you
+      accelerate through it.
+    </p>
+
+    <p>
+      For a control on the geometry itself, the project's hand-written scripted expert — the same
+      fixed two-frame press program that hits <M>{signed(escape.peak)}</M> on the real
+      staircase — runs on the same ten flights. It runs away on exactly the two flights with no
+      faces and a steep
+      rise ({expertRunaway.map(row => signed(row.peak, 1)).join(' and ')}), which proves those
+      admit a chain. It reaches only the <M>-16</M> air-drag attractor
+      everywhere else, including on the castle
+      ({signed(expertCastle.peak)}), where {castleRow.policiesSolving} learned policies
+      reach <M>{signed(castleRow.bestPeak)}</M>. So the expert's successes are informative and its
+      failures are not, and the fixed program that works on the abstract staircases does not
+      reproduce what PPO found on the real one.
+    </p>
+
+    <p>
+      What did the policies actually learn, then? A mix: enough of the physics to compound a
+      chain, enough of the level to trigger it — a 25.6-unit tread-and-face pattern that lets the
+      first launch clear the barrier before the drag term flattens it. The physics half transfers
+      to any 25.6-unit geometry with either the castle's faces or no faces at all; the level half
+      does not survive a change of rise or run. Six weeks of training on one flight, at the
+      throughput this rig runs, produces a policy that is partly the bug and partly the room.
+      Which is honest, and it is also the recipe for the next axis: training on a distribution of
+      geometries would tell you exactly how much of the room the exploit needs, and that is the
+      first thing I would do with more time on this project.
+    </p>
+
+    {/* 10. LIMITS --------------------------------------------------------- */}
     <H2 id="limits">What this does not show</H2>
 
     <p>
@@ -1270,14 +1475,17 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       landing-only reward, and six seeds is thin for an outcome that
       bifurcates <Cite ids={[10]} />. What I would defend is the direction of the
       comparison — {rungByName('height').solved} against {rungByName('terminal').solved}, with the
-      mechanism visible in the per-episode warp counts rather than inferred from an aggregate — and
-      the {spread.toFixed(1)}× spread within the variant that always worked. I would not
-      defend {millions(terminalSolver.firstSuccess)} as an estimate of anything.
+      mechanism visible in the per-episode warp counts rather than inferred from an aggregate —
+      and the {spread.toFixed(1)}× spread within the variant that always worked. I would not
+      defend {millions(terminalSolver.firstSuccess)} as an estimate of anything. As rate
+      comparisons: 6 of 6 speed against 0 of 6 height is Fisher p ≈ 0.002; 0 of 6 height against 1
+      of 6 terminal is p = 1.0, so the headline negative result carries no support as a rate
+      comparison and the argument for it is mechanistic instead.
     </p>
 
     <p>
-      The observation is partial in a way that matters for the central number. The escape condition
-      depends on where in the band Mario arrives and the policy cannot see that, so
+      The observation is also partial in a way that matters for the central number. The escape
+      condition depends on where in the band Mario arrives and the policy cannot see that, so
       "{overshoot.toFixed(1)}× the threshold speed" is a statement about this observation space
       rather than about the exploit.
     </p>
@@ -1285,24 +1493,31 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <p>
       Two controls are missing. Rebuilding libsm64 with <code>-DVERSION_SH</code> to compile
       Nintendo's own fix — the Shindou release zeroes negative speed on landing, comment and all —
-      would be the ground-truth negative control, and it does not build, so the claim that this
-      bug is what the agent found rests on the diff and the TAS replay instead. And a curriculum
-      reward that paid 0.25 per stage of a hand-written recipe was cut for being too helpful in the
-      other direction: it was the first variant to work, 2 of 3 seeds with a first success near 300k
-      steps, roughly 21 times faster than paying nothing. It names the method rather than the goal,
-      so succeeding at it says only that the answer was supplied. Its runs are kept as the upper
-      bound on how much help is possible.
+      would be the ground-truth negative control, and it does not build against this project's
+      libsm64, so the claim that this bug is what the agent found rests on the byte-identical diff
+      and the TAS replay instead. And a curriculum reward that paid 0.25 per stage of a
+      hand-written recipe was cut for being too helpful in the other direction: it was the first
+      variant to work, 2 of 3 seeds with a first success near 300k steps, roughly 21 times faster
+      than paying nothing. It names the method rather than the goal, so succeeding at it says only
+      that the answer was supplied. Its runs are kept as the upper bound on how much help is
+      possible.
     </p>
 
     <p>
       And this is one staircase in one level of one game, with a standard PPO
-      baseline <Cite ids={[5, 6]} /> in a Gymnasium environment <Cite ids={[12]} />. Nothing here is
-      a claim about sample efficiency against methods built for hard exploration; Go-Explore's
+      baseline <Cite ids={[5, 6]} /> in a Gymnasium environment <Cite ids={[12]} />. Nothing here
+      is a claim about sample efficiency against methods built for hard exploration; Go-Explore's
       archive <Cite ids={[11]} /> exists precisely because undirected search is bad at discrete
       discoveries like this one, and a fair comparison would need the same environment, the same
-      budget and the same seed protocol. What this measures is what a reward costs when the thing it
-      is describing sits on the far side of a wall, and that the most helpful-sounding description is
-      the most expensive one.
+      budget and the same seed protocol.
+    </p>
+
+    <p>
+      The single sentence I would keep from the whole post is this. When the goal sits behind a
+      discontinuity, <strong>describing the goal is the most expensive reward you can
+      write</strong>. Help that points at the mechanism beats help that describes the outcome, and
+      saying nothing beats pointing at the wrong place — because a smooth reward that goes flat
+      exactly where the answer lives is not a hint, it is a hill in the wrong direction.
     </p>
 
     <References refs={BLJ_REFS} bibtex={BLJ_BIBTEX} />

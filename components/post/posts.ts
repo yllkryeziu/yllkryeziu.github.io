@@ -17,8 +17,8 @@ export const POSTS: PostMeta[] = [
   {
     slug: 'blj',
     kicker: 'Reinforcement Learning · Reward Design · Exploration',
-    title: 'Discovery cost',
-    dek: "Super Mario 64's long jump multiplies backwards speed without bound, which is how a 1996 sign bug became a 70-star skip. I wired the decompiled game up as an environment and asked PPO to find that bug from a reward that pays only for standing on the top of the stairs. One seed in six finds it, after 6.3M steps. Adding the obvious bonus for climbing takes that to zero in six.",
+    title: 'How much help does reinforcement learning need to break Super Mario 64?',
+    dek: "How much hand-holding does an RL agent need before it can rediscover a Super Mario 64 glitch that took speedrunners years to find? I wired the decompiled game up as an environment and trained 24 PPO agents under four rewards, from one that spells out the goal to one that says almost nothing. The most helpful reward is the only one that never works, and the reason is the same reason the exploit exists at all.",
     date: 'September 2026',
     sortDate: 202610,
     readingMinutes: 32,
