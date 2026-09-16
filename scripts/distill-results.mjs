@@ -450,6 +450,22 @@ function distillMario() {
     // the whole argument that speed alone does not buy the crossing.
     const inPhase = warps.find(warp => Math.abs(warp.velocity) > env.minimum_escape_speed) ?? null;
 
+    // Its counterpart, three frames later in the same chain on the same flight: the first frame
+    // after that warp whose displacement steps over the whole band. The pair is what the slow
+    // motion's first beat shows — one landing inside the band at a speed that should have been
+    // enough, one clearing it entirely a few frames later.
+    const clearing = inPhase
+      ? frames.find(row => row.frame > inPhase.frame && describe(row).crossed)
+      : null;
+    const clears = clearing
+      ? {
+          frame: clearing.frame,
+          velocity: round(clearing.forward_velocity, 2),
+          from: round(clearing.position[2], 1),
+          to: round(at(clearing.frame + 1).position[2], 1),
+        }
+      : null;
+
     return {
       frames: frames.length,
       goalY: replay.goal_y,
@@ -467,6 +483,7 @@ function distillMario() {
       },
       presses,
       inPhase,
+      clears,
     };
   };
   const escape = escapeOf();

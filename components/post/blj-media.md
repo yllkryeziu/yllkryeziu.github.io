@@ -1,8 +1,9 @@
 # What the BLJ post's media has to be
 
 `components/BlogMario.tsx` fetches 21 files under `public/blj/`: 19 clips and the 2 posters. Every
-one is the game's own renderer drawing measured state in `castle_inside` area 2, 4:3, 960×720
-source. Stems are stable: a re-render replaces a file rather than adding one, so better footage
+one is the game's own renderer drawing measured state in `castle_inside` area 2, 4:3 — the three
+single clips at 960×720, the sixteen panels at 640×480, which is the size they are displayed at
+four to a row. Stems are stable: a re-render replaces a file rather than adding one, so better footage
 never needs a prose edit. Only the two clips that wait for a click carry a poster — the looping
 ones autoplay, so their stills would be weight in git that nothing requests.
 
@@ -15,8 +16,10 @@ muted and a reader can unmute one panel at a time, which a composite cannot do.
       rung   height | speed | terminal | height-speed
       label  1M | 5M | 10M | 20M
 
-Sixteen files, no posters: they loop. Rung order in the post is height (Fig. 5), speed (Fig. 6), terminal (Fig. 9),
-height-speed (Fig. 10), which is the order the argument needs: the helpful reward first, the reward
+Sixteen files, no posters: they loop. Each is 360 frames, 12 s, of a 450-frame capture, so a panel
+shows twelve seconds of the fifteen-second window `solved` counts escapes over; Fig. 5's caption
+says so, and re-rendering at the full 450 is a two-word caption edit. Rung order in the post is
+height (Fig. 5), speed (Fig. 6), terminal (Fig. 9), height-speed (Fig. 10), which is the order the argument needs: the helpful reward first, the reward
 that points at the bug second, and the two that say less at the end.
 
 ## The three single clips
@@ -24,12 +27,14 @@ that points at the bug second, and the two that say less at the end.
 | file | what it is | cut on |
 | --- | --- | --- |
 | `untrained.mp4` | Fig. 1, the cold open. 64 Marios with no policy. Silent autoplay loop, so it needs no poster. | `tools/export_swarm_render.py --random` |
-| `escape.mp4` + `.jpg` | Fig. 2, the escape at quarter speed, with audio. | frames 552–580 plus the render's injection offset: the chain starts at 560, crosses at 570, peaks at 576 |
+| `escape.mp4` + `.jpg` | Fig. 2, two beats at one eighth speed — `--slow 8`, each frame held for about a quarter of a second — 352 frames, 11.7 s. Silent: there is no audio track, because audio stretched eight times is not audio, and the caption says so. | two windows, `BEATS` in `tools/render_episode_clips.py`: replay frames 204–222 and 556–580, plus the render's injection offset |
 | `episode.mp4` + `.jpg` | Fig. 3, the hero run uncut, 653 frames, 21.8 s, with a burned-in readout. | the whole episode. The post draws HTML chapter marks over it at frames 0, 208, 214, 292, 560, 570, 576 and 652 |
 
-Frame 214 is worth a beat in `escape.mp4`: −176.04, already faster than the 154-unit escape speed,
-and it warps anyway because it lands at z 995.6 inside the band. That pair is the post's argument
-that phase decides and not speed alone.
+The first beat is the post's argument that phase decides and not speed alone, and both halves of
+it are measured rather than described: `escape.inPhase` is frame 214 at −176.04, already faster
+than the 154-unit escape speed, warping anyway because it lands at z 995.6 inside the band, and
+`escape.clears` is frame 217 at −381.95, stepping from z 1109 to z 878 and never touching it. Both
+come out of `distill-results.mjs`, so a re-recorded episode moves the caption with the clip.
 
 A clip that is not in the build renders as a dashed note naming the missing path rather than a black
 rectangle, so the post can be reviewed before the footage lands. The check is a `HEAD` request that
