@@ -53,7 +53,7 @@ that points at the bug second, and the two that say less at the end.
 
 | file | what it is | cut on |
 | --- | --- | --- |
-| `untrained.mp4` | Fig. 1, the cold open. 64 Marios with no policy. Silent autoplay loop, so it needs no poster. | `tools/export_swarm_render.py --random` |
+| `untrained.mp4` | Fig. 1, the cold open. 64 Marios driven by the untrained network: a freshly initialised PPO, seed 2 — the landing-only run's own starting weights. Silent autoplay loop, so it needs no poster. | `tools/export_swarm_render.py --untrained` |
 | `escape.mp4` + `.jpg` | Fig. 2, two beats at one eighth speed — `--slow 8`, each frame held for about a quarter of a second — 352 frames, 11.7 s. Silent: there is no audio track, because audio stretched eight times is not audio, and the caption says so. | two windows, `BEATS` in `tools/render_episode_clips.py`: replay frames 204–222 and 556–580, plus the render's injection offset |
 | `episode.mp4` + `.jpg` | Fig. 3, the hero run uncut, 653 frames, 21.8 s, with a burned-in readout. | the whole episode. The post draws HTML chapter marks over it at frames 0, 208, 214, 292, 560, 570, 576 and 652 |
 

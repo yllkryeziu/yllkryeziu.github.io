@@ -14,7 +14,7 @@ const Cite = makeCite(BLJ_REFS);
 const meta = POST_BY_SLUG.blj;
 
 const TOC = [
-  { id: 'crowd', label: 'Sixty-four Marios, no policy' },
+  { id: 'crowd', label: 'Sixty-four Marios, no training' },
   { id: 'exploit', label: 'The bug they have to find' },
   { id: 'mistakes', label: 'Three ways I fooled myself' },
   { id: 'experiment', label: 'The experiment' },
@@ -563,16 +563,17 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     toc={TOC}
   >
     {/* 1. COLD OPEN --------------------------------------------------------- */}
-    <H2 id="crowd">Sixty-four Marios, no policy</H2>
+    <H2 id="crowd">Sixty-four Marios, no training</H2>
 
     <p>
-      Sixty-four Marios are trying to get up the stairs to the top floor of Peach's castle. None of
-      them has a network. Each is sampling uniformly from the same 36 combinations of stick and
-      buttons, thirty times a second, and what that mostly produces is ground pounds —{' '}
-      {pct(randomRef.groundPound.mean / 100, 1)} of their frames, because 18 of the 36 actions hold
-      Z and 18 press A, and A pressed in the air with Z held is the ground-pound trigger. A few of
-      them climb six or seven steps, touch the band the level paints across the treads, and are
-      thrown back down to where they started.
+      Sixty-four Marios are trying to get up the stairs to the top floor of Peach's castle. Each
+      one is driven by a neural network — the same small MLP every training run in this post
+      starts from, weights drawn at random and never updated. What that mostly produces is ground
+      pounds — {pct(untrainedRef.groundPound.mean / 100, 1)} of their frames. The action space
+      itself steers Mario into them: 18 of the 36 combinations of stick and buttons hold Z, 18
+      press A, A pressed in the air with Z held is the ground-pound trigger, and the move is cheap
+      to enter and slow to leave. A few of them climb six or seven steps, touch the band the level
+      paints across the treads, and are thrown back down to where they started.
     </p>
 
     <Clip
@@ -582,12 +583,13 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       wide
       caption={
         <>
-          A population with no policy, sampling the 36 actions uniformly, drawn by the game's own
-          renderer in the room the task lives in. The cyan band is the twelve collision triangles
-          the level types as instant warps, drawn from the collision data itself. Over four rollouts
-          of {num(occupancy.frames)} frames a uniform random policy reaches a best height
-          of {num(randomRef.bestHeight)} — its spawn height — and a best backwards speed
-          of <M>{signed(randomRef.bestPeak)}</M>. Silent.
+          The network every training run in this post starts from — a randomly initialised
+          256×256 MLP, seed 2, the landing-only run's own starting weights — drawn by the game's
+          own renderer in the room the task lives in. The cyan band is the twelve collision
+          triangles the level types as instant warps, drawn from the collision data itself. Over
+          four rollouts of {num(occupancy.frames)} frames an untrained network reaches a best
+          height of {num(untrainedRef.bestHeight)} — a couple of treads above spawn, never
+          more — and a best backwards speed of <M>{signed(untrainedRef.bestPeak)}</M>. Silent.
         </>
       }
     />
