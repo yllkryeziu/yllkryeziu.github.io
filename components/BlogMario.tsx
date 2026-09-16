@@ -69,6 +69,7 @@ const fastestIn = (name: string) => {
 };
 
 const escape = results.escape;
+const speed = results.speed;
 // The filmed episode's own audio, one bucket per game frame, with every window derived from the
 // replay by tools/summarise_media.py rather than written down here. `chain` is the run from its
 // first amplifying press to its last, anchored on the press that produced the episode's peak.
@@ -453,13 +454,13 @@ const Pipeline: React.FC = () => {
 
       {box(0, 24, 176, 62, COOL)}
       {label(14, 46, 'PPO')}
-      {mono(14, 62, 'small MLP, 12 envs')}
-      {mono(14, 76, '2,500 steps/s in the loop')}
+      {mono(14, 62, `small MLP, ${speed.envs} envs`)}
+      {mono(14, 76, `${num(speed.loop)} steps/s in the loop`)}
 
       {box(232, 24, 176, 62, BORDER)}
       {label(246, 46, 'libsm64')}
       {mono(246, 62, "the decompilation's Mario")}
-      {mono(246, 76, 'sm64_mario_tick, one frame')}
+      {mono(246, 76, 'sm64_mario_tick per frame')}
 
       <line x1="176" y1="44" x2="226" y2="44" stroke={MUTED} strokeWidth="1.2" markerEnd="url(#blj-arrow)" />
       <text x={201} y={38} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="9.5" fill={SUBTLE}>1 of 36</text>
@@ -481,8 +482,8 @@ const Pipeline: React.FC = () => {
 
       {box(232, 160, 176, 62, WARM)}
       {label(246, 182, 'sm64-port')}
-      {mono(246, 198, 'the real renderer, with the')}
-      {mono(246, 212, 'recorded state stamped on')}
+      {mono(246, 198, 'the real renderer, handed')}
+      {mono(246, 212, 'the recorded state')}
 
       {box(0, 160, 176, 62, BORDER)}
       {label(14, 182, '64 Marios')}
@@ -733,7 +734,21 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <Figure
       n={4}
-      caption="The training loop and the rendering path. One libsm64 process holds one static surface set, so the vectorised environment runs one subprocess per environment; the crowd shots exploit the same static list from the other direction, giving each of 64 Marios its own state while they share one staircase."
+      caption={
+        <>
+          The training loop and the rendering path. One libsm64 process holds one static surface
+          set, so the vectorised environment runs one subprocess per environment; the crowd shots
+          exploit the same static list from the other direction, giving each of 64 Marios its own
+          state while they share one staircase. The two rates are worth comparing:
+          one uncontended process steps at {num(speed.single)} steps/s
+          and {speed.envs} of them plus the learner on {speed.machine.cores} cores manage{' '}
+          {num(speed.loop)}, so the vectorisation buys PPO batched rollouts rather than throughput.
+          Measured on {speed.machine.machine}, {speed.machine.cores} cores. The loop rate is
+          fitted across runs of three lengths rather than timed, because
+          the {speed.startupSeconds}s of spawning subprocesses and loading the ROM into each is
+          otherwise charged to the stepping. (Source: <code>results/throughput.json</code>.)
+        </>
+      }
     >
       <Pipeline />
     </Figure>

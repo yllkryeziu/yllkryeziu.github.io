@@ -254,6 +254,7 @@ function distillMario() {
   const occupancy = readIf(`${root}action_occupancy.json`);
   const replay = readIf(`${root}replay_model_endless.json`);
   const swarmManifest = readIf(`${root}swarm_render_manifest.json`);
+  const throughput = readIf(`${root}throughput.json`);
 
   // One row per training run. first_success is null for a seed that never found the exploit, and
   // those seeds all stop at exactly the same episode count because every episode times out, so the
@@ -345,6 +346,23 @@ function distillMario() {
         successes: row.successes,
         episodes: row.episodes,
       })),
+  };
+
+  // What the loop actually runs at, for the pipeline diagram's own labels. The loop rate is
+  // fitted across runs of different lengths rather than timed, because spawning one libsm64
+  // subprocess per environment and loading the ROM into each is a fixed cost a short run cannot
+  // separate from the stepping — which is how the old 2,500 figure happened.
+  const speed = throughput && {
+    machine: throughput.machine,
+    envs: throughput.trainEnvs,
+    single: round(throughput.environment.stepsPerSecond, 0),
+    loop: round(throughput.loop.stepsPerSecond, 0),
+    startupSeconds: throughput.loop.startupSeconds,
+    fitResidualSeconds: throughput.loop.fitResidualSeconds,
+    runs: throughput.loop.runs.map(row => ({
+      steps: row.steps,
+      stepsPerSecond: round(row.stepsPerSecond, 0),
+    })),
   };
 
   // The filmed episode, reduced to the events the prose and the clip cuts both refer to. Cutting
@@ -471,6 +489,7 @@ function distillMario() {
     media,
     randomPolicy: random ? random.rollouts : null,
     escape,
+    speed,
     swarm: swarmManifest,
     occupancy: occ,
   };

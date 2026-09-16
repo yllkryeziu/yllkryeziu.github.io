@@ -11289,6 +11289,32 @@
       "to": 878
     }
   },
+  "speed": {
+    "machine": {
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "cores": 8
+    },
+    "envs": 8,
+    "single": 7712,
+    "loop": 7099,
+    "startupSeconds": 1.8,
+    "fitResidualSeconds": 0.386,
+    "runs": [
+      {
+        "steps": 16384,
+        "stepsPerSecond": 3987
+      },
+      {
+        "steps": 40960,
+        "stepsPerSecond": 5700
+      },
+      {
+        "steps": 122880,
+        "stepsPerSecond": 6430
+      }
+    ]
+  },
   "swarm": {
     "population": 64,
     "frames": 450,
