@@ -256,6 +256,14 @@ const solvedAt = (rung: string): number[] => swarmManifest.solved[rung];
 // caption's claim about what the reader is watching rather than a claim about training.
 const swarmPeak = (rung: string): number =>
   Math.min(...swarmManifest.rungs[rung].map(row => row.peakBackward));
+// Per checkpoint, because the peak does not trend with the checkpoint and a sentence about one
+// panel must not quote another panel's number. A population's peak is its single fastest Mario,
+// so it is an extreme of 64 and swings on one runaway chain; the escape count is the stable
+// quantity. Negative index counts from the last panel.
+const swarmPeakAt = (rung: string, index: number): number => {
+  const rows = swarmManifest.rungs[rung];
+  return rows[index < 0 ? rows.length + index : index].peakBackward;
+};
 
 // A clip that waits for a click carries preload="none", so the browser never requests the file and
 // never fires an error for a missing one; it would draw as a dead black rectangle instead. Each
@@ -917,8 +925,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       rung="height"
       caption={
         <>
-          The height-shaped population at four checkpoints, 64 policies each, twelve seconds of
-          the {results.swarm.seconds}-second window the counts are taken over. Nothing changes
+          The height-shaped population at four checkpoints, 64 policies each, the whole{' '}
+          {results.swarm.seconds}-second window the counts are taken over. Nothing changes
           across 20M timesteps: the crowd walks up, bunches on the cyan band and is thrown back,
           and no panel finishes a single episode. Best backwards velocity never
           passes <M>{signed(swarmPeak('height'), 1)}</M> in any of the four. Each panel plays
@@ -1010,9 +1018,13 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         <>
           Speed shaping at four checkpoints, 64 policies each, and it improves left to
           right: {solvedAt('speed').join(' / ')} episodes finished. By 20M the crowd crouches,
-          launches backwards and goes over the band rather than into it, reaching
-          <M>{signed(swarmPeak('speed'), 1)}</M> at its fastest. Unmute one panel to hear it; a
-          chain re-enters <code>ACT_LONG_JUMP</code> almost every frame, so the exploit sounds like
+          launches backwards and goes over the band rather than into it, its fastest Mario
+          reaching <M>{signed(swarmPeakAt('speed', -1), 1)}</M>. What improves is the count and not
+          the speed: the four panels peak
+          at {swarmManifest.rungs.speed.map(row => signed(row.peakBackward, 1)).join(', ')}, which
+          does not trend, because a panel's peak is the single fastest of 64 policies and one
+          runaway chain moves it. Unmute one panel to hear it; a chain
+          re-enters <code>ACT_LONG_JUMP</code> almost every frame, so the exploit sounds like
           continuous yahoo.
         </>
       }

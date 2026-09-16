@@ -16,9 +16,10 @@ muted and a reader can unmute one panel at a time, which a composite cannot do.
       rung   height | speed | terminal | height-speed
       label  1M | 5M | 10M | 20M
 
-Sixteen files, no posters: they loop. Each is 360 frames, 12 s, of a 450-frame capture, so a panel
-shows twelve seconds of the fifteen-second window `solved` counts escapes over; Fig. 5's caption
-says so, and re-rendering at the full 450 is a two-word caption edit. Rung order in the post is
+Sixteen files, no posters: they loop. Each is the whole 450-frame capture, 15 s, which is exactly
+the window `solved` counts escapes over, so a panel shows every escape its own label claims. They
+were first cut to 360 frames and re-rendered at full length to remove that gap. Rung order in the
+post is
 height (Fig. 5), speed (Fig. 6), terminal (Fig. 9), height-speed (Fig. 10), which is the order the argument needs: the helpful reward first, the reward
 that points at the bug second, and the two that say less at the end.
 
