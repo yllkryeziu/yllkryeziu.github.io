@@ -1,9 +1,9 @@
 # What the BLJ post's media has to be
 
 `components/BlogMario.tsx` fetches 21 files under `public/blj/`: 19 clips and the 2 posters. Every
-one is the game's own renderer drawing measured state in `castle_inside` area 2, 4:3 — the three
-single clips at 960×720, the sixteen panels at 640×480, which is the size they are displayed at
-four to a row. Stems are stable: a re-render replaces a file rather than adding one, so better footage
+one is the game's own renderer drawing measured state in `castle_inside` area 2, 4:3 at 960×720 —
+the panels included, although they are displayed four to a row at a couple of hundred CSS pixels.
+Stems are stable: a re-render replaces a file rather than adding one, so better footage
 never needs a prose edit. Only the two clips that wait for a click carry a poster — the looping
 ones autoplay, so their stills would be weight in git that nothing requests.
 
@@ -20,18 +20,24 @@ consequences belong to the footage rather than to the code:
   still drawn, because hiding those desynchronises the movie that walks the game to the staircase
   and every shot comes out as the castle grounds. No caption refers to a door, so the hidden door
   is invisible in the prose; what it buys is the whole population in frame at panel size.
-- The two encodes are a display-size decision. Against a lossless encode of the same frames, the
-  panels at the 176 px they are shown at score 0.995 SSIM at crf 28 and 0.985 at crf 34, which is
-  indistinguishable and 38% smaller, so the panels ship at crf 34. The cold open is shown eight
-  times that area, where the same step costs 0.976 → 0.949 and is visible, so it ships at crf 28
-  and is the heaviest file in the set.
+- All seventeen ship at the full 960×720 render size at crf 23 with 96k audio. They used to be
+  smaller — the panels were downscaled to 640×480 at crf 34 and the cold open crf 28, a
+  display-size decision that read fine at 176 px but fell apart on a retina screen, a click-through
+  or a repost. The set is about 100 MB now, so a panel carries no source until it comes within
+  400 px of the viewport and pauses when it leaves again — the weight is paid by the readers who
+  actually scroll to the crowds.
 
 Which makes the two commands that produce all seventeen:
 
     PYTHONPATH=. python tools/render_swarm_shots.py --manifest <shots>/manifest.json \
-        --out_dir <out> --prefix "" --crf 28 --only untrained --no_poster
+        --out_dir <out> --prefix "" --crf 23 --only untrained --no_poster
     PYTHONPATH=. python tools/render_swarm_shots.py --manifest <shots>/manifest.json \
-        --out_dir <out> --out_width 640 --crf 34 --audio_bitrate 64k --no_poster <sixteen --only>
+        --out_dir <out> --crf 23 --audio_bitrate 96k --no_poster <sixteen --only>
+
+The sixteen panels reproduce exactly: the capture is seeded (20250916, offset per shot, with the
+`--random` shot first in the original run's order), so a re-capture lands the same escapes the
+labels and prose quote — 77/124/183/187 for speed, 0/0/191/232 for terminal, 0/144/158/205 for
+height+speed.
 
 ## The four-panel sets
 

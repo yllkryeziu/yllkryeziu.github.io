@@ -388,17 +388,43 @@ const SwarmRow: React.FC<{ n: number; rung: string; caption: React.ReactNode }> 
   );
 };
 
+// Sixteen panels at 960×720 are far too heavy to fetch eagerly, so a panel carries no source at
+// all until it comes within 400 px of the viewport, and pauses when it leaves again — the loop
+// resumes on the way back in. The autoplay attribute alone would start the download at DOM
+// insertion, which is the whole page weight before anyone scrolls.
 const SwarmPanel: React.FC<{ path: string; muted: boolean }> = ({ path, muted }) => {
   const available = useAvailable(path);
+  const video = React.useRef<HTMLVideoElement>(null);
+  const [near, setNear] = React.useState(false);
+  React.useEffect(() => {
+    const element = video.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setNear(true);
+            void element.play().catch(() => {});
+          } else {
+            element.pause();
+          }
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [available]);
   if (available === false) return <Missing src={path} />;
   return (
     <video
-      src={path}
+      ref={video}
+      src={near ? path : undefined}
       muted={muted}
       loop
       autoPlay
       playsInline
-      preload="auto"
+      preload="none"
       style={{ width: '100%' }}
     />
   );
