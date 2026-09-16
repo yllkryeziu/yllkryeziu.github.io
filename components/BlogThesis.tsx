@@ -418,7 +418,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const h2s: React.CSSProperties = {
     fontFamily: 'var(--font-sans)',
     fontSize: '23px', fontWeight: 700, letterSpacing: '-0.025em',
-    lineHeight: 1.15, color: TEXT, margin: '3.2rem 0 0.8rem',
+    lineHeight: 1.15, color: TEXT, margin: '2rem 0 0.75rem',
   };
   return (
     <section style={body} className="d-article">
