@@ -74,7 +74,6 @@ const escape = results.escape;
 // first amplifying press to its last, anchored on the press that produced the episode's peak.
 const audioPhases = results.media.episodeAudio.phases;
 const occupancy = results.occupancy;
-const geometry = results.geometry;
 
 const speedDiscovered = solvedIn('speed');
 const earliest = Math.min(...speedDiscovered.map(seed => seed.firstSuccess!));
@@ -89,6 +88,13 @@ const stalledPeaks = stalled.map(seed => seed.bestPeak).sort((a, b) => a - b);
 const stalledBestPeak = stalledPeaks[0];
 const stalledSecondPeak = stalledPeaks[1];
 const overshoot = Math.abs(escape.peak) / results.escapeSpeed;
+// The one press in the table that pays friction instead of multiplying, against the weakest press
+// that does multiply. Both read out of the table's own rows so the caption cannot drift from it.
+const pressRatios = escape.presses
+  .map(row => row.ratio)
+  .filter((ratio): ratio is number => ratio !== null);
+const dragRatio = Math.min(...pressRatios);
+const weakestAmplify = Math.min(...pressRatios.filter(ratio => ratio >= 1.3));
 
 const heightSeeds = seedsOf('height');
 const heightEpisodes = heightSeeds.reduce((sum, seed) => sum + seed.episodes, 0);
@@ -123,25 +129,6 @@ const rising = atStep(6e6);
 const relapse = atStep(6.3e6);
 const breakthrough = atStep(7e6);
 const converged = occupancy.checkpoints[occupancy.checkpoints.length - 1];
-
-const GEOMETRY_LABEL: Record<string, string> = {
-  flat: 'Flat ground',
-  ramp_20deg: 'Ramp',
-  ramp_30deg: 'Ramp',
-  ramp_37deg: 'Ramp',
-  ramp_40deg: 'Ramp',
-};
-const geomLabel = (name: string) => {
-  if (GEOMETRY_LABEL[name]) return GEOMETRY_LABEL[name];
-  const match = name.match(/rise(\d+)_run(\d+)/);
-  return match ? `Stairs, rise ${match[1]} run ${match[2]}` : name;
-};
-const fastestShape = geometry.full.find(row => row.geometry === 'stairs_rise75_run100')!;
-// The abstract staircase whose envelope matches the castle's own 26.5°, which is the shape the
-// scripted expert ought to run away on and does not.
-const matchedEnvelope = geometry.full.find(row => row.geometry === 'stairs_rise50_run100')!;
-const fullMag = geometry.byMagnitude.find(row => row.magnitude === 1)!;
-const halfMag = geometry.byMagnitude.find(row => row.magnitude === 0.5)!;
 
 const X_TICKS = [0, 5e6, 10e6, 15e6, 20e6].map(v => ({ v, label: `${v / 1e6}M` }));
 
@@ -660,7 +647,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           at <M>{`z = ${escape.inPhase!.from[1]}`}</M>, inside it — and
           frame {escape.clears!.frame}, at <M>{signed(escape.clears!.velocity, 2)}</M>, steps
           from <M>{`z = ${escape.clears!.from}`}</M> to <M>{`z = ${escape.clears!.to}`}</M> and
-          never touches it. Then frames 556–580: the chain of Table 1, the crossing at
+          never touches it. Then frames 548–580: the chain of Table 1, the crossing at
           frame {escape.chain.escapeFrame}, which carries Mario over the whole band in one frame so
           that the floor sample never lands on a trigger triangle, and the peak
           of <M>{signed(escape.peak, 1)}</M> at frame {escape.chain.peakFrame}. Silent, because
@@ -677,11 +664,11 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
           Press frames of that chain, each against the frame immediately before it, which is not
           always the row above because the release frames are omitted.
           Frame {escape.chain.start} is a drag frame, included because the growth is measured
-          from it. It is a drag frame for a reason worth naming: it presses A without
-          holding Z, and <code>act_long_jump_land</code> opens
-          with <code>if (!(m-&gt;input &amp; INPUT_Z_DOWN)) m-&gt;input &amp;= ~INPUT_A_PRESSED</code>,
-          so the press is discarded and the frame pays friction instead of multiplying. Every other
-          press in the chain holds Z. The band spans <M>{`z \\in [${escape.band.zLow}, ${escape.band.zHigh}]`}</M>.
+          from it, and it is a drag frame for a reason worth naming: it presses A without
+          holding Z. <code>act_long_jump_land</code> discards the press
+          unless <code>INPUT_Z_DOWN</code> is set, so the frame pays the ground friction —
+          the {dragRatio.toFixed(2)} in its own row — where every press that holds both multiplies
+          by at least {weakestAmplify.toFixed(3)}. The band spans <M>{`z \\in [${escape.band.zLow}, ${escape.band.zHigh}]`}</M>.
         </>
       }
       columns={[
@@ -732,59 +719,6 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       }
     />
 
-    <H3 id="geometry">Method: which floors admit a chain</H3>
-
-    <p>
-      Fifteen floor shapes, one scripted input program, varying only the geometry. Ramps between 20°
-      and 37° chain happily and go nowhere: air time falls from 30 frames to 19 and backwards speed
-      settles near <M>-23</M>. Three degrees further and it collapses, because the slope
-      trips <code>should_begin_sliding</code> and each backwards landing is diverted — a 40° ramp
-      manages five backwards relaunches against the 37° ramp's 74. Four of the fifteen diverge, all
-      staircases.
-    </p>
-
-    <Table
-      n={2}
-      caption={
-        <>
-          Scripted long-jump chains on fifteen floor shapes at full stick deflection, approach
-          stick {geometry.approachStick}. Divergent means backwards speed grew without settling. Air
-          frames are the mean over the chain. (Source: <code>results/blj_runaway.json</code>.)
-        </>
-      }
-      columns={[
-        { key: 'floor', label: 'Floor' },
-        { key: 'deg', label: 'Envelope', numeric: true },
-        { key: 'cycles', label: 'Backwards relaunches', numeric: true },
-        { key: 'air', label: 'Air frames', numeric: true },
-        { key: 'peak', label: 'Peak speed', numeric: true },
-        { key: 'runaway', label: 'Diverges' },
-      ]}
-      rows={geometry.full.map(row => ({
-        floor: geomLabel(row.geometry),
-        deg: row.degrees === null ? '—' : `${row.degrees}°`,
-        cycles: num(row.backwardsCycles),
-        air: row.meanAirFrames.toFixed(1),
-        peak: signed(row.peak),
-        runaway: row.runaway ? 'yes' : 'no',
-        highlight: row.geometry === 'stairs_rise75_run100',
-      }))}
-    />
-
-    <p>
-      Two rows of that table matter later. The fastest shape, rise 75 run 100 at 36.9°,
-      reaches <M>{signed(fastestShape.peak)}</M> on a mean air time
-      of {fastestShape.meanAirFrames.toFixed(1)} frames. But the shape whose envelope actually
-      matches the castle's own 26.5° — rise 50, run 100, at {matchedEnvelope.degrees}° — does{' '}
-      <em>not</em> diverge under this schedule: it reaches <M>{signed(matchedEnvelope.peak)}</M> and
-      settles. A fixed two-frame repress runs away on abstract stairs and not on the castle's
-      proportions, so what the policies find later is not what this expert does. Stick magnitude
-      matters for the same reason it buys low decay: at 0.5 the chain diverges on {halfMag.runaway}{' '}
-      of {halfMag.total} shapes, at 1.0 on {fullMag.runaway} of {fullMag.total}, and on the
-      castle-like geometry not at all below full deflection. That is why the action space uses full
-      deflection only — a measurement, not a simplification.
-    </p>
-
     <H2 id="training">How this was trained</H2>
 
     <p>
@@ -832,8 +766,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       The last two observation dimensions are the <em>previous</em> frame's A and Z, without which
       the phase of a two-frame press cycle is not representable at all. And the action repeat is 1,
       because <code>INPUT_A_PRESSED</code> is an edge: holding A for <M>k</M> frames produces one
-      press, so a repeat of <M>k</M> forces a minimum press period of <M>2k</M>. Measured with the
-      scripted expert, period 2 peaks at <M>-715</M>, period 4 at <M>-31.6</M>, period 6
+      press, so a repeat of <M>k</M> forces a minimum press period of <M>2k</M>. Measured with a
+      scripted press cycle, period 2 peaks at <M>-715</M>, period 4 at <M>-31.6</M>, period 6
       at <M>-20.8</M>. Above a repeat of 1 the exploit is not harder to learn, it
       is <em>inexpressible</em> — nine runs confirmed that with zero successes, and filing those as
       "shaping insufficient" would have blamed the algorithm for a fact about the game's input
@@ -849,7 +783,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </p>
 
     <Table
-      n={3}
+      n={2}
       caption="The four rewards. Six seeds each to 20M timesteps, 24 runs. Fastest discovery is the earliest timestep at which any seed of that variant reached the landing."
       columns={[
         { key: 'name', label: 'Reward' },
@@ -892,7 +826,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         backwards drive, and a stick magnitude of 4,096 that drove forward velocity
         to <M>-6142</M> in one frame and threw Mario out of the level — and never the range between
         them, which is the only range where a chain exists. The project's central negative result
-        was an input bug, and the geometry table above is what came out of finding it.
+        was an input bug, and every measurement in this post postdates finding it.
       </p>
     </Note>
 
@@ -1003,7 +937,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </p>
 
     <Table
-      n={4}
+      n={3}
       caption="Audio over 30 seconds of each converged population, on the dumped 32 kHz stereo stream. Centroid is the spectral centroid; bright is the fraction of energy above 2 kHz. The mix saturates at about eight simultaneous Marios, because the engine has a fixed voice limit and drops the surplus itself, so these are not loudness-of-crowd measurements."
       columns={[
         { key: 'name', label: 'Reward' },
@@ -1216,7 +1150,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <Table
-      n={5}
+      n={4}
       caption={
         <>
           The same run at five checkpoints, with two null policies for scale. Mean

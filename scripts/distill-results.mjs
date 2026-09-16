@@ -252,7 +252,6 @@ function distillMario() {
   const tas = read(`${root}tas_validation.json`);
   const env = read(`${root}env_validation.json`);
   const occupancy = readIf(`${root}action_occupancy.json`);
-  const runaway = readIf(`${root}blj_runaway.json`);
   const replay = readIf(`${root}replay_model_endless.json`);
   const swarmManifest = readIf(`${root}swarm_render_manifest.json`);
 
@@ -346,38 +345,6 @@ function distillMario() {
         successes: row.successes,
         episodes: row.episodes,
       })),
-  };
-
-  // Scripted probe of the chain condition across 15 floor shapes at four stick magnitudes. The
-  // table the post shows is the full deflection slice; the magnitude summary is what justifies
-  // restricting the action space to full deflection rather than treating that as a simplification.
-  const magnitudes = runaway
-    ? [...new Set(runaway.runs.map(row => row.air_stick_magnitude))].sort((a, b) => a - b)
-    : [];
-  const geometry = runaway && {
-    approachStick: runaway.approach_stick,
-    full: runaway.runs
-      .filter(row => row.air_stick_magnitude === 1)
-      .map(row => ({
-        geometry: row.geometry,
-        degrees: row.envelope_degrees,
-        cycles: row.cycles,
-        backwardsCycles: row.backwards_cycles,
-        peak: row.peak_velocity,
-        launch: row.best_launch_velocity,
-        minAirFrames: row.min_air_frames,
-        meanAirFrames: row.mean_air_frames,
-        runaway: row.runaway,
-      })),
-    byMagnitude: magnitudes.map(magnitude => {
-      const rows = runaway.runs.filter(row => row.air_stick_magnitude === magnitude);
-      return {
-        magnitude,
-        total: rows.length,
-        runaway: rows.filter(row => row.runaway).length,
-        bestPeak: Math.min(...rows.map(row => row.peak_velocity)),
-      };
-    }),
   };
 
   // The filmed episode, reduced to the events the prose and the clip cuts both refer to. Cutting
@@ -506,7 +473,6 @@ function distillMario() {
     escape,
     swarm: swarmManifest,
     occupancy: occ,
-    geometry,
   };
 }
 
