@@ -69,6 +69,10 @@ const fastestIn = (name: string) => {
 };
 
 const escape = results.escape;
+// The filmed episode's own audio, one bucket per game frame, with every window derived from the
+// replay by tools/summarise_media.py rather than written down here. `chain` is the run from its
+// first amplifying press to its last, anchored on the press that produced the episode's peak.
+const audioPhases = results.media.episodeAudio.phases;
 const occupancy = results.occupancy;
 const geometry = results.geometry;
 
@@ -965,9 +969,16 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       And <code>act_long_jump</code> plays <code>SOUND_MARIO_YAHOO</code> on entry, while a working
       chain re-enters that action on nearly every frame, so the obvious guess is that a policy doing
       the exploit screams continuously. It does the opposite. The chain is the quietest stretch of
-      the whole run: RMS 3263 over frames {escape.chain.start}–{escape.chain.peakFrame}, against
-      5073 for the ordinary long jump immediately before it, 5867 for the flight it launches and
-      5108 for the episode as a whole.
+      the whole run: RMS {audioPhases.chain.rms} over
+      frames {audioPhases.chain.first}–{audioPhases.chain.last},
+      against {audioPhases.jumpBefore.rms} for the single ordinary long jump immediately before
+      it, {audioPhases.flightAfter.rms} for the flight it launches
+      and {audioPhases.episode.rms} for the episode as a whole. Widening the window to the chain's
+      first amplifying press at frame {audioPhases.chainFull.first} only
+      reaches {audioPhases.chainFull.rms}, so the result does not depend on where the chain is said
+      to begin. Put the other way round: {audioPhases.chain.presses} yells
+      in {audioPhases.chain.frames} frames are quieter than one yell
+      in {audioPhases.jumpBefore.frames}.
     </p>
 
     <p>
@@ -978,10 +989,11 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       Mario's <code>MARIO_MARIO_SOUND_PLAYED</code> flag on every transition, so re-entering the
       action requests the yell again. And <code>process_sound_request</code> will not stack a
       request from a source that already holds a slot in that bank: it finds the entry by source
-      pointer and, for a discrete sound, overwrites it and sets its status back to waiting. So
-      Mario asks to yell eight times in seventeen frames, and each request restarts the sample from
-      the top before the previous one has been audible. He is yelling the entire way up the
-      staircase. You never hear more than the attack of any of them.
+      pointer and, for a discrete sound, overwrites it and sets its status back to waiting. So Mario
+      asks to yell {audioPhases.chain.presses} times
+      in {audioPhases.chain.frames} frames, and each request restarts the sample from the top
+      before the previous one has been audible. He is yelling the entire way up the staircase. You
+      never hear more than the attack of any of them.
     </p>
 
     <p>
