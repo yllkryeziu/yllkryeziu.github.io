@@ -502,7 +502,7 @@ const WARM = 'var(--series-2)';
 
 const Pipeline: React.FC = () => {
   const box = (x: number, y: number, w: number, h: number, stroke: string) => (
-    <rect x={x} y={y} width={w} height={h} rx="5" fill={SOFT} stroke={stroke} strokeWidth="1.2" />
+    <rect x={x} y={y} width={w} height={h} rx="2" fill={SOFT} stroke={stroke} strokeWidth="1.2" />
   );
   const label = (x: number, y: number, text: string, weight = '650', size = 11.5, fill = TEXT) => (
     <text x={x} y={y} fontFamily="var(--font-sans)" fontSize={size} fontWeight={weight} fill={fill}>

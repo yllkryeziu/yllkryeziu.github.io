@@ -15,7 +15,7 @@ const Node: React.FC<{
 }> = ({ x, y, w, h, title, sub, tone = 'plain' }) => (
   <g>
     <rect
-      x={x} y={y} width={w} height={h} rx="8"
+      x={x} y={y} width={w} height={h} rx="2"
       fill={tone === 'accent' ? 'color-mix(in srgb, var(--series-2) 8%, transparent)' : BG}
       stroke={tone === 'accent' ? ACCENT : BORDER}
       strokeWidth="1.4"
@@ -111,8 +111,8 @@ export const DecisionFigure: React.FC<{
         fire above {decision.toFixed(2)}
       </text>
 
-      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(gain(p))}`).join(' ')} fill="none" stroke={COOL} strokeWidth="2" strokeLinecap="round" />
-      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(cost(p))}`).join(' ')} fill="none" stroke={ACCENT} strokeWidth="2" strokeLinecap="round" />
+      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(gain(p))}`).join(' ')} fill="none" stroke={COOL} strokeWidth="1.75" />
+      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(cost(p))}`).join(' ')} fill="none" stroke={ACCENT} strokeWidth="1.75" />
 
       <text x={px(1) + 10} y={py(gain(1)) + 4} fontFamily="var(--font-sans)" fontSize="11.5" fill={SUBTLE}>expected gain</text>
       <text x={px(1) + 10} y={py(cost(1)) + 4} fontFamily="var(--font-sans)" fontSize="11.5" fill={SUBTLE}>α × expected cost</text>
@@ -154,15 +154,14 @@ export const ReliabilityFigure: React.FC<{
             d={s.bins.map((b, i) => `${i === 0 ? 'M' : 'L'}${px(b.confidence)},${py(b.accuracy)}`).join(' ')}
             fill="none"
             stroke={s.color}
-            strokeWidth="2"
-            strokeLinecap="round"
+            strokeWidth="1.75"
             strokeLinejoin="round"
           />
         ))}
         {series.map(s =>
           s.bins.map((b, i) => (
-            <circle key={`${s.label}-${i}`} cx={px(b.confidence)} cy={py(b.accuracy)} r="3.2"
-              fill={s.color} stroke={BG} strokeWidth="1.5" />
+            <circle key={`${s.label}-${i}`} cx={px(b.confidence)} cy={py(b.accuracy)} r="3"
+              fill={s.color} />
           ))
         )}
         <text x={px(0.5)} y={size - 6} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="11" fill={SUBTLE}>predicted probability</text>

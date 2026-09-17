@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const SERIES = ['var(--series-1)', 'var(--series-2)', 'var(--series-3)', 'var(--series-4)'];
 const MUTE = 'var(--series-mute)';
-const GRID = 'var(--series-grid)';
+const SPINE = 'var(--color-text-subtle)';
 
 interface Tip {
   x: number;
@@ -32,10 +32,16 @@ function niceTicks(max: number, count = 4): number[] {
   return ticks;
 }
 
-function roundedBar(x: number, y: number, w: number, h: number, r: number): string {
-  const rr = Math.min(r, w);
-  return `M${x},${y} H${x + w - rr} Q${x + w},${y} ${x + w},${y + rr} V${y + h - rr} Q${x + w},${y + h} ${x + w - rr},${y + h} H${x} Z`;
-}
+// Classic paper figures draw spines and outward ticks rather than a floating grid, so every
+// cartesian chart here shares the two helpers below: a left and a bottom axis line in the text
+// colour, with four-pixel ticks pointing out of the plot.
+const Spine: React.FC<{ x1: number; y1: number; x2: number; y2: number }> = ({ x1, y1, x2, y2 }) => (
+  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={SPINE} strokeWidth="1" />
+);
+
+const Tick: React.FC<{ x1: number; y1: number; x2: number; y2: number }> = ({ x1, y1, x2, y2 }) => (
+  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={SPINE} strokeWidth="1" />
+);
 
 const Frame: React.FC<{
   title: string;
@@ -96,6 +102,7 @@ export const BarChart: React.FC<{
   return (
     <Frame title={title} sub={sub} footer={footer} tip={tip.node}>
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+        <Spine x1={labelWidth} y1={2} x2={labelWidth} y2={height - 2} />
         {data.map((d, i) => {
           const y = i * rowH + 4;
           const w = Math.max(scale(d.value), 2);
@@ -114,7 +121,7 @@ export const BarChart: React.FC<{
               <text className={`chart-label${d.subject ? ' on' : ''}`} x={labelWidth - 12} y={y + barH / 2 + 4} textAnchor="end">
                 {d.label}
               </text>
-              <path d={roundedBar(labelWidth, y, w, barH, 4)} fill={color} />
+              <rect x={labelWidth} y={y} width={w} height={barH} fill={color} />
               {d.error !== undefined && d.error > 0 && (
                 <g stroke="var(--color-text-muted)" strokeWidth="1">
                   <line x1={labelWidth + scale(d.value - d.error)} y1={y + barH / 2} x2={labelWidth + scale(d.value + d.error)} y2={y + barH / 2} />
@@ -170,16 +177,19 @@ export const GroupedBarChart: React.FC<{
       tip={tip.node}
     >
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+        <Spine x1={left} y1={top} x2={left} y2={top + plotH} />
+        <Spine x1={left} y1={top + plotH} x2={width - 12} y2={top + plotH} />
         {ticks.map(t => (
           <g key={t}>
-            <line x1={left} y1={y(t)} x2={width - 12} y2={y(t)} stroke={GRID} strokeWidth="1" />
-            <text className="chart-axis" x={left - 10} y={y(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
+            <Tick x1={left - 4} y1={y(t)} x2={left} y2={y(t)} />
+            <text className="chart-axis" x={left - 8} y={y(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
           </g>
         ))}
         {groups.map((g, gi) => {
           const groupX = left + gi * bandW;
           return (
             <g key={g}>
+              <Tick x1={groupX + bandW / 2} y1={top + plotH} x2={groupX + bandW / 2} y2={top + plotH + 4} />
               <text className="chart-axis" x={groupX + bandW / 2} y={height - bottom + 20} textAnchor="middle">{g}</text>
               {series.map((s, si) => {
                 const totalW = series.length * barW + (series.length - 1) * 2;
@@ -187,9 +197,12 @@ export const GroupedBarChart: React.FC<{
                 const top0 = y(s.values[gi]);
                 const h = Math.max(top + plotH - top0, 2);
                 return (
-                  <path
+                  <rect
                     key={s.label}
-                    d={`M${x},${top0 + 4} Q${x},${top0} ${x + 4},${top0} H${x + barW - 4} Q${x + barW},${top0} ${x + barW},${top0 + 4} V${top0 + h} H${x} Z`}
+                    x={x}
+                    y={top0}
+                    width={barW}
+                    height={h}
                     fill={SERIES[si]}
                     onMouseEnter={() => tip.show({
                       x: ((x + barW / 2) / width) * 100,
@@ -251,14 +264,19 @@ export const LineChart: React.FC<{
       tip={tip.node}
     >
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+        <Spine x1={left} y1={top} x2={left} y2={top + plotH} />
+        <Spine x1={left} y1={top + plotH} x2={width - right} y2={top + plotH} />
         {yTicks.map(t => (
           <g key={t}>
-            <line x1={left} y1={py(t)} x2={width - right} y2={py(t)} stroke={GRID} strokeWidth="1" />
-            <text className="chart-axis" x={left - 10} y={py(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
+            <Tick x1={left - 4} y1={py(t)} x2={left} y2={py(t)} />
+            <text className="chart-axis" x={left - 8} y={py(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
           </g>
         ))}
         {xTicks.map(t => (
-          <text key={t.v} className="chart-axis" x={px(t.v)} y={height - bottom + 22} textAnchor="middle">{t.label}</text>
+          <g key={t.v}>
+            <Tick x1={px(t.v)} y1={top + plotH} x2={px(t.v)} y2={top + plotH + 4} />
+            <text className="chart-axis" x={px(t.v)} y={height - bottom + 22} textAnchor="middle">{t.label}</text>
+          </g>
         ))}
         <text className="chart-axis" x={left} y={height - 6} textAnchor="start">{xLabel}</text>
         <text className="chart-axis" x={0} y={11} textAnchor="start">{yLabel}</text>
@@ -268,8 +286,7 @@ export const LineChart: React.FC<{
             d={s.points.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p.x)},${py(p.y)}`).join(' ')}
             fill="none"
             stroke={SERIES[si]}
-            strokeWidth="2"
-            strokeLinecap="round"
+            strokeWidth="1.75"
             strokeLinejoin="round"
           />
         ))}
@@ -279,10 +296,10 @@ export const LineChart: React.FC<{
               key={`${s.label}-${i}`}
               cx={px(p.x)}
               cy={py(p.y)}
-              r="4.5"
+              r="3.2"
               fill={SERIES[si]}
-              stroke="var(--color-bg)"
-              strokeWidth="2"
+              stroke="transparent"
+              strokeWidth="7"
               onMouseEnter={() => tip.show({
                 x: (px(p.x) / width) * 100,
                 y: (py(p.y) / height) * 100,
@@ -355,14 +372,19 @@ export const ScatterChart: React.FC<{
       tip={tip.node}
     >
       <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+        <Spine x1={left} y1={top} x2={left} y2={top + plotH} />
+        <Spine x1={left} y1={top + plotH} x2={width - right} y2={top + plotH} />
         {yTicks.map(t => (
           <g key={t}>
-            <line x1={left} y1={py(t)} x2={width - right} y2={py(t)} stroke={GRID} strokeWidth="1" />
-            <text className="chart-axis" x={left - 10} y={py(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
+            <Tick x1={left - 4} y1={py(t)} x2={left} y2={py(t)} />
+            <text className="chart-axis" x={left - 8} y={py(t) + 3.5} textAnchor="end">{t.toLocaleString()}</text>
           </g>
         ))}
         {xTicks.map(t => (
-          <text key={t} className="chart-axis" x={px(t)} y={height - bottom + 22} textAnchor="middle">{t.toLocaleString()}</text>
+          <g key={t}>
+            <Tick x1={px(t)} y1={top + plotH} x2={px(t)} y2={top + plotH + 4} />
+            <text className="chart-axis" x={px(t)} y={height - bottom + 22} textAnchor="middle">{t.toLocaleString()}</text>
+          </g>
         ))}
         <text className="chart-axis" x={left + plotW / 2} y={height - 6} textAnchor="middle">{xLabel}</text>
         <text className="chart-axis" x={0} y={11} textAnchor="start">{yLabel}</text>
@@ -371,8 +393,7 @@ export const ScatterChart: React.FC<{
             d={frontier.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p.x)},${py(p.y)}`).join(' ')}
             fill="none"
             stroke={SERIES[0]}
-            strokeWidth="2"
-            strokeLinecap="round"
+            strokeWidth="1.5"
             strokeLinejoin="round"
             opacity="0.55"
           />
@@ -382,10 +403,10 @@ export const ScatterChart: React.FC<{
             key={p.label}
             cx={px(p.x)}
             cy={py(p.y)}
-            r="5.5"
+            r="4"
             fill={SERIES[p.series]}
-            stroke="var(--color-bg)"
-            strokeWidth="2"
+            stroke="transparent"
+            strokeWidth="6"
             onMouseEnter={() => tip.show({
               x: (px(p.x) / width) * 100,
               y: (py(p.y) / height) * 100,

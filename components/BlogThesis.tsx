@@ -209,7 +209,7 @@ function AdaptiveFigure() {
       <span style={{ fontFamily: MONO, fontSize: '10.5px', color: MUTED, textAlign: 'right', letterSpacing: '0.02em' }}>{label}</span>
       <div style={{ position: 'relative', height: 18 }}>
         <div data-w={w} style={{
-          height: '100%', width: 0, borderRadius: 4,
+          height: '100%', width: 0,
           background: accent ? ACCENT : dashed ? 'transparent' : BORDER,
           border: dashed ? `1.5px dashed ${ACCENT}` : 'none',
           transition: 'width 900ms cubic-bezier(.2,.7,.2,1)',
@@ -249,21 +249,21 @@ function LoopDiagram() {
       </defs>
 
       {/* offline static trace box */}
-      <rect x="220" y="14" width="220" height="58" rx="9" fill="rgba(201,104,74,0.06)" stroke={ACCENT} strokeWidth="1.4" strokeDasharray="5 4" />
+      <rect x="220" y="14" width="220" height="58" rx="3" fill="rgba(201,104,74,0.06)" stroke={ACCENT} strokeWidth="1.4" strokeDasharray="5 4" />
       <text x="330" y="38" fill={ACCENT} fontSize="12" fontWeight="600" textAnchor="middle" fontFamily="var(--font-sans)">Static trace t_static(x)</text>
       <text x="330" y="58" fill={MUTED} fontSize="10.5" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">precomputed once · offline · frozen</text>
       {/* feeds the teacher */}
       <line x1="440" y1="58" x2="500" y2="118" stroke={ACCENT} strokeWidth="1.4" strokeDasharray="4 4" markerEnd="url(#th-arr-acc)" />
 
       {/* student box */}
-      <rect x="34" y="120" width="220" height="92" rx="11" fill={BG} stroke={BORDER} strokeWidth="1.5" />
+      <rect x="34" y="120" width="220" height="92" rx="3" fill={BG} stroke={BORDER} strokeWidth="1.5" />
       <text x="144" y="150" fill={TEXT} fontSize="15" fontWeight="700" textAnchor="middle" fontFamily="var(--font-sans)">Student π_θ</text>
       <text x="144" y="172" fill={MUTED} fontSize="11" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">samples live rollout</text>
       <text x="144" y="190" fill={MUTED} fontSize="11" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">y ~ π_θ(· | problem)</text>
       <text x="144" y="206" fill={ACCENT} fontSize="10" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">updated every step</text>
 
       {/* teacher box */}
-      <rect x="406" y="120" width="220" height="92" rx="11" fill={BG} stroke={BORDER} strokeWidth="1.5" />
+      <rect x="406" y="120" width="220" height="92" rx="3" fill={BG} stroke={BORDER} strokeWidth="1.5" />
       <text x="516" y="148" fill={TEXT} fontSize="15" fontWeight="700" textAnchor="middle" fontFamily="var(--font-sans)">Teacher π_teach</text>
       <text x="516" y="168" fill={MUTED} fontSize="10.5" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">same weights, new prompt:</text>
       <text x="516" y="184" fill={MUTED} fontSize="10.5" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">problem + static trace</text>
@@ -315,7 +315,7 @@ function BenchmarkChart() {
             <span style={{ fontFamily: MONO, fontSize: '10px', color: MUTED, textAlign: 'right' }}>original</span>
             <div style={{ position: 'relative', height: 20 }}>
               <div data-w={(r.orig / max) * 100} style={{
-                height: '100%', width: 0, borderRadius: '0 4px 4px 0', background: BORDER,
+                height: '100%', width: 0, background: BORDER,
                 display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8, minWidth: 40,
                 transition: 'width 900ms cubic-bezier(.2,.7,.2,1)',
               }}>
@@ -327,7 +327,7 @@ function BenchmarkChart() {
             <span style={{ fontFamily: MONO, fontSize: '10px', color: MUTED, textAlign: 'right' }}>rewritten</span>
             <div style={{ position: 'relative', height: 20 }}>
               <div data-w={(r.rew / max) * 100} style={{
-                height: '100%', width: 0, borderRadius: '0 4px 4px 0', background: ACCENT,
+                height: '100%', width: 0, background: ACCENT,
                 display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8, minWidth: 40,
                 transition: 'width 900ms cubic-bezier(.2,.7,.2,1)',
               }}>
@@ -357,19 +357,19 @@ function ScalingChart() {
   return (
     <div ref={ref}>
       <svg viewBox="0 0 660 300" style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}>
-        {/* gridlines */}
-        <g stroke={BORDER} strokeWidth="1">
-          <line x1="60" y1="50" x2="630" y2="50" />
-          <line x1="60" y1="116.7" x2="630" y2="116.7" />
-          <line x1="60" y1="183.3" x2="630" y2="183.3" />
+        {/* spines + outward ticks, paper style */}
+        <g stroke={SUBTLE} strokeWidth="1">
+          <line x1="60" y1="50" x2="60" y2="250" />
           <line x1="60" y1="250" x2="630" y2="250" />
+          {[50, 116.7, 183.3, 250].map(y => <line key={y} x1="56" y1={y} x2="60" y2={y} />)}
+          {[90, 270, 450, 600].map(x => <line key={x} x1={x} y1="250" x2={x} y2="254" />)}
         </g>
         {/* y labels (percentage points of accuracy lost) */}
         <g fill="#a3a3ab" fontSize="11" fontFamily="SF Mono, Menlo, monospace" textAnchor="end">
-          <text x="52" y="54">0</text>
-          <text x="52" y="120.7">−5</text>
-          <text x="52" y="187.3">−10</text>
-          <text x="52" y="254">−15</text>
+          <text x="48" y="54">0</text>
+          <text x="48" y="120.7">−5</text>
+          <text x="48" y="187.3">−10</text>
+          <text x="48" y="254">−15</text>
         </g>
         {/* x labels */}
         <g fill={TEXT} fontSize="12" fontWeight="600" fontFamily="SF Mono, Menlo, monospace" textAnchor="middle">
@@ -379,9 +379,9 @@ function ScalingChart() {
           <text x="600" y="278">14B</text>
         </g>
         {/* AIME line */}
-        <polyline className="sc-path" fill="none" stroke={BORDER} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={pts(aime)} />
+        <polyline className="sc-path" fill="none" stroke={BORDER} strokeWidth="1.75" strokeLinejoin="round" points={pts(aime)} />
         {/* MATH line */}
-        <polyline className="sc-path" fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={pts(math)} />
+        <polyline className="sc-path" fill="none" stroke={ACCENT} strokeWidth="1.75" strokeLinejoin="round" points={pts(math)} />
         <g className="sc-dot" style={{ opacity: 1 }}>
           {aime.map((d, i) => <circle key={'a' + i} cx={xs[i]} cy={yFor(d)} r="4" fill={BORDER} />)}
           {math.map((d, i) => <circle key={'m' + i} cx={xs[i]} cy={yFor(d)} r="4" fill={ACCENT} />)}
@@ -394,10 +394,10 @@ function ScalingChart() {
       </svg>
       <div style={{ display: 'flex', gap: '1.4rem', marginTop: 10, fontSize: '12.5px', color: MUTED }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <i style={{ width: 13, height: 13, borderRadius: 3, display: 'inline-block', background: ACCENT }} />MATH500 (easier)
+          <i style={{ width: 10, height: 10, display: 'inline-block', background: ACCENT }} />MATH500 (easier)
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <i style={{ width: 13, height: 13, borderRadius: 3, display: 'inline-block', background: BORDER }} />AIME2025 (harder)
+          <i style={{ width: 10, height: 10, display: 'inline-block', background: BORDER }} />AIME2025 (harder)
         </span>
       </div>
     </div>
