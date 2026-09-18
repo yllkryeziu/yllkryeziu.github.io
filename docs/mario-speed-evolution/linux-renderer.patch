@@ -1,0 +1,177 @@
+--- a/Makefile
++++ b/Makefile
+@@ -347,6 +347,11 @@
+   C_FILES := $(filter-out src/pc/controller/wup.c,$(C_FILES))
+ endif
+ 
++ifeq ($(TARGET_LINUX),1)
++  # Scripted rendering uses SDL under Xvfb, recorded controllers and captured audio.
++  C_FILES := $(filter-out src/pc/gfx/gfx_glx.c src/pc/audio/audio_alsa.c src/pc/audio/audio_pulse.c src/pc/controller/controller_wup.c src/pc/controller/wup.c,$(C_FILES))
++endif
++
+ # Sound files
+ SOUND_BANK_FILES    := $(wildcard sound/sound_banks/*.json)
+ SOUND_SAMPLE_DIRS   := $(wildcard sound/samples/*)
+@@ -486,8 +491,8 @@
+   PLATFORM_LDFLAGS := -lm -lxinput9_1_0 -lole32 -no-pie -mwindows
+ endif
+ ifeq ($(TARGET_LINUX),1)
+-  PLATFORM_CFLAGS  := -DTARGET_LINUX `pkg-config --cflags libusb-1.0`
+-  PLATFORM_LDFLAGS := -lm -lpthread `pkg-config --libs libusb-1.0` -lasound -lpulse -no-pie
++  PLATFORM_CFLAGS  := -DTARGET_LINUX -DSM64_RENDER_SDL
++  PLATFORM_LDFLAGS := -lm -lpthread -no-pie
+ endif
+ ifeq ($(TARGET_OSX),1)
+   PLATFORM_CFLAGS  := -DTARGET_OSX
+--- a/src/pc/gfx/gfx_sdl2.c
++++ b/src/pc/gfx/gfx_sdl2.c
+@@ -3,7 +3,7 @@
+ 
+ #include "../compat.h"
+ 
+-#if !defined(__linux__) && !defined(__BSD__) && defined(ENABLE_OPENGL)
++#if ((!defined(__linux__) && !defined(__BSD__)) || defined(SM64_RENDER_SDL)) && defined(ENABLE_OPENGL)
+ 
+ #ifdef __MINGW32__
+ #define FOR_WINDOWS 1
+@@ -180,6 +180,12 @@
+ 
+ static void gfx_sdl_init(const char *game_name, bool start_in_fullscreen) {
+     SDL_Init(SDL_INIT_VIDEO);
++#ifdef SM64_RENDER_SDL
++    // This cluster SDL build exposes GLES; use the matching shader dialect.
++    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
++    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
++    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
++#endif
+ 
+     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+@@ -199,7 +205,10 @@
+         set_fullscreen(true, false);
+     }
+ 
+-    SDL_GL_CreateContext(wnd);
++    if (!SDL_GL_CreateContext(wnd)) {
++        fprintf(stderr, "OpenGL context creation failed: %s\n", SDL_GetError());
++        exit(1);
++    }
+ 
+     fast_mode = getenv("SM64_FAST") != NULL;
+     if (fast_mode) {
+@@ -350,10 +359,23 @@
+     if ((frame - first) % every) return;
+     int w, h;
+     SDL_GL_GetDrawableSize(wnd, &w, &h);
+-    unsigned char *px = malloc((size_t) w * h * 3);
++    unsigned char *px = malloc((size_t) w * h * 4);
+     if (!px) return;
+     glPixelStorei(GL_PACK_ALIGNMENT, 1);
+-    glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, px);
++    // RGBA/UNSIGNED_BYTE is guaranteed for GLES readback; RGB is not.
++    while (glGetError() != GL_NO_ERROR) { }
++    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px);
++    GLenum error = glGetError();
++    if (error != GL_NO_ERROR) {
++        fprintf(stderr, "frame readback failed: GL error 0x%x\n", (unsigned) error);
++        exit(1);
++    }
++    // Strip alpha in place, then write the same RGB PPM format as the desktop renderer.
++    for (size_t i = 0; i < (size_t) w * h; ++i) {
++        px[3*i] = px[4*i];
++        px[3*i+1] = px[4*i+1];
++        px[3*i+2] = px[4*i+2];
++    }
+     char path[1024];
+     snprintf(path, sizeof(path), "%s/frame_%06d.ppm", dir, frame);
+     FILE *f = fopen(path, "wb");
+--- a/src/pc/gfx/gfx_opengl.c
++++ b/src/pc/gfx/gfx_opengl.c
+@@ -173,14 +173,19 @@
+     struct CCFeatures cc_features;
+     gfx_cc_get_features(shader_id, &cc_features);
+ 
+-    char vs_buf[1024];
+-    char fs_buf[1024];
++    char vs_buf[2048];
++    char fs_buf[2048];
+     size_t vs_len = 0;
+     size_t fs_len = 0;
+     size_t num_floats = 4;
+ 
+     // Vertex shader
++#ifdef SM64_RENDER_SDL
++    append_line(vs_buf, &vs_len, "#version 100");
++    append_line(vs_buf, &vs_len, "precision highp float;");
++#else
+     append_line(vs_buf, &vs_len, "#version 110");
++#endif
+     append_line(vs_buf, &vs_len, "attribute vec4 aVtxPos;");
+     if (cc_features.used_textures[0] || cc_features.used_textures[1]) {
+         append_line(vs_buf, &vs_len, "attribute vec2 aTexCoord;");
+@@ -211,7 +216,12 @@
+     append_line(vs_buf, &vs_len, "}");
+ 
+     // Fragment shader
++#ifdef SM64_RENDER_SDL
++    append_line(fs_buf, &fs_len, "#version 100");
++    append_line(fs_buf, &fs_len, "precision highp float;");
++#else
+     append_line(fs_buf, &fs_len, "#version 110");
++#endif
+     //append_line(fs_buf, &fs_len, "precision mediump float;");
+     if (cc_features.used_textures[0] || cc_features.used_textures[1]) {
+         append_line(fs_buf, &fs_len, "varying vec2 vTexCoord;");
+--- a/src/pc/pc_main.c
++++ b/src/pc/pc_main.c
+@@ -214,7 +214,7 @@
+     wm_api = &gfx_dxgi_api;
+ #elif defined(ENABLE_OPENGL)
+     rendering_api = &gfx_opengl_api;
+-    #if defined(__linux__) || defined(__BSD__)
++    #if (defined(__linux__) || defined(__BSD__)) && !defined(SM64_RENDER_SDL)
+         wm_api = &gfx_glx;
+     #else
+         wm_api = &gfx_sdl;
+--- a/src/pc/audio/audio_alsa.h
++++ b/src/pc/audio/audio_alsa.h
+@@ -3,7 +3,7 @@
+ 
+ #include "../compat.h"
+ 
+-#if defined(__linux__) || defined(__BSD__)
++#if (defined(__linux__) || defined(__BSD__)) && !defined(SM64_RENDER_SDL)
+ extern struct AudioAPI audio_alsa;
+ #define HAVE_ALSA 1
+ #else
+--- a/src/pc/audio/audio_pulse.h
++++ b/src/pc/audio/audio_pulse.h
+@@ -3,7 +3,7 @@
+ 
+ #include "../compat.h"
+ 
+-#if defined(__linux__) || defined(__BSD__)
++#if (defined(__linux__) || defined(__BSD__)) && !defined(SM64_RENDER_SDL)
+ extern struct AudioAPI audio_pulse;
+ #define HAVE_PULSE_AUDIO 1
+ #else
+--- a/src/pc/controller/controller_entry_point.c
++++ b/src/pc/controller/controller_entry_point.c
+@@ -12,7 +12,7 @@
+ #include "controller_sdl.h"
+ #endif
+ 
+-#ifdef __linux__
++#if defined(__linux__) && !defined(SM64_RENDER_SDL)
+ #include "controller_wup.h"
+ #endif
+ 
+@@ -23,7 +23,7 @@
+ #else
+     &controller_sdl,
+ #endif
+-#ifdef __linux__
++#if defined(__linux__) && !defined(SM64_RENDER_SDL)
+     &controller_wup,
+ #endif
+     &controller_keyboard,

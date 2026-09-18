@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import Article, { H2 } from './post/Article';
+import { POST_BY_SLUG } from './post/posts';
 
 function useScrollAnimate(cb: (el: Element) => void, threshold = 0.2) {
   const ref = useRef<HTMLDivElement>(null);
@@ -23,7 +25,7 @@ const TEXT = 'var(--color-text)';
 const MUTED = 'var(--color-text-muted)';
 const SUBTLE = 'var(--color-text-subtle)';
 const BG = 'var(--color-bg)';
-const MONO = '"IBM Plex Mono", SF Mono, Menlo, monospace';
+const MONO = 'var(--font-mono)';
 
 // ---- syntax helpers (light-themed) ----
 const cm = (s: string) => <span style={{ color: '#9a9aa1', fontStyle: 'italic' }}>{s}</span>;
@@ -112,9 +114,9 @@ function FigCard({ title, unit, caption, children }: { title: string; unit: stri
         background: BG, border: `1px solid ${BORDER}`,
         borderRadius: 8, padding: '1.6rem 1.6rem 1.3rem',
       }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: '1.3rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: '1.3rem' }}>
           <span style={{ fontFamily: 'var(--font-sans)', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', color: TEXT }}>{title}</span>
-          <span style={{ fontFamily: MONO, fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#a3a3ab', whiteSpace: 'nowrap' }}>{unit}</span>
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: MUTED }}>{unit}</span>
         </div>
         {children}
       </div>
@@ -161,41 +163,6 @@ function TickList({ items }: { items: React.ReactNode[] }) {
         </li>
       ))}
     </ul>
-  );
-}
-
-// ---- Hero stat strip ----
-function HeroStats() {
-  const stats = [
-    { num: '78–83', unit: '%', lbl: 'reasoning tokens cut by self-rewriting', accent: true },
-    { num: '+1 to +6', unit: 'pts', lbl: 'accuracy, preserved or improved', accent: false },
-    { num: '0', unit: '', lbl: 'reward models or difficulty labels', accent: false },
-    { num: '28–46', unit: '%', lbl: 'tokens cut after distilling it in', accent: false },
-  ];
-  return (
-    <div style={{
-      marginTop: '2.5rem',
-      borderTop: `1px solid ${TEXT}`,
-      borderBottom: `1px solid ${BORDER}`,
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-    }}>
-      {stats.map((s, i) => (
-        <div key={i} style={{
-          padding: '1.3rem 0.75rem 1.2rem',
-          borderRight: i < 3 ? `1px solid ${BORDER}` : 'none',
-          textAlign: 'center',
-        }}>
-          <div style={{
-            fontSize: '30px', fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.04em',
-            color: s.accent ? ACCENT : TEXT,
-          }}>
-            {s.num}<span style={{ fontSize: '15px', fontWeight: 400, color: MUTED, letterSpacing: 0 }}>{s.unit}</span>
-          </div>
-          <div style={{ fontFamily: MONO, fontSize: '10.5px', letterSpacing: '0.03em', color: MUTED, marginTop: '0.7rem', lineHeight: 1.35 }}>{s.lbl}</div>
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -413,73 +380,26 @@ const ic: React.CSSProperties = {
 
 // ---- Main component ----
 const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const body: React.CSSProperties = { fontFamily: 'var(--font-serif)', fontSize: '17px', lineHeight: 1.72, color: TEXT };
   const p: React.CSSProperties = { margin: '0 0 1rem' };
-  const h2s: React.CSSProperties = {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '23px', fontWeight: 700, letterSpacing: '-0.025em',
-    lineHeight: 1.15, color: TEXT, margin: '2rem 0 0.75rem',
-  };
+  const meta = POST_BY_SLUG.thesis;
   return (
-    <section style={body} className="d-article">
-      {/* back */}
-      <button onClick={onBack} className="d-sans" style={{
-        display: 'flex', alignItems: 'center', gap: '0.4rem',
-        background: 'none', border: 'none', padding: '0 0 1.5rem', cursor: 'pointer',
-        color: MUTED, fontSize: '13px',
-      }}
-        onMouseEnter={e => (e.currentTarget.style.color = TEXT)}
-        onMouseLeave={e => (e.currentTarget.style.color = MUTED)}
-      >
-        ← Blog
-      </button>
-
-      {/* kicker */}
-      <div className="d-sans" style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: MUTED }}>
-        Machine Learning · LLM Reasoning · Distillation
-      </div>
-
-      {/* title */}
-      <h1 className="d-sans" style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1, color: TEXT, margin: '0.6rem 0 0' }}>
-        On-policy self-distillation for adaptive compute
-      </h1>
-
-      {/* dek */}
-      <p style={{ fontSize: '19px', lineHeight: 1.55, color: SUBTLE, marginTop: '1rem', marginBottom: 0 }}>
-        Reasoning models overthink: they burn thousands of tokens on easy problems for no extra accuracy. I let a model
-        rewrite its own reasoning to a length that fits the problem, then distill that behaviour back in,
-        using only the model itself, with <strong>no reward model and no difficulty labels</strong>.
-      </p>
-
-      {/* byline */}
-      <div className="d-byline">
-        <div>
-          <div className="label">Author</div>
-          <div className="value">Yll Kryeziu</div>
-        </div>
-        <div>
-          <div className="label">Published</div>
-          <div className="value">February 2026</div>
-        </div>
-        <div>
-          <div className="label">Code</div>
-          <div className="value">
-            <a href="https://github.com/yllkryeziu/rewritebench" target="_blank" rel="noopener noreferrer">rewritebench</a>
-            {' · '}
-            <a href="https://github.com/yllkryeziu/nvidia-rl" target="_blank" rel="noopener noreferrer">nvidia-rl</a>
-          </div>
-        </div>
-      </div>
-
-      {/* hero stats */}
-      <HeroStats />
-
+    <Article onBack={onBack} title={meta.title} date={meta.date} readingMinutes={meta.readingMinutes}
+      repo={{ label: 'rewritebench', url: 'https://github.com/yllkryeziu/rewritebench' }}
+      toc={[
+        { id: 'compute', label: 'Compute spent where it is not needed' },
+        { id: 'rewrite', label: 'Let the model rewrite itself' },
+        { id: 'distill', label: 'Distilling the behavior back in' },
+        { id: 'weights', label: 'Folding conciseness into the weights' },
+        { id: 'conclusion', label: 'What it adds up to' },
+        { id: 'references', label: 'References' },
+      ]}>
       <p style={{ ...p, marginTop: '2.2rem', fontSize: '14px', color: MUTED }}>
         This post distills my bachelor's thesis at TUM, supervised by Prof. Dr. Stefan Bauer.
+        {' '}Training code: <a href="https://github.com/yllkryeziu/nvidia-rl" target="_blank" rel="noopener noreferrer">nvidia-rl</a>.
       </p>
 
       {/* ---- 01 ---- */}
-      <h2 style={h2s}>Compute spent where it is not needed</h2>
+      <H2 id="compute">Compute spent where it is not needed</H2>
       <p style={p}>
         Reasoning models get their accuracy from <em>thinking longer</em>. Train a model with RL to produce long
         chains of thought before answering, and accuracy on hard benchmarks climbs with the number of tokens it is
@@ -502,7 +422,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </p>
 
       {/* ---- 02 ---- */}
-      <h2 style={h2s}>Let the model rewrite itself</h2>
+      <H2 id="rewrite">Let the model rewrite itself</H2>
       <p style={p}>
         The first idea is self-refinement.<Cite ids={[6]} /> Take the model's own reasoning trace and ask the same model
         to rewrite it to a length that matches how hard the problem actually was, rather than to a fixed length. If the
@@ -560,7 +480,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </FigCard>
 
       {/* ---- 04 ---- */}
-      <h2 style={h2s}>Distilling the behavior back in</h2>
+      <H2 id="distill">Distilling the behavior back in</H2>
       <p style={p}>
         Rewriting at inference time means running the model twice. The point of the thesis is to fold the behavior into
         the model's <em>default</em> distribution, so it just reasons concisely on the first pass. The mechanism is
@@ -626,7 +546,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </p>
 
       {/* ---- 05 ---- */}
-      <h2 style={h2s}>Folding conciseness into the weights</h2>
+      <H2 id="weights">Folding conciseness into the weights</H2>
       <p style={p}>
         Trained across all four Qwen3 sizes and evaluated on MATH500 and AIME2025, the distilled checkpoints generate
         <strong> 28–46% fewer tokens</strong> by default. The model reasons concisely on the first pass, with no second
@@ -651,7 +571,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </p>
 
       {/* ---- 06 ---- */}
-      <h2 style={h2s}>What it adds up to</h2>
+      <H2 id="conclusion">What it adds up to</H2>
       <p style={p}>
         There are two separate results. First, a model can rewrite its own reasoning to the right length with no external
         signal, cutting ~80% of the trace while improving correctness, which makes self-refinement a self-contained
@@ -666,7 +586,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       ]} />
 
       {/* ---- references ---- */}
-      <h2 style={h2s}>References</h2>
+      <H2 id="references">References</H2>
       <ol style={{ margin: '1rem 0 0', padding: 0, listStyle: 'none', counterReset: 'ref' }}>
         {REFS.map(r => (
           <li key={r.n} style={{
@@ -684,7 +604,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         ))}
       </ol>
 
-    </section>
+    </Article>
   );
 };
 

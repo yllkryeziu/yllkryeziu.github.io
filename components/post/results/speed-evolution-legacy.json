@@ -1,0 +1,36 @@
+{
+  "trainingSeed": 4,
+  "firstTrainingSuccess": 580644,
+  "captureSeedMode": "offset-per-shot",
+  "warmupFrames": 45,
+  "checkpoints": [
+    {
+      "steps": 999960,
+      "label": "1M",
+      "file": "swarm-speed-1M.mp4",
+      "escapes": 77,
+      "seconds": 15
+    },
+    {
+      "steps": 4999800,
+      "label": "5M",
+      "file": "swarm-speed-5M.mp4",
+      "escapes": 124,
+      "seconds": 15
+    },
+    {
+      "steps": 9999600,
+      "label": "10M",
+      "file": "swarm-speed-10M.mp4",
+      "escapes": 183,
+      "seconds": 15
+    },
+    {
+      "steps": 19999200,
+      "label": "20M",
+      "file": "swarm-speed-20M.mp4",
+      "escapes": 187,
+      "seconds": 15
+    }
+  ]
+}

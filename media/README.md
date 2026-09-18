@@ -1,6 +1,6 @@
 # Blog media outside Git
 
-The Mario post uses 19 MP4s and two JPEG posters, about 100 MiB in total. Store them as assets
+The Mario media set contains 36 MP4s and two JPEG posters, about 220 MiB in total. Store them as assets
 of a versioned GitHub Release. `blj.json` pins the repository, release tag, filenames, sizes
 and SHA-256 hashes; the clips themselves do not need to be part of a source checkout.
 
@@ -17,6 +17,11 @@ Use a new release tag and update the manifest when footage changes. Do not overw
 asset: a pinned release and checksum should continue to identify the same bytes.
 
 ## Published media
+
+The current set is [blj-media-v2](https://github.com/yllkryeziu/yllkryeziu.github.io/releases/tag/blj-media-v2).
+It retains the original files and adds all 17 speed-policy evolution clips, including the
+reconstructed untrained network and every 100k checkpoint through 1M. New captures have no
+warmup, so escape counts cover precisely the 15 seconds shown.
 
 The initial set is [blj-media-v1](https://github.com/yllkryeziu/yllkryeziu.github.io/releases/tag/blj-media-v1).
 All 21 files were downloaded again and checked against the manifest before the release was

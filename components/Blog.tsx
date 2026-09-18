@@ -1,9 +1,10 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { POSTS, type PostSlug } from './post/posts';
 import { projectsData } from '../data';
+import './post/BlogDesign.css';
 
 type FeedItem =
-  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; desc: string }
+  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; preview: string; previewKind?: string }
   | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; links: { name: string; url: string }[] };
 
 function parseSortDate(date: string): number {
@@ -25,7 +26,8 @@ const feed: FeedItem[] = [
     title: post.title,
     date: post.date,
     sortDate: post.sortDate,
-    desc: post.dek,
+    preview: post.preview,
+    previewKind: post.previewKind,
   })),
   ...projectsData.map<FeedItem>(project => ({
     kind: 'project',
@@ -79,41 +81,21 @@ const metaStyle: React.CSSProperties = {
 };
 
 const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }) => (
-  <section>
-    <h2 style={{
-      fontSize: '13px',
-      fontWeight: 600,
-      letterSpacing: '0.08em',
-      textTransform: 'uppercase',
-      color: 'var(--color-text-muted)',
-      margin: '0 0 1.5rem',
-    }}>Work</h2>
-    <div style={{ borderTop: '1px solid var(--color-border)' }}>
+  <section aria-label="Blog posts and projects">
+    <div className="blog-list">
       {feed.map(item =>
         item.kind === 'post' ? (
-          <button
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className="feed-link"
-            style={{
-              ...itemStyle,
-              display: 'block',
-              width: '100%',
-              textAlign: 'left',
-              background: 'none',
-              border: 'none',
-              borderBottom: '1px solid var(--color-border)',
-              cursor: 'pointer',
-              font: 'inherit',
-            }}
-          >
-            <div className="feed-title" style={titleStyle}>{item.title}</div>
-            <p style={descStyle}>{item.desc}</p>
-            <div style={metaStyle}>
-              <span>{item.date}</span>
-              <span>Read →</span>
-            </div>
-          </button>
+          <a key={item.id} href={`#work/${item.id}`} className="blog-row"
+            onClick={event => {
+              if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                event.preventDefault(); onSelect(item.id);
+              }
+            }}>
+            <span className={`blog-thumbnail ${item.previewKind ?? ''}`}>
+              <img src={item.preview} alt="" loading="lazy" width={960} height={640} />
+            </span>
+            <div><h3>{item.title}</h3><span className="blog-date">{item.date}</span></div>
+          </a>
         ) : (
           <div key={item.id} style={itemStyle}>
             <div style={titleStyle}>{item.title}</div>

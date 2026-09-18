@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import './BlogDesign.css';
 
 export interface Reference {
   n: number;
@@ -13,9 +14,7 @@ export interface TocEntry {
 
 interface ArticleProps {
   onBack: () => void;
-  kicker: string;
   title: string;
-  dek: React.ReactNode;
   date: string;
   readingMinutes: number;
   repo?: { label: string; url: string };
@@ -23,9 +22,12 @@ interface ArticleProps {
   children: React.ReactNode;
 }
 
-function scrollToSection(event: React.MouseEvent, id: string) {
-  event.preventDefault();
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function scrollToSection(id: string) {
+  const heading = document.getElementById(id);
+  if (!heading) return;
+  heading.tabIndex = -1;
+  heading.focus({ preventScroll: true });
+  heading.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 
 function useActiveSection(ids: string[]): string | null {
@@ -70,39 +72,47 @@ function useActiveSection(ids: string[]): string | null {
   return active;
 }
 
-const Rail: React.FC<{ entries: TocEntry[]; onBack: () => void }> = ({ entries, onBack }) => {
+const ReadingNav: React.FC<{ entries: TocEntry[]; onBack: () => void }> = ({ entries, onBack }) => {
   const active = useActiveSection(entries.map(entry => entry.id));
+  const menu = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const close = (event: PointerEvent) => {
+      if (menu.current && !menu.current.contains(event.target as Node)) menu.current.open = false;
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, []);
   return (
-    <aside className="post-rail">
-      <button onClick={onBack} className="post-rail-back">← Work</button>
-      <nav className="post-rail-toc" aria-label="Table of contents">
-        <div className="post-rail-label">Contents</div>
-        <ol>
-          {entries.map((entry, index) => (
-            <li key={entry.id} className={active === entry.id ? 'on' : undefined}>
-              <a href={`#${entry.id}`} onClick={event => scrollToSection(event, entry.id)}>
-                <span className="num">{String(index + 1).padStart(2, '0')}</span>
-                <span className="label">{entry.label}</span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-    </aside>
+    <div className="post-reading-nav">
+      <button type="button" onClick={onBack}>← Work</button>
+      <details ref={menu} className="post-contents" onKeyDown={event => {
+        if (event.key === 'Escape' && menu.current) {
+          menu.current.open = false;
+          menu.current.querySelector('summary')?.focus();
+        }
+      }}>
+        <summary>Contents</summary>
+        <nav aria-label="Table of contents"><ol>
+          {entries.map(entry => <li key={entry.id}>
+            <button type="button" aria-current={active === entry.id ? 'location' : undefined} onClick={() => {
+              if (menu.current) menu.current.open = false;
+              scrollToSection(entry.id);
+            }}>{entry.label}</button>
+          </li>)}
+        </ol></nav>
+      </details>
+    </div>
   );
 };
 
 const Article: React.FC<ArticleProps> = ({
-  onBack, kicker, title, dek, date, readingMinutes, repo, toc, children,
+  onBack, title, date, readingMinutes, repo, toc, children,
 }) => (
   <article className="post">
+    <ReadingNav entries={toc} onBack={onBack} />
     <header className="post-head">
-      <div className="post-kicker">{kicker}</div>
       <h1 className="post-title">{title}</h1>
-      <p className="post-dek">{dek}</p>
       <div className="post-meta">
-        <span>Yll Kryeziu</span>
-        <span className="sep">·</span>
         <span>{date}</span>
         <span className="sep">·</span>
         <span>{readingMinutes} min read</span>
@@ -115,7 +125,6 @@ const Article: React.FC<ArticleProps> = ({
       </div>
     </header>
     <div className="post-shell">
-      <Rail entries={toc} onBack={onBack} />
       <div className="post-body">{children}</div>
     </div>
   </article>
@@ -124,7 +133,6 @@ const Article: React.FC<ArticleProps> = ({
 export const H2: React.FC<{ id: string; children: React.ReactNode }> = ({ id, children }) => (
   <h2 id={id}>
     {children}
-    <a className="post-anchor" href={`#${id}`} onClick={e => scrollToSection(e, id)} aria-label="Link to section">#</a>
   </h2>
 );
 
@@ -137,18 +145,6 @@ export const Note: React.FC<{ label?: string; children: React.ReactNode }> = ({ 
     {label && <span className="note-label">{label}</span>}
     {children}
   </aside>
-);
-
-export const KeyNumbers: React.FC<{ items: { k: string; v: string; s: string }[] }> = ({ items }) => (
-  <div className="post-keys">
-    {items.map(item => (
-      <div className="cell" key={item.k}>
-        <div className="k">{item.k}</div>
-        <div className="v">{item.v}</div>
-        <div className="s">{item.s}</div>
-      </div>
-    ))}
-  </div>
 );
 
 export default Article;

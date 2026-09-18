@@ -1,6 +1,7 @@
 import React from 'react';
 import Article, { H2, H3, Note } from './post/Article';
 import Figure from './post/Figure';
+import SpeedEvolution from './post/SpeedEvolution';
 import Table from './post/Table';
 import Code from './post/Code';
 import { M } from './post/Math';
@@ -19,7 +20,6 @@ const TOC = [
   { id: 'experiment', label: 'The experiment' },
   { id: 'rewards', label: 'Which rewards worked?' },
   { id: 'silence', label: 'Learning with only a landing reward' },
-  { id: 'transfer', label: 'Does it work on other stairs?' },
   { id: 'mistakes', label: 'Three mistakes in the setup' },
   { id: 'validation', label: 'Checking the simulation' },
   { id: 'limits', label: 'What I can conclude' },
@@ -112,48 +112,6 @@ const DISCOVERY_BARS = results.seeds
     note: seed.firstSuccess === null ? `No success by 20M timesteps; peak backward velocity ${signed(seed.bestPeak)}` : undefined,
   }));
 
-// Transfer test. Ten flights, twenty-four policies, eight episodes each. The rows come out of the
-// distilled results in the order the report needs them: the castle first as the reference, the
-// synthetic rebuild as the control, then the ablations paired by geometry so a reader can read
-// riser-height and tread-depth as separate effects.
-const transfer = results.transfer!;
-const transferExpert = results.transferExpert!;
-const TRANSFER_ORDER = [
-  'castle',
-  'rebuilt_rise26_run51',
-  'rebuilt_rise26_run51_norisers',
-  'rise50_run51_norisers',
-  'rise75_run100_norisers',
-  'rise100_run100_norisers',
-  'rise50_run51',
-  'rise75_run100',
-  'rise100_run100',
-  'rise26_run100',
-];
-const SCENE_LABEL: Record<string, string> = {
-  castle: 'the castle (real)',
-  rebuilt_rise26_run51: 'rebuilt · rise 25.6, run 51',
-  rebuilt_rise26_run51_norisers: 'rebuilt · faces removed',
-  rise50_run51_norisers: 'rise 50, run 51 · faces removed',
-  rise75_run100_norisers: 'rise 75, run 100 · faces removed',
-  rise100_run100_norisers: 'rise 100, run 100 · faces removed',
-  rise50_run51: 'rise 50, run 51',
-  rise75_run100: 'rise 75, run 100',
-  rise100_run100: 'rise 100, run 100',
-  rise26_run100: 'rise 26, run 100',
-};
-const transferRow = (name: string) => transfer.rows.find(row => row.scene === name)!;
-const expertRow = (name: string) => transferExpert.rows.find(row => row.scene === name)!;
-
-const castleRow = transferRow('castle');
-const rebuiltRow = transferRow('rebuilt_rise26_run51');
-const rise50NoFaces = transferRow('rise50_run51_norisers');
-const rise50Faces = transferRow('rise50_run51');
-const rise100NoFaces = transferRow('rise100_run100_norisers');
-const rise26Run100 = transferRow('rise26_run100');
-const expertCastle = expertRow('castle');
-const expertRunaway = transferExpert.rows.filter(row => row.runaway);
-
 const LAUNCH_CODE = `//! (BLJ's) This properly handles long jumps from getting forward speed with
 //  too much velocity, but misses backwards longs allowing high negative speeds.
 if ((m->forwardVel *= 1.5f) > 48.0f) {
@@ -161,7 +119,7 @@ if ((m->forwardVel *= 1.5f) > 48.0f) {
 }`;
 
 const STICK_CODE = `gController.stickX = -64.0f * inputs->stickX;
-gController.stickY = -64.0f * inputs->stickY;`;
+gController.stickY = 64.0f * inputs->stickY;`;
 
 // Media. Every clip is the game's own renderer drawing measured state; the cut points come from
 // results.escape, so re-recording the episode moves the prose and the cuts together. Stems are
@@ -174,10 +132,8 @@ const MEDIA = {
   swarm: (rung: string, label: string) => `swarm-${rung.replace(/_/g, '-')}-${label}.mp4`,
 };
 
-// Episodes each population of 64 policy copies finished inside the fifteen second window that was filmed,
-// per checkpoint, measured during the crowd captures themselves. Every termination inside a window
-// that short is an escape — an episode otherwise runs to a 1200 frame timeout, and the window is
-// 450 — so this is escapes completed by a population of sixty four and not a rate over attempts.
+// Original capture counts include 45 warmup frames plus 450 filmed frames. Copies reset after
+// escaping; these are completed episodes, not percentages or a count of distinct successful Marios.
 const swarmManifest = results.swarm as {
   solved: Record<string, number[]>;
   rungs: Record<string, { label: string; peakBackward: number }[]>;
@@ -187,15 +143,6 @@ const solvedAt = (rung: string): number[] => swarmManifest.solved[rung];
 // caption's claim about what the reader is watching rather than a claim about training.
 const swarmPeak = (rung: string): number =>
   Math.min(...swarmManifest.rungs[rung].map(row => row.peakBackward));
-// Per checkpoint, because the peak does not trend with the checkpoint and a sentence about one
-// panel must not quote another panel's number. A population's peak is its single fastest Mario,
-// so it is an extreme of 64 and swings on one runaway chain; the escape count is the stable
-// quantity. Negative index counts from the last panel.
-const swarmPeakAt = (rung: string, index: number): number => {
-  const rows = swarmManifest.rungs[rung];
-  return rows[index < 0 ? rows.length + index : index].peakBackward;
-};
-
 // A clip that waits for a click carries preload="none", so the browser never requests the file and
 // never fires an error for a missing one; it would draw as a dead black rectangle instead. Each
 // clip therefore probes for its own source and says what is absent rather than showing nothing.
@@ -256,7 +203,7 @@ const SwarmRow: React.FC<{ n: number; rung: string; caption: React.ReactNode }> 
   const [audible, setAudible] = React.useState<string | null>(null);
   const counts = solvedAt(rung);
   return (
-    <Figure n={n} caption={caption}>
+    <Figure n={n} caption={<>{caption}{' '}Counts include the 1.5-second warmup before each clip.</>}>
       <div className="post-swarm">
         {SWARM_STEPS.map((label, i) => {
           const path = `blj/${MEDIA.swarm(rung, label)}`;
@@ -475,9 +422,7 @@ const Pipeline: React.FC = () => {
 const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <Article
     onBack={onBack}
-    kicker={meta.kicker}
     title={meta.title}
-    dek={meta.dek}
     date={meta.date}
     readingMinutes={meta.readingMinutes}
     repo={meta.repo}
@@ -690,17 +635,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       width; it is a proxy for a crossing, not a guarantee of one.
     </p>
 
-    <SwarmRow
-      n={5}
-      rung="speed"
-      caption={
-        <>
-          Speed reward at the same four checkpoints: {solvedAt('speed').join(', ')} completed
-          escapes per capture. A copy resets after finishing, so the count can exceed 64.
-          The final panel's peak backward velocity is <M>{signed(swarmPeakAt('speed', -1))}</M>.
-        </>
-      }
-    />
+    <SpeedEvolution />
 
     <p>
       This reward produced successes in {rungByName('speed').solved} of{' '}
@@ -716,7 +651,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       caption={
         <>
           Height and speed together, for a run that succeeded. The four captures
-          contain {solvedAt('height_speed').join(', ')} escapes. Three of this reward's six
+          record {solvedAt('height_speed').join(', ')} escapes including warmup. Three of this reward's six
           training runs found the exploit.
         </>
       }
@@ -784,92 +719,6 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       not make landing-only training reliable: the other five seeds never finished.
     </p>
 
-    <H2 id="transfer">Does it work on other stairs?</H2>
-
-    <p>
-      I next tested all {transfer.totalPolicies} final policies on ten staircases without further
-      training, using {transfer.episodesPerRun} episodes per policy and staircase. The scenes
-      include the castle, a synthetic rebuild of its steps, and changes to step height, depth
-      and vertical faces. This tests whether the learned behavior survives changes in geometry.
-    </p>
-
-    <Table
-      n={2}
-      caption={
-        <>
-          Transfer without retraining. Rise and run are step height and depth; faces are the
-          vertical surfaces between treads. Policies solving counts any success among all{' '}
-          {transfer.totalPolicies} policies. Mean success averages over the{' '}
-          {transfer.castleSolvers} policies that solve the castle.
-        </>
-      }
-      columns={[
-        { key: 'scene', label: 'Staircase' },
-        { key: 'rise', label: 'Rise', numeric: true },
-        { key: 'run', label: 'Run', numeric: true },
-        { key: 'risers', label: 'Faces' },
-        { key: 'policies', label: 'Policies solving', numeric: true },
-        { key: 'rate', label: 'Mean success', numeric: true },
-        { key: 'peak', label: 'Peak velocity', numeric: true },
-      ]}
-      rows={TRANSFER_ORDER.map(name => {
-        const row = transferRow(name);
-        return {
-          scene: SCENE_LABEL[name],
-          rise: row.rise,
-          run: row.run,
-          risers: row.risers ? 'yes' : 'no',
-          policies: `${row.policiesSolving} / ${row.totalPolicies}`,
-          rate: pct(row.meanRate),
-          peak: signed(row.bestPeak),
-          highlight: name === 'castle',
-        };
-      })}
-    />
-
-    <p>
-      The synthetic rebuild preserves the castle's step dimensions while reducing the collision
-      mesh from {castleRow.triangles} to {rebuiltRow.triangles} triangles. It keeps{' '}
-      {rebuiltRow.policiesSolving} of the {castleRow.policiesSolving} castle-solving policies,
-      with mean success falling from {pct(castleRow.meanRate)} to {pct(rebuiltRow.meanRate)}.
-      The rebuild preserves much of the behavior, though it is not an exact substitute for
-      the original scene.
-    </p>
-
-    <p>
-      Taller vertical faces cause trouble. Raising the steps from {castleRow.rise} to{' '}
-      {rise50Faces.rise} units at the same depth leaves {rise50Faces.policiesSolving} policies
-      solving. Removing those faces brings back {rise50NoFaces.policiesSolving}, with{' '}
-      {pct(rise50NoFaces.meanRate)} mean success. Depth matters too: doubling the tread depth
-      while keeping the castle's rise and faces leaves {rise26Run100.policiesSolving} policies
-      solving. Transfer depends on the combination of these features.
-    </p>
-
-    <p>
-      A fast chain is still not enough by itself. On the 100-unit steps with faces removed,
-      the learned policies reach <M>{signed(rise100NoFaces.bestPeak)}</M> against a band{' '}
-      {rise100NoFaces.escapeSpeed} units deep, yet none of the{' '}
-      {rise100NoFaces.totalPolicies * transfer.episodesPerRun} episodes reaches the landing.
-      The controller must also position the chain so it crosses the band.
-    </p>
-
-    <p>
-      I also tested a scripted controller that repeats a fixed two-frame press cycle. It
-      develops fast chains on two steep staircases without faces, reaching{' '}
-      {expertRunaway.map(row => signed(row.peak)).join(' and ')}. On the castle it reaches
-      only <M>{signed(expertCastle.peak)}</M>, while the learned policies reach{' '}
-      <M>{signed(castleRow.bestPeak)}</M> in this evaluation. The script is a useful check that
-      some geometries permit acceleration, but its failure on the castle makes it a poor test
-      of whether a geometry is solvable.
-    </p>
-
-    <p>
-      The policies learned jump chains that transfer to some altered staircases, with substantial
-      losses in success rate. They did not learn a controller that works across all these
-      geometries. Training on varied stairs would be the next experiment; this evaluation only
-      measures transfer after training on one flight.
-    </p>
-
     <H2 id="mistakes">Three mistakes in the setup</H2>
 
     <p>
@@ -882,7 +731,7 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <p>
       My first scripted sweep found no sustained acceleration, and I thought the exploit might
       require inputs too precise for a policy to find. The sweep was passing stick values
-      of <M>{`\pm 64`}</M> to libsm64. The library expects <M>[-1, 1]</M> and applies its own scaling:
+      of <M>{`\pm 64`}</M> to libsm64. The library expects <M>[-1, 1]</M> and applies its own scaling <Cite ids={[3]} />:
     </p>
 
     <Code language="c" file="src/libsm64.c:241">{STICK_CODE}</Code>
@@ -942,11 +791,13 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <Note label="How closely does libsm64 match the game?">
-      The source files governing the jump chain match the decompilation at commit{' '}
-      <code>9921382a</code>. In a comparison against a chain from the TASVideos 0-star run{' '}
+      In my comparison of the longest castle-area-1 jump chain from TASVideos movie 2016M{' '}
       <Cite ids={[1]} />, position and velocity match bit-for-bit in{' '}
       {results.validation.framesBitExact} of {results.validation.framesCompared} frames, with
-      the same action sequence. This checks the movement code, not every part of the level:
+      the same action sequence. The comparison aligns the camera-relative input direction
+      to the reference on every frame. Other chains show small numerical differences, and
+      a basement chain diverges at a level transition <Cite ids={[13]} />.
+      This checks a specific movement sequence, not every part of the level:
       libsm64 lacks doors and instant warps, so the environment implements the staircase's
       warp check using the level's collision data.
     </Note>
@@ -996,8 +847,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <p>
       The reward definitions matter. These are particular record-based bonuses with particular
-      caps. I did not compare the wider range of reward transformations studied in shaping
-      theory <Cite ids={[7]} />, and I have not shown that height is always a poor signal.
+      caps. I did not test potential-based shaping, whose policy-invariance conditions are
+      studied by Ng, Harada and Russell <Cite ids={[7]} />, and I have not shown that height is always a poor signal.
       A preliminary curriculum that explicitly rewarded stages of the jump recipe solved
       2 of 3 seeds, with a first success around 300k steps. More detailed guidance can help;
       that curriculum was excluded from the four-way comparison because it supplied the
@@ -1015,9 +866,8 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <p>
       Finally, this is one PPO baseline on one training staircase. It does not compare PPO
       with methods designed for hard exploration, such as Go-Explore <Cite ids={[11]} />.
-      The most useful next steps would be more seeds for the sparse reward and training on
-      varied stair geometries. Those would address the two weaknesses visible here:
-      unreliable discovery and limited transfer.
+      More seeds for the sparse reward and comparisons with exploration-focused methods
+      would help establish how reliably the exploit can be discovered.
     </p>
 
     <References refs={BLJ_REFS} bibtex={BLJ_BIBTEX} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import Article, { H2, H3, Note, KeyNumbers } from './post/Article';
+import Article, { H2, H3, Note } from './post/Article';
 import Figure from './post/Figure';
 import Table from './post/Table';
 import Code from './post/Code';
@@ -86,34 +86,12 @@ const CONSISTENCY_CODE = `def apply_answer(state: GameState, attribute_index: in
 const BlogSecret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <Article
     onBack={onBack}
-    kicker={meta.kicker}
     title={meta.title}
-    dek={meta.dek}
     date={meta.date}
     readingMinutes={meta.readingMinutes}
     repo={meta.repo}
     toc={TOC}
   >
-    <KeyNumbers
-      items={[
-        {
-          k: 'games that self-contradict',
-          v: pct(ARMS.greedy.contradicted, 1),
-          s: `first contradiction at turn ${ARMS.greedy.medianDeathTurn}, where perfect play needs 5.72 questions`,
-        },
-        {
-          k: 'cost of latency',
-          v: `${((CFULL.named_context_vs_elicited_beliefs - CFULL.in_game_vs_elicited_beliefs) * 100).toFixed(1)} pts`,
-          s: `self-agreement ${pct(CFULL.named_context_vs_elicited_beliefs)} when the animal is named, ${pct(CFULL.in_game_vs_elicited_beliefs)} when it is not`,
-        },
-        {
-          k: 'probe reads the secret',
-          v: pct(probeStats.accuracy),
-          s: `against a ${pct(P.most_common_baseline)} majority baseline, but only ${pct(probeStats.transfer_accuracy)} survives the game`,
-        },
-      ]}
-    />
-
     <H2 id="question">The question</H2>
     <p>
       Ask a model to think of an animal and not tell you which. It says "Ready." Then you start

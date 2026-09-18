@@ -1,6 +1,7 @@
 # What the BLJ post's media has to be
 
-`components/BlogMario.tsx` uses 21 files under `public/blj/`: 19 clips and the 2 posters.
+The published `blj-media-v1` set has 21 files under `public/blj/`: 19 clips and 2 posters.
+The local speed study adds 17 clips; the published `blj-media-v2` set retains all 38 assets.
 The [storage guide](../../media/README.md) keeps them in versioned release assets, with deployment
 fetching and verifying the [manifest](../../media/blj.json) before building the site. Each clip
 uses the game's own renderer to draw measured state in `castle_inside` area 2, 4:3 at 960×720 —
@@ -11,7 +12,7 @@ ones autoplay, so their stills would be weight in git that nothing requests.
 
 ## One locked camera, and no door
 
-The sixteen panels and the cold open are one vantage, `DEFAULT_CAM` in
+The sixteen checkpoint clips and the cold open are one vantage, `DEFAULT_CAM` in
 `tools/render_swarm_shots.py` in the measurement repo: eye at (-204, 3450, 3900) looking at
 (-204, 3700, 1800) through a 55 degree lens, which is behind the bottom landing at hip height. That
 file records why every direction around it fails, so the sweep does not have to be repeated. Two
@@ -43,18 +44,25 @@ height+speed.
 
 ## The four-panel sets
 
-Four separate video elements per reward, left to right, **not** a 2×2 composite — they autoplay
-muted and a reader can unmute one panel at a time, which a composite cannot do.
+Height, height+speed, and landing-only each show four separate video elements, left to right.
+They autoplay muted and a reader can unmute one panel at a time. Speed uses the larger
+`SpeedEvolution` viewer: a checkpoint slider, playback speed, and an optional two-clip comparison.
+Only selected clips load as their players approach the viewport. Its checkpoint inventory is
+`components/post/results/speed-evolution.json`; all 17 server-rendered clips are installed locally.
+The viewer checks for the new media and falls back to the four published clips from
+`speed-evolution-legacy.json` when it is absent. See
+[the intermediate-checkpoint study](../../docs/mario-speed-evolution/README.md) for the completed
+render, checkpoint provenance, downloadable viewer and published release manifest.
 
     swarm-<rung>-<label>.mp4
       rung   height | speed | terminal | height-speed
       label  1M | 5M | 10M | 20M
 
-Sixteen files, no posters: they loop. Each is the whole 450-frame capture, 15 s, which is exactly
-the window `solved` counts escapes over, so a panel shows every escape its own label claims. They
-were first cut to 360 frames and re-rendered at full length to remove that gap. Rung order in the
-post is
-height (Fig. 4), speed (Fig. 5), height-speed (Fig. 6), terminal (Fig. 7). Each panel shows
+Sixteen original files, no posters: they loop. Each shows 450 frames, 15 seconds. The original
+exporter counts escapes across **45 warmup + 450 recorded frames**, so those totals also include
+1.5 seconds before the clip; the article now states this. The new speed study uses zero warmup,
+so its counts cover exactly the visible 15 seconds. Rung order in the post is
+height (Fig. 4), speed (Fig. 5), height-speed (Fig. 6), terminal (Fig. 7). Each clip shows
 64 copies of one checkpoint policy sampling actions, not 64 independently trained policies.
 
 ## The three single clips
@@ -87,14 +95,22 @@ Regenerate with `PROJECTS_ROOT=/Users/yll/Desktop node scripts/distill-results.m
 - `occupancy` — `results/action_occupancy.json`. Fig. 8 shows the changing action mix in the
   successful landing-only run. It does not isolate the cause of those changes.
 - `transfer` and `transferExpert` — `results/transfer.json` and `results/transfer_expert.json`.
-  Table 2 and the scripted-controller comparison use their own evaluation peaks, which differ
-  from the peak of the filmed episode.
+  Retained in the distilled data for reference; the other-staircases section is no longer
+  displayed in the article.
 - `swarm` — `results/swarm_render_manifest.json`, from `tools/summarise_swarm_shots.py`.
-  The panel labels count completed escapes in the filmed window, not success rates over
-  attempts. An episode ends at the goal or a 1,200-frame timeout; the window is 450 frames.
+  The original panel labels count completed escapes across warmup and recording, not success
+  rates over attempts. An episode ends at the goal or a 1,200-frame timeout. New speed metadata
+  comes from the separate study with no warmup and a 450-frame recording.
 - `speed` — `results/throughput.json`, used in the pipeline diagram and Fig. 9's caption.
 - Audio measurements and median-return curves remain in the distilled results for reference,
   but the article no longer presents them as figures or tables.
 
 The band is drawn cyan rather than red because the endless staircase is carpeted in red and a red
 band on it is invisible. Fig. 1's caption says cyan, so a recolour is a prose edit.
+
+## Reference audit
+
+The September 18, 2026 [reference audit](../../docs/mario-speed-evolution/reference-audit.md)
+records the primary sources checked and corrections. The published comparison extract at
+`public/blj-study/validation.json` retains the original measurement commit and source-file SHA-256.
+It is linked as the article's own data, separately from the TAS movie attribution.

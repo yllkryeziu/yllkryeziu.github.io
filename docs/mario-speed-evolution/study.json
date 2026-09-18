@@ -1,0 +1,229 @@
+{
+  "trainingSeed": 4,
+  "rung": "speed",
+  "measurementRepo": "https://github.com/yllkryeziu/mario-blj",
+  "measurementCommit": "d300897dfbb0ddfaa452781b97a8002454ccb85a",
+  "sourceRun": "/fast/project/HFMI_SynergyUnit/yll/mario-blj/results/ladder_v2/speed/seed_4",
+  "episodesSha256": "64854b4593f059c4193c585d46d3d2799ad6ce318f400975fade394e21a5bf34",
+  "availableCheckpointCount": 200,
+  "firstCheckpoint": 99996,
+  "lastCheckpoint": 19999200,
+  "checkpointStride": 99996,
+  "firstTrainingSuccess": 580644,
+  "trainingBins": [
+    {
+      "afterStep": 0,
+      "throughStep": 100000,
+      "episodes": 24,
+      "successes": 0,
+      "rate": 0.0
+    },
+    {
+      "afterStep": 100000,
+      "throughStep": 200000,
+      "episodes": 36,
+      "successes": 0,
+      "rate": 0.0
+    },
+    {
+      "afterStep": 200000,
+      "throughStep": 300000,
+      "episodes": 36,
+      "successes": 0,
+      "rate": 0.0
+    },
+    {
+      "afterStep": 300000,
+      "throughStep": 400000,
+      "episodes": 36,
+      "successes": 0,
+      "rate": 0.0
+    },
+    {
+      "afterStep": 400000,
+      "throughStep": 500000,
+      "episodes": 24,
+      "successes": 0,
+      "rate": 0.0
+    },
+    {
+      "afterStep": 500000,
+      "throughStep": 600000,
+      "episodes": 37,
+      "successes": 1,
+      "rate": 0.02702702702702703
+    },
+    {
+      "afterStep": 600000,
+      "throughStep": 700000,
+      "episodes": 42,
+      "successes": 11,
+      "rate": 0.2619047619047619
+    },
+    {
+      "afterStep": 700000,
+      "throughStep": 800000,
+      "episodes": 48,
+      "successes": 27,
+      "rate": 0.5625
+    },
+    {
+      "afterStep": 800000,
+      "throughStep": 900000,
+      "episodes": 90,
+      "successes": 79,
+      "rate": 0.8777777777777778
+    },
+    {
+      "afterStep": 900000,
+      "throughStep": 1000000,
+      "episodes": 224,
+      "successes": 219,
+      "rate": 0.9776785714285714
+    }
+  ],
+  "sourceHashes": {
+    "tools/export_swarm_render.py": "2965c203176a9fe742ea0e23166b7e659d8e2fb18b53f102907d53698bffc894",
+    "tools/render_swarm_shots.py": "9b411da542ed849fbbd5639bdd80e3984746d77af562ed95ad7f02ebcae87cef",
+    "src/train/ppo.py": "1e056266f02e18c125a8fc4120380f89c14290f919aa1f5988a2aa041dd952a5",
+    "src/train/ladder.py": "63c081329a90ffb6ae6136fd82b0d2902f213dbd04290566b146fe4d0fc4a706",
+    "src/env/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/env/audio.py": "d5972029bbda7db8a61875ff4fae0e505ae15b113e0893c6c82c08b5bd76aea7",
+    "src/env/blj_env.py": "e48d66375348c3f07ae55c3545c96299f67ee62dc65b462ecc3d3cfb68c378fa",
+    "src/env/collision.py": "a6b72f852e1ebfdcdcece93ca4f7f904b94a901a0ba82beed67dc9ddd9173209",
+    "src/env/endless_stairs.py": "d3e333b98f6bd34227c2b2de5223963f68bacdcafc330780ef9a9236f34709c0",
+    "src/env/geometry.py": "062f15a178663778b37dbb757e49f669a10ea407b0b2c39da3dd87426f1c0788",
+    "src/env/native.py": "0307b4fda7c943f6987e0c4479e287d3de383f1e63f8829295d187705779c630",
+    "src/env/swarm.py": "3435c67320eb9f4956526d1669f145d7635cc74f5db5161984bf609ea2156901"
+  },
+  "checkpoints": [
+    {
+      "name": "speed-0.1M",
+      "label": "0.1M",
+      "steps": 99996,
+      "file": "ppo_99996_steps.zip",
+      "bytes": 1877314,
+      "sha256": "6d1815899d9f5dd183d5de7140ae74aa8c27a138396c37abd93784ea143aa05f"
+    },
+    {
+      "name": "speed-0.2M",
+      "label": "0.2M",
+      "steps": 199992,
+      "file": "ppo_199992_steps.zip",
+      "bytes": 1878803,
+      "sha256": "e950ddf3d565896795826f3a5fb1142de2f99555ee1a5868c28b362635ee4b9f"
+    },
+    {
+      "name": "speed-0.3M",
+      "label": "0.3M",
+      "steps": 299988,
+      "file": "ppo_299988_steps.zip",
+      "bytes": 1880291,
+      "sha256": "c68879daece2977078fb296ec89a99c515d7b9ae4510493ca3ff06ffd0f48033"
+    },
+    {
+      "name": "speed-0.4M",
+      "label": "0.4M",
+      "steps": 399984,
+      "file": "ppo_399984_steps.zip",
+      "bytes": 1880458,
+      "sha256": "ac6dc501b76eb1fd13a0a5339adafbdfa55f4a2fb4033d2d6206ee5420c63f2d"
+    },
+    {
+      "name": "speed-0.5M",
+      "label": "0.5M",
+      "steps": 499980,
+      "file": "ppo_499980_steps.zip",
+      "bytes": 1880459,
+      "sha256": "c5da4ac605df73b70801953d64a04f3d8db1a16c9e2f71bbe953565fdbd1a70c"
+    },
+    {
+      "name": "speed-0.6M",
+      "label": "0.6M",
+      "steps": 599976,
+      "file": "ppo_599976_steps.zip",
+      "bytes": 1880459,
+      "sha256": "668f4d3fa44ad01d9e5199a21a0511fa86638e040669d611e17869ee2355868c"
+    },
+    {
+      "name": "speed-0.7M",
+      "label": "0.7M",
+      "steps": 699972,
+      "file": "ppo_699972_steps.zip",
+      "bytes": 1880460,
+      "sha256": "89fe115d6f16e49cb144e8d58cf7fee7433a23d41912aecf46f3db4c93f52f25"
+    },
+    {
+      "name": "speed-0.8M",
+      "label": "0.8M",
+      "steps": 799968,
+      "file": "ppo_799968_steps.zip",
+      "bytes": 1880459,
+      "sha256": "12af2eba9d06f7339e67e2d270dffe75cd68e605cd86451180d62a718c307d47"
+    },
+    {
+      "name": "speed-0.9M",
+      "label": "0.9M",
+      "steps": 899964,
+      "file": "ppo_899964_steps.zip",
+      "bytes": 1880456,
+      "sha256": "5b989e34872a267461842e2bf0e88484d1e9351c1634f231b8a340217d663288"
+    },
+    {
+      "name": "speed-1M",
+      "label": "1M",
+      "steps": 999960,
+      "file": "ppo_999960_steps.zip",
+      "bytes": 1880408,
+      "sha256": "886069e3b9c80aebf9f8c127a904e146dfcac50e68848ab61f021d1c99982939"
+    },
+    {
+      "name": "speed-1.5M",
+      "label": "1.5M",
+      "steps": 1499940,
+      "file": "ppo_1499940_steps.zip",
+      "bytes": 1880361,
+      "sha256": "5f1b90e9bb59f464a84e33423611d9992ddcacd36f5da6d8a5f07912da7276de"
+    },
+    {
+      "name": "speed-2M",
+      "label": "2M",
+      "steps": 1999920,
+      "file": "ppo_1999920_steps.zip",
+      "bytes": 1880335,
+      "sha256": "036c6ff1d77704a98f6e4f36ddfcb0500efaea245a0ac2bee97ec17d08445c30"
+    },
+    {
+      "name": "speed-3M",
+      "label": "3M",
+      "steps": 2999880,
+      "file": "ppo_2999880_steps.zip",
+      "bytes": 1880345,
+      "sha256": "c13c2faf4e3569e583f353310b621411c2425f94414f90fd3a9e54409c7ef5c7"
+    },
+    {
+      "name": "speed-5M",
+      "label": "5M",
+      "steps": 4999800,
+      "file": "ppo_4999800_steps.zip",
+      "bytes": 1880345,
+      "sha256": "648811f3c479185df286b6f16be43ef6b70fb07f68f67b7937e400a59d60c76c"
+    },
+    {
+      "name": "speed-10M",
+      "label": "10M",
+      "steps": 9999600,
+      "file": "ppo_9999600_steps.zip",
+      "bytes": 1880338,
+      "sha256": "9ac753a738ef8e2702939040da604e6b08a33878a88aa7275943bdca56b1d721"
+    },
+    {
+      "name": "speed-20M",
+      "label": "20M",
+      "steps": 19999200,
+      "file": "ppo_19999200_steps.zip",
+      "bytes": 1880343,
+      "sha256": "1b776ca97709f98387607147bf425ca2ad14e47f228459d57aca5f8c57bee152"
+    }
+  ]
+}

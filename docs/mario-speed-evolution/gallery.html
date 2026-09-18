@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Speed policy evolution · seed 4</title>
+<style>
+*{box-sizing:border-box}body{margin:32px auto;padding:0 20px;max-width:1300px;background:#faf9f5;color:#242320;font:16px/1.5 system-ui,sans-serif}h1{font-size:26px}h2{font-size:18px;font-weight:600}p{max-width:850px;color:#64615a}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:22px 0}button,select,input{font:inherit}button,select{padding:6px 12px}#time{flex:1;min-width:200px}main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}video{width:100%;display:block;background:#1c1b18}article p{font-size:13px;margin:8px 0}article h2{margin:0 0 10px}@media(max-width:700px){main{grid-template-columns:1fr}}
+</style>
+<h1>Speed policy evolution · seed 4</h1>
+<p>Select two checkpoints to compare. Each clip shows 64 copies of one policy, with the same initial sampling seed and camera. Escapes count completed episodes in 15 seconds, not a success percentage. The untrained network is reconstructed with seed 4. The first training success occurred at 580,644 steps; the 500k and 600k checkpoints bracket it.</p>
+<div class="controls"><button id="play">Play both from start</button><button id="pause">Pause both</button><label>Speed <select id="rate"><option value="1">1×</option><option value="0.5">½×</option><option value="0.25">¼×</option></select></label><label for="time">Seek both</label><input id="time" type="range" min="0" max="14.99" step="0.033333" value="0"></div>
+<main><article><h2><label>Earlier <select id="left"></select></label></h2><video id="a" controls muted playsinline preload="metadata"></video><p id="a-note"></p></article><article><h2><label>Later <select id="right"></select></label></h2><video id="b" controls muted playsinline preload="metadata"></video><p id="b-note"></p></article></main>
+<p>Shared controls provide a visual comparison; two browser videos are not guaranteed frame-locked. Use each video’s controls to inspect it independently. Training-log percentages are separate measurements and are recorded in study.json.</p>
+<script>
+const shots=/* STUDY_DATA */[];
+const left=document.querySelector('#left'),right=document.querySelector('#right');
+const videos=[document.querySelector('#a'),document.querySelector('#b')];
+const rate=document.querySelector('#rate'),time=document.querySelector('#time');
+const title=s=>s.steps===null?'Untrained':`${s.stepsLabel} · ${s.steps.toLocaleString()} steps`;
+for(const select of [left,right])for(const [i,shot] of shots.entries()){const option=document.createElement('option');option.value=i;option.textContent=title(shot);select.append(option);}
+function load(select,index){if(!shots.length)return;const shot=shots[Number(select.value)];const video=videos[index];video.src=shot.video;video.playbackRate=Number(rate.value);document.querySelector(index?'#b-note':'#a-note').textContent=`${shot.successes} escapes in ${shot.seconds}s · capture seed ${shot.captureSeed}`;}
+left.value=Math.max(0,shots.findIndex(s=>s.stepsLabel==='0.5M'));right.value=Math.max(0,shots.findIndex(s=>s.stepsLabel==='0.6M'));
+left.onchange=()=>load(left,0);right.onchange=()=>load(right,1);load(left,0);load(right,1);
+document.querySelector('#play').onclick=async()=>{for(const v of videos){v.currentTime=0;v.playbackRate=Number(rate.value);}await Promise.allSettled(videos.map(v=>v.play()));};
+document.querySelector('#pause').onclick=()=>videos.forEach(v=>v.pause());
+rate.onchange=()=>videos.forEach(v=>v.playbackRate=Number(rate.value));
+time.oninput=()=>videos.forEach(v=>{v.pause();v.currentTime=Number(time.value);});
+videos[0].ontimeupdate=()=>{time.value=videos[0].currentTime;};
+</script>
+</html>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Article, { H2, H3, Note, KeyNumbers } from './post/Article';
+import Article, { H2, H3, Note } from './post/Article';
 import Figure from './post/Figure';
 import Table from './post/Table';
 import Code from './post/Code';
@@ -181,34 +181,12 @@ if expected_gain <= self.config.alpha * expected_cost:
 const BlogPrefetch: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <Article
     onBack={onBack}
-    kicker={meta.kicker}
     title={meta.title}
-    dek={meta.dek}
     date={meta.date}
     readingMinutes={meta.readingMinutes}
     repo={meta.repo}
     toc={TOC}
   >
-    <KeyNumbers
-      items={[
-        {
-          k: 'p95, origin provisioned',
-          v: pct(edgeDelta('edge_warm', 64, 'cost_aware_mlp')),
-          s: `matching always-top-2 at ${pct(edgeDelta('edge_warm', 64, 'always_top2'))} for less origin load`,
-        },
-        {
-          k: 'p95, origin saturated',
-          v: pct(edgeDelta('edge_small', 16, 'cost_aware_mlp')),
-          s: `where always-top-2 reaches ${pct(edgeDelta('edge_small', 16, 'always_top2'), 0)}`,
-        },
-        {
-          k: 'saving at a 400 ms origin',
-          v: `${ms(Math.abs(byOriginLatency[byOriginLatency.length - 1].absolute), 1)} ms`,
-          s: 'absolute p95 reduction scales with origin distance',
-        },
-      ]}
-    />
-
     <H2 id="the-bet">The cost of a speculative fetch</H2>
     <p>
       Prefetching is an old idea<Cite ids={[1]} />: guess what the user will ask for next, fetch it early,

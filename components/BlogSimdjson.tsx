@@ -1,5 +1,5 @@
 import React from 'react';
-import Article, { H2, H3, Note, KeyNumbers } from './post/Article';
+import Article, { H2, H3, Note } from './post/Article';
 import Figure from './post/Figure';
 import Table from './post/Table';
 import Code from './post/Code';
@@ -129,34 +129,12 @@ Java_dev_yll_simdjsonjni_SimdJson_parse(JNIEnv* env, jclass, jobject buffer, jin
 const BlogSimdjson: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <Article
     onBack={onBack}
-    kicker={meta.kicker}
     title={meta.title}
-    dek={meta.dek}
     date={meta.date}
     readingMinutes={meta.readingMinutes}
     repo={meta.repo}
     toc={TOC}
   >
-    <KeyNumbers
-      items={[
-        {
-          k: 'throughput',
-          v: `${aggregateSpeedup.toFixed(1)}x`,
-          s: `${mb(bestNative)} MB/s against ${mb(bestJvm)} MB/s for the best JVM parser`,
-        },
-        {
-          k: 'boundary cost',
-          v: `${crossingNanos.toFixed(1)} ns`,
-          s: 'one JNI crossing, measured, against 0.34 ns for a plain Java call',
-        },
-        {
-          k: 'heap per parse',
-          v: `${allocationMean('simdjson-jni-direct', 'alloc_bytes_per_op').toFixed(0)} B`,
-          s: `where Jackson's tree parser allocates ${(allocationMean('jackson-tree', 'alloc_bytes_per_op') / 1e6).toFixed(1)} MB`,
-        },
-      ]}
-    />
-
     <H2 id="origin">Where this comes from</H2>
     <p>
       At Porsche Informatik I worked on a Java platform that ingests vehicle data feeds across

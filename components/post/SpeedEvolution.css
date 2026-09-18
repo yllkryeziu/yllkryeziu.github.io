@@ -1,0 +1,22 @@
+.speed-evolution { font: 13px/1.5 var(--font-sans); color: var(--color-text-subtle); }
+.speed-evolution-videos { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.speed-evolution-videos.is-comparing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.speed-evolution video { width: 100%; aspect-ratio: 4 / 3; }
+.speed-evolution-detail { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; }
+.speed-evolution-detail strong { font-weight: 600; color: var(--color-text); }
+.speed-evolution-timeline { margin-top: 22px; }
+.speed-evolution-slider { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.speed-evolution-slider input { width: 100%; min-width: 0; accent-color: var(--color-accent); cursor: pointer; }
+.speed-evolution-endpoints { display: flex; justify-content: space-between; margin: 3px 50px 0; color: var(--color-text-muted); font-size: 12px; }
+.speed-evolution-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+.speed-evolution-controls label { display: flex; align-items: center; gap: 8px; }
+.speed-evolution .speed-evolution-reading { margin: 18px 0 0; font: inherit; color: inherit; }
+.speed-evolution button, .speed-evolution select { font: inherit; color: var(--color-text-subtle); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 4px; padding: 6px 10px; cursor: pointer; }
+.speed-evolution button:hover:not(:disabled) { color: var(--color-text); border-color: var(--color-text-muted); }
+.speed-evolution button:disabled { opacity: .4; cursor: default; }
+.speed-evolution button[aria-pressed='true'] { color: var(--color-text); border-color: var(--color-text-subtle); }
+.speed-evolution :is(button, select, input):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.speed-evolution-error { aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; background: var(--color-border-light); }
+@media (max-width: 640px) {
+  .speed-evolution-videos.is-comparing { grid-template-columns: minmax(0, 1fr); }
+}

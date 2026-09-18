@@ -1,0 +1,127 @@
+{
+  "trainingSeed": 4,
+  "firstTrainingSuccess": 580644,
+  "captureSeedMode": "shared",
+  "warmupFrames": 0,
+  "checkpoints": [
+    {
+      "steps": 0,
+      "label": "Untrained",
+      "file": "speed-evolution-untrained-speed-seed-4.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 99996,
+      "label": "0.1M",
+      "file": "speed-evolution-speed-0.1M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 199992,
+      "label": "0.2M",
+      "file": "speed-evolution-speed-0.2M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 299988,
+      "label": "0.3M",
+      "file": "speed-evolution-speed-0.3M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 399984,
+      "label": "0.4M",
+      "file": "speed-evolution-speed-0.4M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 499980,
+      "label": "0.5M",
+      "file": "speed-evolution-speed-0.5M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 599976,
+      "label": "0.6M",
+      "file": "speed-evolution-speed-0.6M.mp4",
+      "escapes": 0,
+      "seconds": 15.0
+    },
+    {
+      "steps": 699972,
+      "label": "0.7M",
+      "file": "speed-evolution-speed-0.7M.mp4",
+      "escapes": 2,
+      "seconds": 15.0
+    },
+    {
+      "steps": 799968,
+      "label": "0.8M",
+      "file": "speed-evolution-speed-0.8M.mp4",
+      "escapes": 7,
+      "seconds": 15.0
+    },
+    {
+      "steps": 899964,
+      "label": "0.9M",
+      "file": "speed-evolution-speed-0.9M.mp4",
+      "escapes": 16,
+      "seconds": 15.0
+    },
+    {
+      "steps": 999960,
+      "label": "1M",
+      "file": "speed-evolution-speed-1M.mp4",
+      "escapes": 68,
+      "seconds": 15.0
+    },
+    {
+      "steps": 1499940,
+      "label": "1.5M",
+      "file": "speed-evolution-speed-1.5M.mp4",
+      "escapes": 111,
+      "seconds": 15.0
+    },
+    {
+      "steps": 1999920,
+      "label": "2M",
+      "file": "speed-evolution-speed-2M.mp4",
+      "escapes": 107,
+      "seconds": 15.0
+    },
+    {
+      "steps": 2999880,
+      "label": "3M",
+      "file": "speed-evolution-speed-3M.mp4",
+      "escapes": 125,
+      "seconds": 15.0
+    },
+    {
+      "steps": 4999800,
+      "label": "5M",
+      "file": "speed-evolution-speed-5M.mp4",
+      "escapes": 117,
+      "seconds": 15.0
+    },
+    {
+      "steps": 9999600,
+      "label": "10M",
+      "file": "speed-evolution-speed-10M.mp4",
+      "escapes": 163,
+      "seconds": 15.0
+    },
+    {
+      "steps": 19999200,
+      "label": "20M",
+      "file": "speed-evolution-speed-20M.mp4",
+      "escapes": 164,
+      "seconds": 15.0
+    }
+  ]
+}

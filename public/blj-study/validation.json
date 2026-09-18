@@ -1,0 +1,116 @@
+{
+  "source": {
+    "repository": "https://github.com/yllkryeziu/mario-blj",
+    "commit": "d300897dfbb0ddfaa452781b97a8002454ccb85a",
+    "file": "results/tas_validation.json",
+    "sha256": "48ca21bfc36fd7086349a494ccbf960cda177202058e300cf3eb2412397a05fb"
+  },
+  "description": "Selected fields from the original project comparison, not a new validation run. The original movie credits use historical author aliases; current credits are available at https://tasvideos.org/2016M.",
+  "reference_movie": {
+    "file": "sm64-0star-2016M.m64",
+    "source": "TASVideos 2016M, Snark / Kyman / sonicpacker / Mickey-VIS / ToT",
+    "header_magic": "M64\\x1a",
+    "version": 3,
+    "input_samples": 8772,
+    "vi_count_field": 18135,
+    "rom_crc1_in_movie": "0x635a2bff",
+    "rom_sha1": "9bef1128717f958171a4afac3ed78ee2bb4e86ce",
+    "rom_matches": true
+  },
+  "camera_confound": {
+    "problem": "The analog stick is camera relative. sm64-port resolves it as intendedYaw = atan2s(-stickY, stickX) + m->area->camera->yaw (mario.c:1304) where camera->yaw comes from the full camera simulation. libsm64 has no camera and instead sets camera->yaw = atan2s(camLookZ, camLookX) from the caller supplied camLook vector (libsm64.c:239).",
+    "how_handled": "For ACT_LONG_JUMP and ACT_LONG_JUMP_LAND the camera reaches Mario only through intendedYaw, so instead of modelling the camera this comparison solves for it. For every frame a throwaway Mario instance is ticked with that frame exact stick and a candidate camLook, and the candidate is searched until libsm64 intendedYaw equals the reference intendedYaw. The probe Mario is safe because GlobalState::mgController is per instance, and all probing finishes before the replay Mario is created. The stick itself is inverted through libsm64 own transform: inputs->stickX = -refStickX/64 and inputs->stickY = refStickY/64, using the reference POST adjust_analog_stick values, so the deadzone and magnitude clamp are accounted for too.",
+    "residual": "libsm64 camera yaw is the output of atan2s, which is a lookup into the 4097 entry gArctanTable, so not every s16 yaw is representable. On the longest chain every required yaw was reachable exactly and the residual is 0 on all 45 frames. On the other two chains a residual of up to 4 and 5 s16 units remained, 0.022 and 0.027 degrees.",
+    "attribution": "A deliberate sensitivity sweep on the longest chain offset the solved camLook index by 1, 2 and 4 steps. Offsets of 1 and 2 changed nothing at all, because atan2s quantisation snapped them back to the same reachable yaw and the residual stayed 0, and the replay stayed bit exact. An offset of 4 pushed the residual to 7 units and destroyed the chain, peak forwardVel -42.4 instead of -7468.7. So the chain is chaotically sensitive to the camera at the few s16 unit level, the residual drift seen on the other two chains is exactly the kind of effect a residual of 4 to 5 units produces, and none of the divergence needs a physics explanation.",
+    "second_residual_source": "sm64-port adjust_analog_stick clamps stickMag to exactly 64.0f, while libsm64 recomputes stickMag = sqrtf(stickX*stickX + stickY*stickY) from the reconstructed components and lands one or two ulp short, giving intendedMag 31.999996 where the reference has 32.0. This happens on frames in all three chains including the bit exact one, where it provably did not change any f32 result."
+  },
+  "chain_identification": {
+    "endless_stairs": "The chain whose re-launch window is frames 6589 to 6607, LEVEL_CASTLE area 2, at (-1160.0, 1075/1101, 2186.4) on a level 26 unit step, peak forwardVel -711.1437. Area 2 is the area that holds the endless staircase: it is the only castle_inside area carrying the 12 SURFACE_INSTANT_WARP_1B triangles, at x in [-409, 0], y in [3917, 3994], z in [905, 1059]. Note the BLJ itself is NOT performed on the endless stairs. It is performed on the ordinary staircase just outside them; Mario then carries -711 into the corridor at x in [-409, 0] and climbs it backwards from y 1203 to y 2253 over frames 6620 to 6640, crossing the instant warp repeatedly (the +205 per frame y steps and +410 per frame z steps in the trace are the INSTANT_WARP(0, 2, 0, -205, 410) displacement from levels/castle_inside/script.c:285 fighting his own motion), and exits into LEVEL_BITS at frame 6798. Mario fastest legitimate speed is the 48 unit long jump clamp, so this is self certifying.",
+    "castle_basement": "The chain whose re-launch window is frames 4039 to 4059, LEVEL_CASTLE area 3, at (-1278.0, -1074/-1100, 1588.0) on a level 26 unit step, peak forwardVel -423.0276. Area 3 is the basement: its collision spans y -2508 to -255, the only castle_inside area entirely below the lobby. The chain is immediately followed by entry into LEVEL_BITFS, Bowser in the Fire Sea.",
+    "longest": "The chain whose re-launch window is frames 3709 to 3739, LEVEL_CASTLE area 1, at (-3169.6, 691/717, -2416.9) on a level 26 unit step with floor normal y exactly 1.0 and floor type SURFACE_DEFAULT. 16 re-launches, peak forwardVel -7468.7485 at frame 3739, the largest backwards speed anywhere in the movie. This is the chain used for the libsm64 comparison."
+  },
+  "comparisons": {
+    "castle_area1_longest": {
+      "seed_frame": 3707,
+      "last_frame": 3752,
+      "collision": "levels/castle_inside/areas/1/collision.inc.c",
+      "frames_compared": 45,
+      "frames_bit_exact_in_pos_vel_forwardvel": 45,
+      "action_sequence_matches_every_frame": true,
+      "first_action_mismatch_frame": null,
+      "first_frame_forwardvel_diff_over_0p5": null,
+      "first_frame_position_diff_over_0p5": null,
+      "max_abs_cam_intended_yaw_residual_s16": 0,
+      "max_abs_d_forward_vel_before_any_0p5_breach": 0.0,
+      "max_d_pos_norm_before_any_0p5_breach": 0.0,
+      "floor_height_mismatch_frames": [],
+      "peak_forward_vel_reference": -7468.74853515625,
+      "peak_forward_vel_libsm64": -7468.74853515625
+    },
+    "castle_area2_endless_stairs": {
+      "seed_frame": 6588,
+      "last_frame": 6620,
+      "collision": "levels/castle_inside/areas/2/collision.inc.c",
+      "frames_compared": 32,
+      "frames_bit_exact_in_pos_vel_forwardvel": 0,
+      "action_sequence_matches_every_frame": true,
+      "first_action_mismatch_frame": null,
+      "first_frame_forwardvel_diff_over_0p5": null,
+      "first_frame_position_diff_over_0p5": null,
+      "max_abs_cam_intended_yaw_residual_s16": 4,
+      "max_abs_d_forward_vel_before_any_0p5_breach": 0.00250244140625,
+      "max_d_pos_norm_before_any_0p5_breach": 0.011480451679249494,
+      "floor_height_mismatch_frames": [],
+      "peak_forward_vel_reference": -711.1436767578125,
+      "peak_forward_vel_libsm64": -711.1411743164062
+    },
+    "castle_area2_endless_stairs_with_runup": {
+      "seed_frame": 6557,
+      "last_frame": 6620,
+      "collision": "levels/castle_inside/areas/2/collision.inc.c",
+      "frames_compared": 63,
+      "frames_bit_exact_in_pos_vel_forwardvel": 2,
+      "action_sequence_matches_every_frame": true,
+      "first_action_mismatch_frame": null,
+      "first_frame_forwardvel_diff_over_0p5": null,
+      "first_frame_position_diff_over_0p5": null,
+      "max_abs_cam_intended_yaw_residual_s16": 4,
+      "max_abs_d_forward_vel_before_any_0p5_breach": 0.0106201171875,
+      "max_d_pos_norm_before_any_0p5_breach": 0.014812315734489758,
+      "floor_height_mismatch_frames": [],
+      "peak_forward_vel_reference": -711.1436767578125,
+      "peak_forward_vel_libsm64": -711.133056640625
+    },
+    "castle_area3_basement": {
+      "seed_frame": 4008,
+      "last_frame": 4062,
+      "collision": "levels/castle_inside/areas/3/collision.inc.c",
+      "frames_compared": 54,
+      "frames_bit_exact_in_pos_vel_forwardvel": 8,
+      "action_sequence_matches_every_frame": false,
+      "first_action_mismatch_frame": 4055,
+      "first_frame_forwardvel_diff_over_0p5": 4056,
+      "first_frame_position_diff_over_0p5": 4055,
+      "max_abs_cam_intended_yaw_residual_s16": 5,
+      "max_abs_d_forward_vel_before_any_0p5_breach": 0.0005950927734375,
+      "max_d_pos_norm_before_any_0p5_breach": 0.0235595703125,
+      "floor_height_mismatch_frames": [
+        4055,
+        4056,
+        4057,
+        4059,
+        4060
+      ],
+      "peak_forward_vel_reference": -423.027587890625,
+      "peak_forward_vel_libsm64": -283.2983093261719
+    }
+  },
+  "verdict": {
+    "known_gaps": [
+      "libsm64 has no level logic, so it cannot follow a door or an instant warp. The basement comparison diverges hard at frame 4055 for exactly that reason: the reference Mario is displaced from (-1278, -1100, 1588) to (-1127, -1074, 1539) and gets one further 1.5x that libsm64 has no way to see. libsm64 continues the chain from -283.2983 while the reference sits frozen at -283.2992 through the transition. This is a scope gap, not a physics disagreement, and it is why the environment has to implement check_instant_warp itself.",
+      "libsm64 camera yaw is quantised by gArctanTable, so some s16 camera yaws are unreachable and a chain can be up to a few s16 units off. Given how sensitive the chain is (a 4 unit error killed it outright in the sweep), an RL environment should drive camLook itself rather than try to imitate the real camera.",
+      "libsm64 exposes no setter for actionState, actionTimer, actionArg, framesSinceA or framesSinceB, so exact seeding is only possible on frames where the reference has them all zero. All three seeds here were chosen that way.",
+      "A freshly created libsm64 Mario has a dirty marioObj->oInteractStatus, which is only zeroed at the end of execute_mario_action. On the first tick after sm64_mario_create the stale bits can raise INPUT_UNKNOWN_10 and throw Mario into ACT_SHOCKWAVE_BOUNCE, which is what happened on the first two attempts at the area 2 chain. The fix used here is one discarded warm up tick between sm64_mario_create and the seed. Anything building on libsm64 needs that warm up tick or it will see random spurious action transitions on frame one."
+    ]
+  }
+}

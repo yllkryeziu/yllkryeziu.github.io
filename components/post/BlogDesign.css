@@ -1,0 +1,39 @@
+/* Scoped to the Work feed and articles; portfolio chrome keeps its existing styles. */
+.blog-list { border-top: 1px solid var(--color-border); }
+.blog-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text); text-decoration: none; }
+.blog-row h3 { font: 600 16px/1.4 var(--font-sans); letter-spacing: -.02em; margin: 0 0 10px; }
+.blog-date { font: 400 12px/1.5 var(--font-sans); color: var(--color-text-muted); }
+.blog-row:hover h3 { color: var(--color-accent); }
+.blog-thumbnail { display: block; width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #eee9df; border-radius: 4px; }
+.blog-thumbnail img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.blog-thumbnail.game img { object-fit: contain; }
+.blog-thumbnail.diagram { padding: 8px; background: #f2efe7; }
+.blog-thumbnail.diagram img { object-fit: contain; }
+.post { max-width: 42rem; margin-inline: auto; line-height: 1.7; }
+.post .post-head { display: block; margin: 48px 0 38px; max-width: none; }
+.post .post-title { font: 600 34px/1.2 var(--font-sans); letter-spacing: -.035em; margin: 0 0 18px; }
+.post .post-meta { border: 0; padding: 0; margin: 0; font-size: 12px; }
+.post .post-shell { display: block; max-width: none; margin: 0; }
+.post .post-body > h2 { font-size: 22px; line-height: 1.35; font-weight: 600; letter-spacing: -.02em; margin: 36px 0 16px; scroll-margin-top: 92px; }
+.post .post-body > h2:first-child { margin-top: 0; }
+.post .post-body em { font-style: normal; }
+.post .post-reading-nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 60px; border-bottom: 1px solid var(--color-border); background: var(--color-bg); font: 13px/1.5 var(--font-sans); }
+.post-reading-nav button { font: inherit; color: var(--color-text-subtle); border: 0; background: none; cursor: pointer; padding: 6px 0; text-align: left; }
+.post .post-contents { position: relative; }
+.post-contents summary { cursor: pointer; padding: 6px 0; color: var(--color-text-subtle); }
+.post-contents nav { position: absolute; right: 0; top: 39px; width: min(285px, calc(100vw - 40px)); max-height: calc(100dvh - 100px); overflow-y: auto; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 4px; padding: 10px; box-shadow: 0 8px 20px #00000008; }
+.post .post-contents ol { padding: 0; margin: 0; list-style: none; }
+.post .post-contents li { margin: 0; padding: 0; }
+.post-contents nav button { display: block; width: 100%; padding: 9px 10px; border-left: 2px solid transparent; line-height: 1.4; }
+.post-contents nav button[aria-current] { color: var(--color-accent); border-left-color: var(--color-accent); }
+.post-reading-nav button:hover { color: var(--color-accent); }
+.blog-row:focus-visible, .post-reading-nav :is(button, summary):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+@media (max-width: 639px) {
+  .blog-row { gap: 14px; padding-block: 24px; }
+  .blog-row h3 { font-size: 15px; margin-bottom: 8px; }
+  .blog-date { font-size: 11.5px; }
+  .post { font-size: 16px; }
+  .post .post-head { margin-top: 32px; margin-bottom: 30px; }
+  .post .post-title { font-size: 28px; }
+  .post .post-body > h2 { font-size: 21px; }
+}
