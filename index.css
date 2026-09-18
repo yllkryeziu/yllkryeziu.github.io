@@ -140,6 +140,7 @@ a {
   gap: 4px;
   width: max-content;
   max-width: 100%;
+  margin-inline: auto;
   padding: 5px;
   border: 1px solid rgba(134, 128, 110, .1);
   border-radius: 999px;
