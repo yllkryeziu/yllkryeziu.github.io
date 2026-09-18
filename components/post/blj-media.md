@@ -1,10 +1,12 @@
 # What the BLJ post's media has to be
 
-`components/BlogMario.tsx` fetches 21 files under `public/blj/`: 19 clips and the 2 posters. Every
-one is the game's own renderer drawing measured state in `castle_inside` area 2, 4:3 at 960×720 —
+`components/BlogMario.tsx` uses 21 files under `public/blj/`: 19 clips and the 2 posters.
+The [storage plan](../../media/README.md) moves them to versioned release assets, with deployment
+fetching and verifying the [manifest](../../media/blj.json) before building the site. Each clip
+uses the game's own renderer to draw measured state in `castle_inside` area 2, 4:3 at 960×720 —
 the panels included, although they are displayed four to a row at a couple of hundred CSS pixels.
-Stems are stable: a re-render replaces a file rather than adding one, so better footage
-never needs a prose edit. Only the two clips that wait for a click carry a poster — the looping
+Filenames stay stable across re-renders; changed footage gets a new release and manifest hashes.
+Only the two clips that wait for a click carry a poster — the looping
 ones autoplay, so their stills would be weight in git that nothing requests.
 
 ## One locked camera, and no door
@@ -52,20 +54,20 @@ Sixteen files, no posters: they loop. Each is the whole 450-frame capture, 15 s,
 the window `solved` counts escapes over, so a panel shows every escape its own label claims. They
 were first cut to 360 frames and re-rendered at full length to remove that gap. Rung order in the
 post is
-height (Fig. 5), speed (Fig. 6), terminal (Fig. 9), height-speed (Fig. 10), which is the order the argument needs: the helpful reward first, the reward
-that points at the bug second, and the two that say less at the end.
+height (Fig. 4), speed (Fig. 5), height-speed (Fig. 6), terminal (Fig. 7). Each panel shows
+64 copies of one checkpoint policy sampling actions, not 64 independently trained policies.
 
 ## The three single clips
 
 | file | what it is | cut on |
 | --- | --- | --- |
 | `untrained.mp4` | Fig. 1, the cold open. 64 Marios driven by the untrained network: a freshly initialised PPO, seed 2 — the landing-only run's own starting weights. Silent autoplay loop, so it needs no poster. | `tools/export_swarm_render.py --untrained` |
-| `escape.mp4` + `.jpg` | Fig. 2, two beats at one eighth speed — `--slow 8`, each frame held for about a quarter of a second — 352 frames, 11.7 s. Silent: there is no audio track, because audio stretched eight times is not audio, and the caption says so. | two windows, `BEATS` in `tools/render_episode_clips.py`: replay frames 204–222 and 556–580, plus the render's injection offset |
-| `episode.mp4` + `.jpg` | Fig. 3, the hero run uncut, 653 frames, 21.8 s, with a burned-in readout. | the whole episode. The post draws HTML chapter marks over it at frames 0, 208, 214, 292, 560, 570, 576 and 652 |
+| `escape.mp4` + `.jpg` | Fig. 10, two beats at one eighth speed — `--slow 8`, each frame held for about a quarter of a second — 352 frames, 11.7 s. Silent: there is no audio track, because audio stretched eight times is not audio, and the caption says so. | two windows, `BEATS` in `tools/render_episode_clips.py`: replay frames 204–222 and 556–580, plus the render's injection offset |
+| `episode.mp4` + `.jpg` | Fig. 2, the hero run uncut, 653 frames, 21.8 s, with a burned-in readout. | the whole episode. The post draws HTML chapter marks over it at frames 0, 208, 214, 292, 560, 570, 576 and 652 |
 
-The first beat is the post's argument that phase decides and not speed alone, and both halves of
-it are measured rather than described: `escape.inPhase` is frame 214 at −176.04, already faster
-than the 154-unit escape speed, warping anyway because it lands at z 995.6 inside the band, and
+The first beat shows why speed alone does not guarantee a crossing: `escape.inPhase` is frame 214
+at −176.04, already faster than the 154-unit band is wide, warping anyway because it lands at
+z 995.6 inside the band, and
 `escape.clears` is frame 217 at −381.95, stepping from z 1109 to z 878 and never touching it. Both
 come out of `distill-results.mjs`, so a re-recorded episode moves the caption with the clip.
 
@@ -77,29 +79,22 @@ rejects an `index.html` served by the single-page fallback, not just a 404.
 
 Regenerate with `PROJECTS_ROOT=/Users/yll/Desktop node scripts/distill-results.mjs`.
 
-- `escape` — the filmed episode's mechanical events, from `results/replay_model_endless.json`. The
-  press table, the crossing frame and the clip cut points all read from it, so re-recording the
-  episode moves the prose and the cuts together.
-- The four RMS figures in the silence section's first paragraph — 3263 over the chain, 5073 for the
-  ordinary long jump before it, 5867 for the flight, 5108 for the whole episode — are the only
-  numbers in the post typed rather than read from JSON. They were measured on `episode.mp4`'s own
-  audio track, one bucket per game frame at 32 kHz. They belong in `media_summary.json` next to the
-  rest of the audio work, and should be swapped for derived values once
-  `tools/summarise_media.py` reports per-phase levels for the filmed episode.
-- `media` — `results/media_summary.json`, from `tools/summarise_media.py`. Table 4 and Fig. 12 are
-  this file. The crowd captures write a different container and do not touch the audio it reads, so
-  it does not go stale when footage is re-rendered.
-- `swarm` — `results/swarm_render_manifest.json`, from `tools/summarise_swarm_shots.py`, which
-  reduces the capture manifest the crowd shots were filmed from. The per-checkpoint counts the
-  four-panel labels read are escapes completed inside the filmed window, not a rate over attempts:
-  an episode ends at the goal or at a 1200 frame timeout and the window is 450 frames, so every
-  termination in a window is an escape.
-- `heightOverTerminal` and each rung's `returnModes` — `results/curves_page.json`, from
-  `tools/prep_curves.py`. Fig. 7's caption is entirely these. Return on this task is bimodal, so a
-  median across six seeds is not a level any seed reached, and the plateaus are not comparable
-  across rungs because a solver scores 1.0 for the landing plus its rung's shaping ceiling. The
-  caption quotes both modes and the count of bins on which height leads landing-only rather than
-  asserting a plateau, so recomputing the curves moves the caption with them.
+- `escape` — the filmed episode's mechanical events, from `results/replay_model_endless.json`.
+  The chapter marks, crossing frames and slow-motion caption read from these values.
+- `seeds` and `rungs` — `results/episode_stats.json` and `results/curves_page.json`. Table 1
+  reports seeds solved and fastest discovery; Fig. 3 shows each run's first success, with
+  failures explicitly marked as censored at 20M steps.
+- `occupancy` — `results/action_occupancy.json`. Fig. 8 shows the changing action mix in the
+  successful landing-only run. It does not isolate the cause of those changes.
+- `transfer` and `transferExpert` — `results/transfer.json` and `results/transfer_expert.json`.
+  Table 2 and the scripted-controller comparison use their own evaluation peaks, which differ
+  from the peak of the filmed episode.
+- `swarm` — `results/swarm_render_manifest.json`, from `tools/summarise_swarm_shots.py`.
+  The panel labels count completed escapes in the filmed window, not success rates over
+  attempts. An episode ends at the goal or a 1,200-frame timeout; the window is 450 frames.
+- `speed` — `results/throughput.json`, used in the pipeline diagram and Fig. 9's caption.
+- Audio measurements and median-return curves remain in the distilled results for reference,
+  but the article no longer presents them as figures or tables.
 
 The band is drawn cyan rather than red because the endless staircase is carpeted in red and a red
 band on it is invisible. Fig. 1's caption says cyan, so a recolour is a prose edit.

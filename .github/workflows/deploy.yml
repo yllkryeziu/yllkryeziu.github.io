@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch and verify blog media
+        run: npm run media:fetch
+
       - name: Build
         run: npm run build
 

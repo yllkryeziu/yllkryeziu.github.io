@@ -18,10 +18,10 @@ export const POSTS: PostMeta[] = [
     slug: 'blj',
     kicker: 'Reinforcement Learning · Reward Design · Exploration',
     title: 'How much help does reinforcement learning need to break Super Mario 64?',
-    dek: "How much hand-holding does an RL agent need before it can rediscover a Super Mario 64 glitch that took speedrunners years to find? I wired the decompiled game up as an environment and trained 24 PPO agents under four rewards, from one that spells out the goal to one that says almost nothing. The most helpful reward is the only one that never works, and the reason is the same reason the exploit exists at all.",
+    dek: "I trained 24 PPO agents to climb Mario's endless stairs using four different rewards. All six agents rewarded for backward speed reached the landing; none rewarded for height did. One found the backwards long jump with only a reward for finishing. Here is what the runs reveal about reward design and what the policies learned.",
     date: 'September 2026',
     sortDate: 202610,
-    readingMinutes: 32,
+    readingMinutes: 20,
     repo: { label: 'mario-blj', url: 'https://github.com/yllkryeziu/mario-blj' },
   },
   {

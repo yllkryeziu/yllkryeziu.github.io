@@ -1,0 +1,111 @@
+{
+  "repository": "yllkryeziu/yllkryeziu.github.io",
+  "release": "blj-media-v1",
+  "files": [
+    {
+      "name": "episode.jpg",
+      "bytes": 104603,
+      "sha256": "955e24b56c2896b4c17bb9431ba445d8d9972fe7b03c7532cce5d269e70b8e93"
+    },
+    {
+      "name": "episode.mp4",
+      "bytes": 4700077,
+      "sha256": "69a6373283293ff362699cc42e81bc0732eb7c172fbb5a4d7461e991c29b0bb2"
+    },
+    {
+      "name": "escape.jpg",
+      "bytes": 117442,
+      "sha256": "9a3b4d77ce4691f57571096e2001269b936b3dbb7b5ec52eb7f4167d61295903"
+    },
+    {
+      "name": "escape.mp4",
+      "bytes": 2453487,
+      "sha256": "9b59424b7068438f492a9d84903b699cc4790d501d6d2a99ea64bb020b3dbc51"
+    },
+    {
+      "name": "swarm-height-10M.mp4",
+      "bytes": 3298103,
+      "sha256": "c02bcfbbfe055e4df53374eb423cf861f60c1cd17f6d7620f00b4f23cf4b3f2f"
+    },
+    {
+      "name": "swarm-height-1M.mp4",
+      "bytes": 3419146,
+      "sha256": "9ce3657d52c726d6e3208fad8bcc15577b830df3d98c940ab466cf162a148304"
+    },
+    {
+      "name": "swarm-height-20M.mp4",
+      "bytes": 2914083,
+      "sha256": "61898a80767c0e53a0151a2de0aa8662b732788d18ce256765a49fb71612e81b"
+    },
+    {
+      "name": "swarm-height-5M.mp4",
+      "bytes": 3272612,
+      "sha256": "75163b6f3131d0cc511b619d6fbe1bdd0c7014808e347f3cdd422717b1bc6185"
+    },
+    {
+      "name": "swarm-height-speed-10M.mp4",
+      "bytes": 5735440,
+      "sha256": "cedf2e3da4c666d21b49b96b6e88876fe5ed1427ed749e450b31619db03cd409"
+    },
+    {
+      "name": "swarm-height-speed-1M.mp4",
+      "bytes": 7762734,
+      "sha256": "aea6053d8a2023f2a10049470a67af185cd478b86f8b2fe832f9b472f15a1f2c"
+    },
+    {
+      "name": "swarm-height-speed-20M.mp4",
+      "bytes": 4955400,
+      "sha256": "7841a979e82595ca8ff659b4edfaa10c7ff364a362fc41a5b248d3592a4ad227"
+    },
+    {
+      "name": "swarm-height-speed-5M.mp4",
+      "bytes": 5430361,
+      "sha256": "f582845ae78a1aaaf4f19e31b4b05883efb4d7bbe68902e1f08546980b0a2265"
+    },
+    {
+      "name": "swarm-speed-10M.mp4",
+      "bytes": 5861789,
+      "sha256": "94c71d3bb60b9aa4aa5aaa0e316c0e7627358f91ac91066415adca742e93072a"
+    },
+    {
+      "name": "swarm-speed-1M.mp4",
+      "bytes": 7352512,
+      "sha256": "a05d75679f6cbc0d4a7adb4ca58e13c949c227d9542e5345a872372ae1a5989a"
+    },
+    {
+      "name": "swarm-speed-20M.mp4",
+      "bytes": 5911910,
+      "sha256": "4b85b41511d4f019d92f2ade8c4e0359632990c74cac4910ec3c76aacb91216d"
+    },
+    {
+      "name": "swarm-speed-5M.mp4",
+      "bytes": 6834614,
+      "sha256": "8efbf66f13e7c115adc6d9e6c719b23537d58f70325d367a428d696d2b111e51"
+    },
+    {
+      "name": "swarm-terminal-10M.mp4",
+      "bytes": 5334452,
+      "sha256": "80f5c0d6eada97aef43ef94c5ae10b2725a4e977829fc341a845548e06c8040a"
+    },
+    {
+      "name": "swarm-terminal-1M.mp4",
+      "bytes": 8685659,
+      "sha256": "00fdf0d8d89c984dae347bb12e080941028e71b8bbf9f193174aed2b0f9fce8e"
+    },
+    {
+      "name": "swarm-terminal-20M.mp4",
+      "bytes": 4109429,
+      "sha256": "9ca2fc504d42fd5c496a6e665fee5ce11c090e780fb86763e9c5bf5fbdbea02b"
+    },
+    {
+      "name": "swarm-terminal-5M.mp4",
+      "bytes": 8918003,
+      "sha256": "c03f734f1fd1fa6ae6107a41be7e54a5b664b834c88574d9c9cb8a1bac8cd564"
+    },
+    {
+      "name": "untrained.mp4",
+      "bytes": 7975491,
+      "sha256": "ce5d5404cfeaa88e75cf44fcf0b2e2863a3ff127306039881340b380fa29c65f"
+    }
+  ]
+}
