@@ -1,7 +1,7 @@
 # What the BLJ post's media has to be
 
 `components/BlogMario.tsx` uses 21 files under `public/blj/`: 19 clips and the 2 posters.
-The [storage plan](../../media/README.md) moves them to versioned release assets, with deployment
+The [storage guide](../../media/README.md) keeps them in versioned release assets, with deployment
 fetching and verifying the [manifest](../../media/blj.json) before building the site. Each clip
 uses the game's own renderer to draw measured state in `castle_inside` area 2, 4:3 at 960×720 —
 the panels included, although they are displayed four to a row at a couple of hundred CSS pixels.

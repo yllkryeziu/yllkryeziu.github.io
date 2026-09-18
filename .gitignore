@@ -17,5 +17,4 @@ projects/**/results-m3
 /dist/
 
 # Versioned release assets; fetch only when needed with `npm run media:fetch`.
-# Existing tracked files are removed after the initial release upload is verified.
 /public/blj/

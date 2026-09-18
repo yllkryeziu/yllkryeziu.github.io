@@ -16,45 +16,28 @@ download endpoint. Local development and ordinary source clones do not need to d
 Use a new release tag and update the manifest when footage changes. Do not overwrite a published
 asset: a pinned release and checksum should continue to identify the same bytes.
 
-## Initial migration
+## Published media
 
-The fetch command and deployment step are prepared. The current clips remain tracked until
-the release has been uploaded and a clean download has been verified. The ignore rules alone
-do not remove already-tracked files or historical copies.
+The initial set is [blj-media-v1](https://github.com/yllkryeziu/yllkryeziu.github.io/releases/tag/blj-media-v1).
+All 21 files were downloaded again and checked against the manifest before the release was
+published. The release tag points to source history without the video files.
 
-A cleanup preview in an isolated mirror of commit `66b8b56` reduced packed Git objects from
-235.40 MiB to 7.45 MiB. The resulting source tree was checked against the original: only
-`public/blj/`, `dist/` and `node_modules/` were excluded. The working repository and its remote
-history were not rewritten.
+The September 2026 migration removes historical `public/blj/`, generated `dist/`, and accidentally
+committed `node_modules/` files from Git. This reduces packed history from about 235 MiB to
+about 7.5 MiB. Existing clones should be replaced with a fresh clone after preserving any local
+work; merging the old history back would reintroduce the large objects.
 
-1. Verify the current files with `npm run media:verify`.
-2. With an authenticated GitHub CLI, create a draft release and upload the exact manifest files:
+## Updating footage
 
-   ```sh
-   gh release create blj-media-v1 public/blj/*.mp4 public/blj/*.jpg \
-     --repo yllkryeziu/yllkryeziu.github.io --target main --draft \
-     --title 'Mario blog media v1' \
-     --notes 'Versioned footage and posters for the Mario reinforcement-learning post.'
-   ```
+1. Render the replacement files locally. Keep the filenames expected by the post.
+2. Choose a new release tag and update `blj.json` with each file's byte size and SHA-256 hash.
+3. Run `npm run media:verify` against the new manifest.
+4. Upload the complete set as assets of a draft release, using GitHub's release editor or an
+   authenticated GitHub CLI. Do not add the videos to a source commit.
+5. Download the draft's assets to an empty directory and run
+   `npm run media:verify -- /path/to/downloaded-assets` before publishing it.
+6. Once published, test `npm run media:fetch -- /path/to/another-empty-directory`, then commit
+   the updated manifest and any article changes. Deployment uses that pinned release.
 
-3. Publish the reviewed release, then fetch into an empty directory and verify it:
-
-   ```sh
-   gh release edit blj-media-v1 --repo yllkryeziu/yllkryeziu.github.io --draft=false
-   media_check_dir="$(mktemp -d)"
-   npm run media:fetch -- "$media_check_dir"
-   npm run media:verify -- "$media_check_dir"
-   ```
-
-4. Remove `public/blj/` and `dist/` from Git tracking while retaining local files, then commit
-   the source changes. Confirm a clean build can fetch the released media before deployment.
-5. Back up the repository and coordinate a one-time history rewrite. In a separate fresh mirror,
-   use `git filter-repo --invert-paths --path public/blj/ --path dist/ --path node_modules/`.
-   This removes earlier videos, generated builds, and accidentally committed dependencies.
-   Check all affected branches and tags, including the media release tag, before replacing remote
-   refs. Keep the release assets. The replacement requires explicit approval: commit IDs change
-   and existing clones should be replaced or carefully realigned.
-
-Without step 5, shallow clones and source ZIPs become smaller after untracking, but a full
-clone still downloads historical video blobs. Adding LFS now would not remove those old
-objects either. No history rewrite or remote publication is performed by the npm commands.
+No Git history rewrite is needed for subsequent media updates. The npm commands never publish
+releases or modify Git history.
