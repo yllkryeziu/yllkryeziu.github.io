@@ -1,6 +1,7 @@
 import React from 'react';
 import type { View } from '../types';
 import { MailIcon, LinkedInIcon, GitHubIcon, XIcon, SunIcon, MoonIcon } from '../data';
+import Navigation from './Navigation';
 
 interface HeaderProps {
   activeView: View;
@@ -15,22 +16,6 @@ interface HeaderProps {
   isDark: boolean;
   toggleTheme: () => void;
 }
-
-const NavLink: React.FC<{
-  label: View;
-  activeView: View;
-  onClick: (view: View) => void;
-}> = ({ label, activeView, onClick }) => {
-  const isActive = activeView === label;
-  return (
-    <button
-      onClick={() => onClick(label)}
-      className={`nav-link text-sm font-medium ${isActive ? 'active' : ''}`}
-    >
-      {label}
-    </button>
-  );
-};
 
 const SocialLink: React.FC<{
   href: string;
@@ -62,8 +47,6 @@ const Header: React.FC<HeaderProps> = ({
   isDark,
   toggleTheme
 }) => {
-  const navItems: View[] = ['Highlights', 'Experience', 'Work'];
-
   return (
     <header>
       {/* Identity Section */}
@@ -105,18 +88,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Navigation */}
-      <nav className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-800">
-        <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto pb-1 -mb-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item}
-              label={item}
-              activeView={activeView}
-              onClick={setActiveView}
-            />
-          ))}
-        </div>
-      </nav>
+      <Navigation activeView={activeView} onSelect={setActiveView} />
     </header>
   );
 };
