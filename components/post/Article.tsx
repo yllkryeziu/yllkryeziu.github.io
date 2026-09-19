@@ -16,7 +16,6 @@ interface ArticleProps {
   onBack: () => void;
   title: string;
   date: string;
-  readingMinutes: number;
   repo?: { label: string; url: string };
   toc: TocEntry[];
   children: React.ReactNode;
@@ -91,15 +90,13 @@ const Rail: React.FC<{ entries: TocEntry[]; onBack: () => void }> = ({ entries, 
 };
 
 const Article: React.FC<ArticleProps> = ({
-  onBack, title, date, readingMinutes, repo, toc, children,
+  onBack, title, date, repo, toc, children,
 }) => (
   <article className="post">
     <header className="post-head">
       <h1 className="post-title">{title}</h1>
       <div className="post-meta">
         <span>{date}</span>
-        <span className="sep">·</span>
-        <span>{readingMinutes} min read</span>
         {repo && (
           <>
             <span className="sep">·</span>

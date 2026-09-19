@@ -8,7 +8,6 @@ export interface PostMeta {
   dek: string;
   date: string;
   sortDate: number;
-  readingMinutes: number;
   repo?: { label: string; url: string };
 }
 
@@ -23,7 +22,6 @@ export const POSTS: PostMeta[] = [
     dek: "I trained 24 PPO agents to climb Mario's endless stairs using four different rewards. All six agents rewarded for backward speed reached the landing; none rewarded for height did. One found the backwards long jump with only a reward for finishing. Here is what the runs reveal about reward design and what the policies learned.",
     date: 'September 2026',
     sortDate: 202610,
-    readingMinutes: 20,
     repo: { label: 'mario-blj', url: 'https://github.com/yllkryeziu/mario-blj' },
   },
   {
@@ -33,7 +31,6 @@ export const POSTS: PostMeta[] = [
     dek: 'Asked to think of an animal and not reveal it, Qwen3.5-9B contradicts itself in 99.5% of games. Naming the animal in the prompt restores 15 points of self-consistency, so most of the inconsistency comes from failing to hold the referent rather than from unstable beliefs about animals.',
     date: 'September 2026',
     sortDate: 202609,
-    readingMinutes: 16,
     repo: { label: 'latent-commitment', url: `${REPO_ROOT}/latent-commitment` },
   },
   {
@@ -43,7 +40,6 @@ export const POSTS: PostMeta[] = [
     dek: 'Reasoning models overthink. I let a model rewrite its own reasoning to a length that matches the problem, then distilled that behaviour back into the weights, using no reward model, no difficulty labels and no ground-truth answers.',
     date: 'February 2026',
     sortDate: 202602,
-    readingMinutes: 18,
   },
   {
     slug: 'jax',
@@ -53,7 +49,6 @@ export const POSTS: PostMeta[] = [
     dek: 'Every speculative fetch spends origin capacity to buy latency that may never be needed. I trained a JAX next-request predictor on 3.4M real HTTP requests and priced each bet against live queue depth. Unconditional prefetching raises p95 by 183% when the origin saturates. The priced version leaves it unchanged and keeps the upside.',
     date: 'February 2026',
     sortDate: 202602,
-    readingMinutes: 22,
     repo: { label: 'jax-prefetch', url: `${REPO_ROOT}/jax-prefetch` },
   },
   {
@@ -63,7 +58,6 @@ export const POSTS: PostMeta[] = [
     dek: 'A SIMD JSON parser reached from Java runs 5.2x faster than the best JVM parser and allocates about a million times less heap. One crossing of the JNI boundary costs 10 nanoseconds, so what matters is not the boundary itself but how many times a design makes you cross it.',
     date: 'October 2025',
     sortDate: 202510,
-    readingMinutes: 19,
     repo: { label: 'simdjson-jni', url: `${REPO_ROOT}/simdjson-jni` },
   },
 ];

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Article, { H2 } from './post/Article';
 import { POST_BY_SLUG } from './post/posts';
+import { LineChart } from './post/Charts';
 
 function useScrollAnimate(cb: (el: Element) => void, threshold = 0.2) {
   const ref = useRef<HTMLDivElement>(null);
@@ -106,23 +107,18 @@ function Pull({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ---- Figure card wrapper ----
-function FigCard({ title, unit, caption, children }: { title: string; unit: string; caption: React.ReactNode; children: React.ReactNode }) {
+// ---- Shared article figure layout ----
+function FigCard({ title, unit, caption, children }: { title?: string; unit?: string; caption: React.ReactNode; children: React.ReactNode }) {
   return (
-    <figure style={{ margin: '2rem 0' }}>
-      <div style={{
-        background: BG, border: `1px solid ${BORDER}`,
-        borderRadius: 8, padding: '1.6rem 1.6rem 1.3rem',
-      }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: '1.3rem' }}>
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', color: TEXT }}>{title}</span>
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: MUTED }}>{unit}</span>
-        </div>
+    <figure className="post-figure">
+      <div className="post-figure-body">
+        {title && <div className="thesis-figure-heading">
+          <span className="chart-title">{title}</span>
+          <span className="chart-sub">{unit}</span>
+        </div>}
         {children}
       </div>
-      <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', color: SUBTLE, marginTop: '0.8rem', lineHeight: 1.5, paddingLeft: '0.9rem', borderLeft: `2px solid ${BORDER}` }}>
-        {caption}
-      </div>
+      <figcaption className="post-caption">{caption}</figcaption>
     </figure>
   );
 }
@@ -185,7 +181,7 @@ function AdaptiveFigure() {
     </div>
   );
   return (
-    <div ref={ref} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.8rem' }}>
+    <div ref={ref} className="adaptive-panels">
       <div>
         <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 600, color: TEXT, marginBottom: 4 }}>Easy problem</div>
         <div style={{ fontFamily: MONO, fontSize: '11px', color: ACCENT, marginBottom: 14 }}>overthinking → trim</div>
@@ -257,10 +253,6 @@ function LoopDiagram() {
 
 // ---- Benchmark chart: original vs rewritten tokens per model ----
 function BenchmarkChart() {
-  const ref = useScrollAnimate((el) => {
-    el.querySelectorAll<HTMLElement>('[data-w]').forEach(b => { b.style.width = b.dataset.w + '%'; });
-  });
-  // tokens normalized to the largest original (7638)
   const rows = [
     { model: 'Qwen3-1.7B', orig: 7638, rew: 1405, dAcc: '+4.0', red: '−81.6%' },
     { model: 'Qwen3-4B', orig: 7355, rew: 1250, dAcc: '+5.3', red: '−83.0%' },
@@ -269,39 +261,20 @@ function BenchmarkChart() {
   ];
   const max = 7638;
   return (
-    <div ref={ref} style={{ display: 'flex', flexDirection: 'column', gap: '1.3rem' }}>
-      {rows.map((r, i) => (
-        <div key={i}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 600, color: TEXT }}>{r.model}</span>
-            <span style={{ fontFamily: MONO, fontSize: '11px', color: MUTED }}>
-              {r.red} tokens · <span style={{ color: ACCENT, fontWeight: 600 }}>{r.dAcc} acc</span>
-            </span>
+    <div className="benchmark-chart">
+      {rows.map(r => (
+        <div className="benchmark-row" key={r.model}>
+          <div className="benchmark-heading">
+            <strong>{r.model}</strong>
+            <span>{r.red} tokens · {r.dAcc} accuracy points</span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', alignItems: 'center', gap: 10, marginBottom: 5 }}>
-            <span style={{ fontFamily: MONO, fontSize: '10px', color: MUTED, textAlign: 'right' }}>original</span>
-            <div style={{ position: 'relative', height: 20 }}>
-              <div data-w={(r.orig / max) * 100} style={{
-                height: '100%', width: 0, background: BORDER,
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8, minWidth: 40,
-                transition: 'width 900ms cubic-bezier(.2,.7,.2,1)',
-              }}>
-                <span style={{ fontFamily: MONO, fontSize: '11px', color: SUBTLE }}>{r.orig.toLocaleString()}</span>
-              </div>
+          {[{label: 'original', value: r.orig}, {label: 'rewritten', value: r.rew}].map(bar => (
+            <div className="benchmark-comparison" key={bar.label}>
+              <span>{bar.label}</span>
+              <div><div className={`benchmark-bar ${bar.label}`} style={{width: `${bar.value / max * 100}%`}} /></div>
+              <span className="benchmark-value">{bar.value.toLocaleString()}</span>
             </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontFamily: MONO, fontSize: '10px', color: MUTED, textAlign: 'right' }}>rewritten</span>
-            <div style={{ position: 'relative', height: 20 }}>
-              <div data-w={(r.rew / max) * 100} style={{
-                height: '100%', width: 0, background: ACCENT,
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8, minWidth: 40,
-                transition: 'width 900ms cubic-bezier(.2,.7,.2,1)',
-              }}>
-                <span style={{ fontFamily: MONO, fontSize: '11px', color: '#fff' }}>{r.rew.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       ))}
     </div>
@@ -310,64 +283,21 @@ function BenchmarkChart() {
 
 // ---- Scaling chart: accuracy gap narrows with model size ----
 function ScalingChart() {
-  const ref = useScrollAnimate((el) => {
-    el.querySelectorAll<SVGPathElement>('.sc-path').forEach(p => { p.style.strokeDashoffset = '0'; });
-    el.querySelectorAll<SVGElement>('.sc-dot').forEach(d => { d.style.opacity = '1'; });
-  });
-  // x positions for 1.7B, 4B, 8B, 14B
-  const xs = [90, 270, 450, 600];
-  // y axis: 0 pts at y=50, -15 pts at y=250  => y = 50 + (-drop)*(200/15)
-  const yFor = (drop: number) => 50 + Math.abs(drop) * (200 / 15);
-  const math = [-5.6, -2.7, -1.9, -0.9];
-  const aime = [-13.5, -12.0, -10.5, -8.3];
-  const pts = (arr: number[]) => arr.map((d, i) => `${xs[i]},${yFor(d)}`).join(' ');
+  const sizes = [1.7, 4, 8, 14];
   return (
-    <div ref={ref}>
-      <svg viewBox="0 0 660 300" style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}>
-        {/* spines + outward ticks, paper style */}
-        <g stroke={SUBTLE} strokeWidth="1">
-          <line x1="60" y1="50" x2="60" y2="250" />
-          <line x1="60" y1="250" x2="630" y2="250" />
-          {[50, 116.7, 183.3, 250].map(y => <line key={y} x1="56" y1={y} x2="60" y2={y} />)}
-          {[90, 270, 450, 600].map(x => <line key={x} x1={x} y1="250" x2={x} y2="254" />)}
-        </g>
-        {/* y labels (percentage points of accuracy lost) */}
-        <g fill="#a3a3ab" fontSize="11" fontFamily="SF Mono, Menlo, monospace" textAnchor="end">
-          <text x="48" y="54">0</text>
-          <text x="48" y="120.7">−5</text>
-          <text x="48" y="187.3">−10</text>
-          <text x="48" y="254">−15</text>
-        </g>
-        {/* x labels */}
-        <g fill={TEXT} fontSize="12" fontWeight="600" fontFamily="SF Mono, Menlo, monospace" textAnchor="middle">
-          <text x="90" y="278">1.7B</text>
-          <text x="270" y="278">4B</text>
-          <text x="450" y="278">8B</text>
-          <text x="600" y="278">14B</text>
-        </g>
-        {/* AIME line */}
-        <polyline className="sc-path" fill="none" stroke={BORDER} strokeWidth="1.75" strokeLinejoin="round" points={pts(aime)} />
-        {/* MATH line */}
-        <polyline className="sc-path" fill="none" stroke={ACCENT} strokeWidth="1.75" strokeLinejoin="round" points={pts(math)} />
-        <g className="sc-dot" style={{ opacity: 1 }}>
-          {aime.map((d, i) => <circle key={'a' + i} cx={xs[i]} cy={yFor(d)} r="4" fill={BORDER} />)}
-          {math.map((d, i) => <circle key={'m' + i} cx={xs[i]} cy={yFor(d)} r="4" fill={ACCENT} />)}
-          {/* endpoint labels */}
-          <text x={xs[0]} y={yFor(aime[0]) + 20} fill={MUTED} fontSize="11" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">−13.5</text>
-          <text x={xs[3]} y={yFor(aime[3]) + 20} fill={MUTED} fontSize="11" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">−8.3</text>
-          <text x={xs[0]} y={yFor(math[0]) - 12} fill={ACCENT} fontSize="11" fontWeight="600" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">−5.6</text>
-          <text x={xs[3]} y={yFor(math[3]) - 12} fill={ACCENT} fontSize="11" fontWeight="600" textAnchor="middle" fontFamily="SF Mono, Menlo, monospace">−0.9</text>
-        </g>
-      </svg>
-      <div style={{ display: 'flex', gap: '1.4rem', marginTop: 10, fontSize: '12.5px', color: MUTED }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <i style={{ width: 10, height: 10, display: 'inline-block', background: ACCENT }} />MATH500 (easier)
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <i style={{ width: 10, height: 10, display: 'inline-block', background: BORDER }} />AIME2025 (harder)
-        </span>
-      </div>
-    </div>
+    <LineChart
+      title="Accuracy delta after distillation, by model size"
+      sub="Percentage points · closer to 0 is better"
+      xLabel="model size (B parameters)"
+      yLabel="accuracy delta (pp)"
+      unit="percentage points"
+      xTicks={sizes.map(v => ({v, label: `${v}B`}))}
+      yTicks={[-15, -10, -5, 0]}
+      series={[
+        {label: 'MATH500 (easier)', points: [-5.6, -2.7, -1.9, -0.9].map((y, i) => ({x: sizes[i], y})), endLabel: '−0.9'},
+        {label: 'AIME2025 (harder)', points: [-13.5, -12.0, -10.5, -8.3].map((y, i) => ({x: sizes[i], y})), endLabel: '−8.3'},
+      ]}
+    />
   );
 }
 
@@ -380,10 +310,9 @@ const ic: React.CSSProperties = {
 
 // ---- Main component ----
 const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const p: React.CSSProperties = { margin: '0 0 1rem' };
   const meta = POST_BY_SLUG.thesis;
   return (
-    <Article onBack={onBack} title={meta.title} date={meta.date} readingMinutes={meta.readingMinutes}
+    <Article onBack={onBack} title={meta.title} date={meta.date}
       repo={{ label: 'rewritebench', url: 'https://github.com/yllkryeziu/rewritebench' }}
       toc={[
         { id: 'compute', label: 'Compute spent where it is not needed' },
@@ -393,27 +322,27 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         { id: 'conclusion', label: 'What it adds up to' },
         { id: 'references', label: 'References' },
       ]}>
-      <p style={{ ...p, marginTop: '2.2rem', fontSize: '14px', color: MUTED }}>
+      <p style={{ fontSize: '14px', color: MUTED }}>
         This post distills my bachelor's thesis at TUM, supervised by Prof. Dr. Stefan Bauer.
         {' '}Training code: <a href="https://github.com/yllkryeziu/nvidia-rl" target="_blank" rel="noopener noreferrer">nvidia-rl</a>.
       </p>
 
       {/* ---- 01 ---- */}
       <H2 id="compute">Compute spent where it is not needed</H2>
-      <p style={p}>
+      <p>
         Reasoning models get their accuracy from <em>thinking longer</em>. Train a model with RL to produce long
         chains of thought before answering, and accuracy on hard benchmarks climbs with the number of tokens it is
         allowed to spend at inference time.<Cite ids={[1, 2, 3]} /> The same models, however,
         keep thinking long after the problem has been solved. They allocate a wall of reasoning to <code style={ic}>2+3</code>,
         re-derive the obvious, and second-guess correct answers, a pattern documented as <em>overthinking</em>.<Cite ids={[4]} />
       </p>
-      <p style={p}>
+      <p>
         Every extra token costs latency and money without buying accuracy. So you want the opposite of a fixed budget:
         spend less on easy problems, keep the budget for hard ones. The catch is that &ldquo;how hard is this problem&rdquo;
         is exactly the thing you do not know in advance.
       </p>
       <Pull>The target is reasoning whose length matches the difficulty of the problem in front of it, which sometimes means going longer.</Pull>
-      <p style={p}>
+      <p>
         Plenty of methods chase this, and most lean on something external: a token budget conditioned on an estimated
         difficulty, a verifier, a reward model, or preference pairs curated by a stronger teacher. Those signals are
         powerful, but they are not always available, and they pull you out of the single-model setting.<Cite ids={[5]} /> The
@@ -423,7 +352,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       {/* ---- 02 ---- */}
       <H2 id="rewrite">Let the model rewrite itself</H2>
-      <p style={p}>
+      <p>
         The first idea is self-refinement.<Cite ids={[6]} /> Take the model's own reasoning trace and ask the same model
         to rewrite it to a length that matches how hard the problem actually was, rather than to a fixed length. If the
         trace overthinks an easy problem, trim it. If it underthinks a hard one, deepen it. The rewrite has to stay{' '}
@@ -441,7 +370,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <AdaptiveFigure />
       </FigCard>
 
-      <p style={p}>
+      <p>
         The whole mechanism is a prompt. It tells the model to act as a careful reader of its own monologue, keep the
         voice intact, fix genuine errors, and delete only redundancy that leads nowhere, compressing{' '}
         <em>only</em> when the problem is clearly overthought for its difficulty.
@@ -462,7 +391,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         {'overthought for its difficulty.'}
       </CodeBlock>
 
-      <p style={p}>
+      <p>
         The effect is large. Across Qwen3 models from 1.7B to 14B<Cite ids={[7]} /> on a math subset of
         OpenThoughts-114k,<Cite ids={[8]} /> self-refinement strips <strong>78–83%</strong> of the reasoning trace while
         final-answer accuracy goes <em>up</em>, by +1 to +6 points. The load-bearing steps survive; what gets cut is the
@@ -481,14 +410,14 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       {/* ---- 04 ---- */}
       <H2 id="distill">Distilling the behavior back in</H2>
-      <p style={p}>
+      <p>
         Rewriting at inference time means running the model twice. The point of the thesis is to fold the behavior into
         the model's <em>default</em> distribution, so it just reasons concisely on the first pass. The mechanism is
         token-level <strong>on-policy distillation</strong>: instead of training on a fixed dataset of rewrites, the
         student is supervised on the tokens it actually generates, which sidesteps the train–inference mismatch that
         plagues offline imitation.<Cite ids={[9, 10]} />
       </p>
-      <p style={p}>
+      <p>
         The teacher and student are the <em>same model</em>, differing only in their prompt. The student sees the bare
         problem. The teacher sees the problem, a frozen static trace of the student's own earlier attempt, and the
         rewrite instruction, so its next-token distribution is shifted toward the concise, compute-optimal
@@ -506,7 +435,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <LoopDiagram />
       </FigCard>
 
-      <p style={p}>
+      <p>
         Concretely: for a live student completion <code style={ic}>y</code>, we evaluate the teacher's log-probabilities
         on those same tokens under its rewrite-conditioned prefix, and update the student to reduce the reverse-KL
         divergence between the two next-token distributions along the prefixes the student visits.
@@ -517,7 +446,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <span style={{ color: ACCENT, fontWeight: 600 }}>L(θ)</span>{' = 𝔼'}<sub>y~π_θ</sub>{' [ Σₜ D'}<sub>KL</sub>{'( π_θ(· | x, y₍<ₜ₎) ‖ π_teach(· | x, y₍<ₜ₎) ) ]'}
       </Eq>
 
-      <p style={p}>
+      <p>
         Reverse KL is mode-seeking, which suits this setting: a trace can be rewritten in many valid
         ways, and it is better for the student to commit to one consistent concise style than to
         spread probability across all of them. The teacher is the
@@ -539,7 +468,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         {'    loss.'}{fn('backward')}{'(); opt.'}{fn('step')}{'()'}
       </CodeBlock>
 
-      <p style={p}>
+      <p>
         Because the teacher grades the student's own prefixes, every token position gets a directional grade. The
         supervision is dense, with no sparse sequence-level reward and no ground-truth answer anywhere in the
         loop.<Cite ids={[11]} />
@@ -547,15 +476,13 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       {/* ---- 05 ---- */}
       <H2 id="weights">Folding conciseness into the weights</H2>
-      <p style={p}>
+      <p>
         Trained across all four Qwen3 sizes and evaluated on MATH500 and AIME2025, the distilled checkpoints generate
         <strong> 28–46% fewer tokens</strong> by default. The model reasons concisely on the first pass, with no second
         rewrite and no inference-time overhead. The behaviour has moved into the weights.
       </p>
 
       <FigCard
-        title="Accuracy delta after distillation, by model size"
-        unit="percentage points · closer to 0 is better"
         caption={<><strong>Figure 4.</strong> The accuracy gap closes with scale on both benchmarks. On MATH500 it tightens to
           just <strong>−0.9 points at 14B</strong>; on the harder AIME2025 it tightens from −13.5 to −8.3. Both lines bend toward
           zero as the model grows.</>}
@@ -563,7 +490,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <ScalingChart />
       </FigCard>
 
-      <p style={p}>
+      <p>
         The effect strengthens with scale. As the underlying model gets stronger, the
         rewrite-conditioned teacher gives sharper token-level guidance, and the student internalises
         conciseness while keeping the robustness that hard problems require. Stronger models compress
@@ -572,7 +499,7 @@ const BlogThesis: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       {/* ---- 06 ---- */}
       <H2 id="conclusion">What it adds up to</H2>
-      <p style={p}>
+      <p>
         There are two separate results. First, a model can rewrite its own reasoning to the right length with no external
         signal, cutting ~80% of the trace while improving correctness, which makes self-refinement a self-contained
         test-time compression operator. Second, that behaviour is distillable: token-level on-policy self-distillation

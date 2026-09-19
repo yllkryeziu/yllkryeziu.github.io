@@ -11,7 +11,7 @@ const Figure: React.FC<FigureProps> = ({ n, caption, plain, children }) => (
   <figure className={`post-figure${plain ? ' post-figure-plain' : ''}`}>
     <div className="post-figure-body">{children}</div>
     <figcaption className="post-caption">
-      <span className="lbl">Fig. {n}.</span> {caption}
+      <span className="lbl">Figure {n}.</span> {caption}
     </figcaption>
   </figure>
 );

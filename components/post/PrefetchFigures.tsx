@@ -1,4 +1,5 @@
 import React from 'react';
+import { usePlotWidth } from './Charts';
 
 const TEXT = 'var(--color-text)';
 const MUTED = 'var(--color-text-muted)';
@@ -74,11 +75,11 @@ export const DecisionFigure: React.FC<{
   alpha: number;
   floor: number;
 }> = ({ latencySaved, costUnit, wastedPenalty, alpha, floor }) => {
-  const width = 640;
-  const height = 250;
-  const left = 56;
-  const right = 118;
-  const top = 16;
+  const { ref, width } = usePlotWidth();
+  const height = 300;
+  const left = 44;
+  const right = 20;
+  const top = 26;
   const bottom = 44;
   const plotW = width - left - right;
   const plotH = height - top - bottom;
@@ -94,29 +95,45 @@ export const DecisionFigure: React.FC<{
   const decision = Math.max(crossing, floor);
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Expected gain versus expected cost">
-      {[0, 0.25, 0.5, 0.75, 1].map(t => (
-        <text key={t} x={px(t)} y={height - bottom + 22} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="10.5" fill={MUTED}>
-          {t.toFixed(2)}
-        </text>
-      ))}
-      <line x1={left} y1={top + plotH} x2={width - right} y2={top + plotH} stroke={BORDER} strokeWidth="1" />
-      <text x={left + plotW / 2} y={height - 6} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="10.5" fill={MUTED}>
-        p(next request = this resource)
-      </text>
+    <div className="chart">
+      <div className="chart-title">Expected gain versus expected cost</div>
+      <div className="chart-legend">
+        <span><i style={{background: COOL}} />Expected gain</span>
+        <span><i style={{background: ACCENT}} />α × expected cost</span>
+      </div>
+      <div ref={ref} className="chart-plot">
+        <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Expected gain versus expected cost">
+          <rect x={left} y={top} width={px(decision) - left} height={plotH} fill={SOFT} />
+          {[0, 0.5, 1].map(fraction => {
+            const value = fraction * yMax;
+            return <g key={fraction}>
+              <line x1={left} y1={py(value)} x2={width - right} y2={py(value)} stroke="var(--series-grid)" strokeDasharray="2 3" />
+              <text className="chart-axis" x={left - 8} y={py(value) + 4} textAnchor="end">{value.toFixed(0)}</text>
+            </g>;
+          })}
+          <text className="chart-axis chart-axis-title" x={left} y={14}>ms</text>
+          {[0, 0.25, 0.5, 0.75, 1].map(t => (
+            <text key={t} x={px(t)} y={height - bottom + 22} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12" fill={MUTED}>
+              {t.toFixed(2)}
+            </text>
+          ))}
+          <line x1={left} y1={top} x2={left} y2={top + plotH} stroke={SUBTLE} strokeWidth="0.8" />
+          <line x1={left} y1={top + plotH} x2={width - right} y2={top + plotH} stroke={SUBTLE} strokeWidth="0.8" />
+          <text x={left + plotW / 2} y={height - 6} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12" fill={MUTED}>
+            p(next request = this resource)
+          </text>
 
-      <rect x={left} y={top} width={px(decision) - left} height={plotH} fill={SOFT} />
-      <line x1={px(decision)} y1={top} x2={px(decision)} y2={top + plotH} stroke={TEXT} strokeWidth="1.2" strokeDasharray="4 3" />
-      <text x={px(decision) + 8} y={top + 14} fontFamily="var(--font-mono)" fontSize="10.5" fill={TEXT}>
-        fire above {decision.toFixed(2)}
-      </text>
+          <line x1={px(decision)} y1={top} x2={px(decision)} y2={top + plotH} stroke={TEXT} strokeWidth="1.2" strokeDasharray="4 3" />
+          <text x={px(decision) + 8} y={top + 14} fontFamily="var(--font-sans)" fontSize="12" fill={TEXT}>
+            fire above {decision.toFixed(2)}
+          </text>
 
-      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(gain(p))}`).join(' ')} fill="none" stroke={COOL} strokeWidth="1.75" />
-      <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(cost(p))}`).join(' ')} fill="none" stroke={ACCENT} strokeWidth="1.75" />
+          <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(gain(p))}`).join(' ')} fill="none" stroke={COOL} strokeWidth="2.25" />
+          <path d={samples.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p)},${py(cost(p))}`).join(' ')} fill="none" stroke={ACCENT} strokeWidth="2.25" />
 
-      <text x={px(1) + 10} y={py(gain(1)) + 4} fontFamily="var(--font-sans)" fontSize="11.5" fill={SUBTLE}>expected gain</text>
-      <text x={px(1) + 10} y={py(cost(1)) + 4} fontFamily="var(--font-sans)" fontSize="11.5" fill={SUBTLE}>α × expected cost</text>
-    </svg>
+        </svg>
+      </div>
+    </div>
   );
 };
 
@@ -137,14 +154,14 @@ export const ReliabilityFigure: React.FC<{
   const ticks = [0, 0.25, 0.5, 0.75, 1];
 
   return (
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: 300, maxWidth: '100%', height: 'auto' }} role="img" aria-label="Reliability diagram">
+    <div className="reliability-plot">
+      <svg viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Reliability diagram">
         {ticks.map(t => (
           <g key={t}>
-            <line x1={px(t)} y1={py(0)} x2={px(t)} y2={py(1)} stroke={BORDER} strokeWidth="1" />
-            <line x1={px(0)} y1={py(t)} x2={px(1)} y2={py(t)} stroke={BORDER} strokeWidth="1" />
-            <text x={px(t)} y={size - pad + 16} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="9.5" fill={MUTED}>{t}</text>
-            <text x={pad - 8} y={py(t) + 3.5} textAnchor="end" fontFamily="var(--font-mono)" fontSize="9.5" fill={MUTED}>{t}</text>
+            <line x1={px(t)} y1={py(0)} x2={px(t)} y2={py(1)} stroke="var(--series-grid)" strokeWidth="1" strokeDasharray="2 3" />
+            <line x1={px(0)} y1={py(t)} x2={px(1)} y2={py(t)} stroke="var(--series-grid)" strokeWidth="1" strokeDasharray="2 3" />
+            <text x={px(t)} y={size - pad + 16} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="11" fill={SUBTLE}>{t}</text>
+            <text x={pad - 8} y={py(t) + 3.5} textAnchor="end" fontFamily="var(--font-sans)" fontSize="11" fill={SUBTLE}>{t}</text>
           </g>
         ))}
         <line x1={px(0)} y1={py(0)} x2={px(1)} y2={py(1)} stroke={MUTED} strokeWidth="1.4" strokeDasharray="4 4" />
@@ -154,7 +171,7 @@ export const ReliabilityFigure: React.FC<{
             d={s.bins.map((b, i) => `${i === 0 ? 'M' : 'L'}${px(b.confidence)},${py(b.accuracy)}`).join(' ')}
             fill="none"
             stroke={s.color}
-            strokeWidth="1.75"
+            strokeWidth="2.25"
             strokeLinejoin="round"
           />
         ))}

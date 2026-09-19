@@ -424,7 +424,6 @@ const BlogMario: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     onBack={onBack}
     title={meta.title}
     date={meta.date}
-    readingMinutes={meta.readingMinutes}
     repo={meta.repo}
     toc={TOC}
   >
