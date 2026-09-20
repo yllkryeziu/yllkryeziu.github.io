@@ -5,12 +5,13 @@ import Highlights from './components/Highlights';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import Work from './components/Blog';
+import { postSlugFromHash } from './components/post/posts';
 import Intro from './components/Intro';
 import type { View } from './types';
 import { aboutData, highlightsData, cvData } from './data';
 
 function isPostOpen(hash: string): boolean {
-  return /^#(?:work|blog)\/[a-z]+$/i.test(hash);
+  return postSlugFromHash(hash) !== null;
 }
 
 function hashToView(hash: string): View {

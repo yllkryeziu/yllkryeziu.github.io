@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { POSTS, type PostSlug } from './post/posts';
+import { POSTS, postSlugFromHash, type PostSlug } from './post/posts';
 import { projectsData } from '../data';
 import './post/BlogDesign.css';
 
@@ -40,10 +40,8 @@ const feed: FeedItem[] = [
   })),
 ].sort((a, b) => b.sortDate - a.sortDate);
 
-const BlogPrefetch = lazy(() => import('./BlogPrefetch'));
 const BlogSimdjson = lazy(() => import('./BlogSimdjson'));
 const BlogThesis = lazy(() => import('./BlogThesis'));
-const BlogSecret = lazy(() => import('./BlogSecret'));
 const BlogMario = lazy(() => import('./BlogMario'));
 
 const PostFallback: React.FC = () => (
@@ -122,13 +120,8 @@ const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }
   </section>
 );
 
-function slugFromHash(): PostSlug | null {
-  const match = window.location.hash.match(/^#(?:work|blog)\/(jax|simd|thesis|secret|blj)$/i);
-  return match ? (match[1].toLowerCase() as PostSlug) : null;
-}
-
 const Work: React.FC = () => {
-  const [selected, setSelected] = useState<PostSlug | null>(slugFromHash);
+  const [selected, setSelected] = useState<PostSlug | null>(() => postSlugFromHash(window.location.hash));
 
   const handleSelect = (slug: PostSlug) => {
     window.location.hash = `work/${slug}`;
@@ -141,7 +134,7 @@ const Work: React.FC = () => {
   };
 
   useEffect(() => {
-    const onHashChange = () => setSelected(slugFromHash());
+    const onHashChange = () => setSelected(postSlugFromHash(window.location.hash));
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
@@ -155,9 +148,7 @@ const Work: React.FC = () => {
   return (
     <Suspense fallback={<PostFallback />}>
       {selected === 'blj' && <BlogMario onBack={handleBack} />}
-      {selected === 'secret' && <BlogSecret onBack={handleBack} />}
       {selected === 'thesis' && <BlogThesis onBack={handleBack} />}
-      {selected === 'jax' && <BlogPrefetch onBack={handleBack} />}
       {selected === 'simd' && <BlogSimdjson onBack={handleBack} />}
     </Suspense>
   );
