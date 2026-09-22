@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>A multiplayer world that redistributes itself · Yll Kryeziu</title>
+    <meta
+      name="description"
+      content="An interactive systems essay: 2,400 simulated players, three Rust workers, live state migration, and reproducible comparisons against naive baselines."
+    />
+    <link rel="canonical" href="https://yllkryeziu.github.io/multiplayer/" />
+    <meta property="og:image" content="https://yllkryeziu.github.io/blog-previews/multiplayer.png" />
+    <meta property="og:title" content="A multiplayer world that redistributes itself" />
+    <meta name="theme-color" content="#FAF9F5" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <script src="./theme.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#article-body">Skip to article</a>
+    <main>
+      <header class="post-head">
+        <h1>A multiplayer world that redistributes itself</h1>
+        <div class="post-meta">
+          <span>September 2026</span>
+        </div>
+      </header>
+      <div class="article-layout page-width">
+        <aside class="article-nav">
+          <a class="rail-back" href="https://yllkryeziu.github.io/#work">← Work</a>
+          <nav aria-label="Contents">
+            <span class="rail-label">Contents</span>
+            <a href="#experiment"><span>01</span> The experiment</a>
+            <a href="#problem"><span>02</span> The bottleneck</a>
+            <a href="#handoff"><span>03</span> Moving a writer</a>
+            <a href="#placement"><span>04</span> Placement</a>
+            <a href="#stability"><span>05</span> Stability</a>
+            <a href="#results"><span>06</span> Measurements</a>
+            <a href="#database"><span>07</span> Transactions & recovery</a>
+            <a href="#limits"><span>08</span> Limits</a>
+            <a href="#research"><span>09</span> References</a>
+          </nav>
+        </aside>
+        <article id="article-body">
+          <p class="article-intro">I built a multiplayer world in Rust that moves regions between
+            three worker processes while players keep sending commands. When a crowd
+            gathers in one corner, ownership changes to spread the load.</p>
+          <p>The challenge is transferring the right to change state without losing
+            acknowledged work. The experiments below compare placement policies, walk
+            through a handoff, and test what survives when a worker crashes.</p>
+      <section
+        class="experiment prose-section"
+        id="experiment"
+        aria-labelledby="experiment-heading"
+      >
+        <div class="section-intro">
+          <div>
+            <h2 id="experiment-heading">A moving crowd</h2>
+          </div>
+          <p>
+            Explore a recorded Rust run below, watch the demo, and compare
+            the measured placement policies in the interactive figures.
+          </p>
+        </div>
+        <p class="demo-recipe">The map shows recorded worker state. The video captures live flag movement and ownership changes; the figures below let you explore the results.</p>
+        <div class="lab">
+          <div class="lab-toolbar">
+            <div class="lab-title">
+              <span class="status-dot" id="connection-dot"></span
+              ><strong id="connection-label">RECORDED RUST RUN</strong
+              >
+            </div>
+
+          </div>
+          <div class="policy-toolbar">
+            <span class="control-label">Policy</span>
+            <span>Graph + guardrails · recorded run</span>
+            <span id="elapsed" class="mono">00:00 / 01:00</span>
+          </div>
+          <div class="lab-body">
+            <div class="world-area">
+              <div class="map-overlay top">
+                <span
+                  ><i class="map-dot"></i>
+                  <span id="player-count">2,400</span> simulated players</span
+                ><span>12 × 8 regions</span>
+              </div>
+              <canvas
+                id="world"
+                role="img"
+                aria-label="Recorded multiplayer world with player positions and regions colored by worker ownership."
+              ></canvas>
+              <div class="map-overlay bottom">
+                <span class="drag-hint"
+                  >Recorded player positions</span
+                ><span id="selected-region"
+                  >Region 38 · worker A · epoch 1</span
+                >
+              </div>
+
+            </div>
+            <aside class="telemetry">
+              <div class="panel-eyebrow">
+                Worker demand
+                <span
+                  id="capacity-help"
+                  title="Offered commands divided by the planning target. This is demand, not CPU utilization."
+                  >· 100% = planning target</span
+                >
+              </div>
+              <div id="worker-loads"></div>
+              <div class="metric-row">
+                <div>
+                  <span class="metric-label" id="latency-label"
+                    >p99 acknowledgment</span
+                  ><strong id="latency">—<small> ms</small></strong>
+                </div>
+                <svg
+                  id="mini-spark"
+                  viewBox="0 0 88 35"
+                  aria-hidden="true"
+                ></svg>
+              </div>
+              <div class="small-metrics">
+                <div>
+                  <span>Handoffs</span><strong id="migration-count">—</strong>
+                </div>
+                <div><span>In flight</span><strong id="pending">—</strong></div>
+                <div>
+                  <span>Remote payload</span><strong id="cross-bytes">—</strong>
+                </div>
+              </div>
+              <div class="integrity" id="integrity">
+                <span class="integrity-icon">◎</span>
+                <div>
+                  <strong>Independent state audit</strong
+                  ><span id="integrity-detail"
+                    >Runs after the command queue drains</span
+                  >
+                </div>
+              </div>
+              <div class="worker-pids" id="worker-pids">
+                Recorded run from separate Rust processes.
+              </div>
+            </aside>
+          </div>
+          <div class="chart-panel">
+            <div class="chart-heading">
+              <span
+                ><i class="line-key"></i> p99 command latency
+                <small
+                  >rolling 2 seconds · includes queueing & handoff</small
+                ></span
+              >
+
+            </div>
+            <svg
+              id="latency-chart"
+              viewBox="0 0 1000 124"
+              role="img"
+              aria-label="Measured command latency over time"
+            ></svg>
+          </div>
+          <div class="live-trace">
+            <div class="trace-heading">
+              <span class="overline">Recent handoffs</span
+              ><span id="trace-mode">Recorded worker responses</span>
+            </div>
+            <div id="handoff-trace">
+              <p>
+                No handoffs yet. Static ownership keeps the original writers.
+              </p>
+            </div>
+          </div>
+          <div class="lab-footer">
+            <span id="lab-note"
+              >Recorded measurements from three Rust worker processes.</span
+            ><span
+              ><i class="legend-dot a"></i>A <i class="legend-dot b"></i>B
+              <i class="legend-dot c"></i>C</span
+            >
+          </div>
+        </div>
+        <div class="experiment-caption">
+          <p>
+            The dots are clients; the colored regions are the units of
+            ownership. Each command runs a synthetic CPU kernel and updates
+            authoritative region state. A brief flash marks a completed handoff.
+            Positions show the clients’ offered movement; acknowledgments can
+            lag behind. The map draws recorded data from the Rust coordinator.
+          </p>
+        </div>
+        <details class="recording">
+          <summary>Watch a recorded live session <span>↗</span></summary>
+          <p>
+            Static ownership, a moving rally flag, adaptive placement, and a
+            passing state audit—all recorded from the Rust backend. This
+            interactive session uses different inputs from the fixed benchmark
+            tables.
+          </p>
+          <video
+            id="recording-video"
+            controls
+            playsinline
+            preload="none"
+            aria-label="Recorded live Rust experiment with flag movement and ownership handoffs"
+          >
+            <source src="./demo.webm" type="video/webm" />
+            <a href="./demo.webm">Download the recorded experiment</a>
+          </video>
+        </details>
+
+      </section>
+
+          <section id="problem" class="prose-section">
+            <h2>A balanced map is not a balanced workload</h2>
+            <p>
+              Splitting a world into three equal stripes looks reasonable. It
+              even works—until everyone runs toward the same event. Two workers
+              have room to spare. The third has a queue that grows faster than
+              it can drain.
+            </p>
+            <p>
+              A stateless load balancer would send the next request somewhere
+              else. Here, the next worker needs the state: which commands have
+              already happened, the last sequence number, and the latest
+              presence of every player in the region.
+            </p>
+            <p>
+              The question is not just <em>where should this work run?</em> It
+              is
+              <em
+                >how do we change the answer while the work is still
+                happening?</em
+              >
+            </p>
+
+            <p>
+              I built a small world to make that distinction visible. The
+              clients submit a deterministic stream of movement samples. Three
+              separate Rust processes execute real CPU work and own regional
+              state. A coordinator routes commands and proposes changes to the
+              ownership map.
+            </p>
+            <div class="architecture">
+              <div class="arch-box">
+                <strong>2,400 clients</strong
+                ><small>seeded movement</small>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-box coordinator">
+                <strong>Coordinator</strong
+                ><small>directory · sequence · planner</small>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-workers">
+                <span class="worker-chip a">Rust A</span
+                ><span class="worker-chip b">Rust B</span
+                ><span class="worker-chip c">Rust C</span>
+              </div>
+            </div>
+            <p class="aside-text">
+              The coordinator is a single authority. This project explores
+              online repartitioning, not consensus or replicated durability.
+            </p>
+          </section>
+          <section id="handoff" class="prose-section">
+            <h2>Moving a writer</h2>
+            <p>
+              A naive copy-and-switch has a race: copy the state, accept another
+              command at the old owner, then publish the new one. That command
+              was acknowledged. Its effect is now missing.
+            </p>
+            <p>
+              The handoff needs a boundary that both workers agree on. I use an
+              <strong>ownership epoch</strong>, a monotonic sequence per region,
+              and a snapshot followed by an ordered tail of state changes.
+            </p>
+            <div class="protocol-widget">
+              <div class="widget-heading">
+                <span class="overline">Ownership handoff</span
+                ><span class="walkthrough-badge">Protocol walkthrough</span>
+              </div>
+              <div class="protocol-nodes">
+                <div id="source-node" class="protocol-node a">
+                  <span>OLD OWNER</span><strong>Worker A</strong
+                  ><code id="source-state">ACTIVE · epoch 7</code>
+                </div>
+                <div class="protocol-link">
+                  <span id="transfer-label">snapshot →</span>
+
+                </div>
+                <div id="destination-node" class="protocol-node b">
+                  <span>NEW OWNER</span><strong>Worker B</strong
+                  ><code id="destination-state">NO AUTHORITY</code>
+                </div>
+              </div>
+              <div
+                class="protocol-steps"
+                role="group"
+                aria-label="Handoff phase"
+              >
+                <button data-step="0" class="active">01 Snapshot</button
+                ><button data-step="1">02 Catch up</button
+                ><button data-step="2">03 Fence</button
+                ><button data-step="3">04 Commit</button>
+              </div>
+              <div class="protocol-description">
+                <span id="step-counter">01</span>
+                <div>
+                  <h3 id="step-title">
+                    Copy the state. Keep accepting commands.
+                  </h3>
+                  <p id="step-description">
+                    B receives the state through sequence 102. A is still the
+                    only writer. New effects go into a tail alongside the source
+                    state.
+                  </p>
+                </div>
+              </div>
+              <div class="protocol-invariant">
+                <span>Invariant</span
+                ><code id="protocol-invariant">writable owners = { A@7 }</code>
+              </div>
+            </div>
+            <p>
+              During the final seal, the coordinator buffers new arrivals for
+              that region. A priority seal freezes the old writer at its last
+              executed sequence. The destination applies the computed tail and
+              advances the epoch before the directory changes. Every
+              unacknowledged command is then forwarded in order; deduplication
+              covers effects whose receipts were still in flight.
+            </p>
+            <p>
+              Operation IDs travel with the snapshot. A retry returns the
+              existing receipt. An old epoch fails before mutation. The
+              guarantee is
+              <strong
+                >exactly-once effects for retained operation IDs within a
+                coordinator session</strong
+              >. Durable workers also retain their receipts across a local
+              process restart; the network can still deliver requests more than once.
+            </p>
+
+            <h3>The first version moved too late.</h3>
+            <p>
+              A global FIFO service queue exposes a second bottleneck. A
+              migration barrier waited behind work for unrelated regions, so a
+              busy worker could spend seconds waiting to hand off its state. The
+              placement decision was already aging before it took effect.
+            </p>
+            <p>
+              The worker now uses <strong>fair per-region mailboxes</strong>,
+              with a four-command execution quantum. Prepare and seal controls
+              cut at the executed prefix; queued commands continue at the new
+              owner. Other regions keep making progress. The tail carries
+              computed state deltas, so the destination does not repeat the
+              expensive CPU kernel. The FIFO path remains available as a
+              baseline. The ablation below measures the scheduling package,
+              including priority cutover, against that baseline.
+            </p>
+          </section>
+          <section id="placement" class="prose-section">
+            <h2>Choosing where to move</h2>
+            <p>
+              Players interact with their surroundings. A region periodically
+              reads neighboring occupancy and receives those observations at its
+              owning worker. Place neighboring regions on different workers and
+              those observations cross process boundaries.
+            </p>
+            <p>
+              A CPU-only greedy scheduler can reduce the hottest worker’s demand
+              while fragmenting a closely interacting crowd. To account for that
+              cost, the adaptive scheduler treats regions as vertices and
+              proximity demand as weighted edges.
+            </p>
+            <div class="formula">
+              <span class="formula-label">Placement objective</span>
+              <div>
+                <b>J</b> = <span class="term-load">overload + peak load</span
+                ><br /><span class="formula-indent"
+                  >+ <span class="term-cut">λ · communication cut</span></span
+                ><br /><span class="formula-indent"
+                  >+ <span class="term-move">cost of moving state</span></span
+                >
+              </div>
+              <small
+                >A bounded local search over single regions and adjacent
+                pairs.<br />Lower is better. Moving nothing is a valid
+                decision.</small
+              >
+            </div>
+            <p>
+              Pairs matter: two neighbors can be worth moving together even when
+              either move alone cuts an expensive edge. The search is
+              deliberately small—36 candidate regions and their adjacent
+              pairs—so the controller’s cost remains inspectable.
+            </p>
+            <p>
+              CPU demand and edge weights are estimates. The movement penalty is
+              a normalized proxy, not an exact byte-cost model. The benchmarks
+              therefore report both the weighted graph cut and the actual routed
+              proximity payload.
+            </p>
+          </section>
+          <section id="stability" class="prose-section">
+            <h2>Knowing when to stay put</h2>
+            <p>
+              A crowd that keeps reversing direction is a trap for a reactive
+              scheduler. Migration itself consumes time and resources.
+              Optimizing every noisy sample can turn the controller into another
+              source of load.
+            </p>
+            <div class="guardrail-grid">
+              <div>
+                <span>01</span>
+                <h3>Smooth the signal</h3>
+                <p>
+                  An EWMA with α = 0.3 dampens instantaneous regional demand.
+                </p>
+              </div>
+              <div>
+                <span>02</span>
+                <h3>Demand a real gain</h3>
+                <p>
+                  A proposal must pay its movement penalty and improve the
+                  objective by 0.035.
+                </p>
+              </div>
+              <div>
+                <span>03</span>
+                <h3>Give it time</h3>
+                <p>
+                  A region waits 3.5 seconds before another move. At most 8
+                  regions move in a 4-second window.
+                </p>
+              </div>
+              <div>
+                <span>04</span>
+                <h3>Check it again</h3>
+                <p>
+                  Before acting, validate the proposed source and re-score the
+                  move against the latest observations.
+                </p>
+              </div>
+            </div>
+            <p>
+              The planner runs on a separate blocking thread. It returns a
+              proposal, not authority. The coordinator checks that proposal
+              before starting a handoff. This separation lets commands continue
+              while placement is computed—and makes stale decisions an explicit
+              concern.
+            </p>
+          </section>
+          <section id="results" class="prose-section wide-section">
+            <h2>Comparing placement policies</h2>
+            <p>
+              Every policy sees the same seeded, open-loop command stream. I
+              rotate execution order across runs, retain the raw observations,
+              and audit the final state against an independent replay. The table
+              shows medians across seeds; select a workload to see the tradeoff
+              change.
+            </p>
+            <div
+              class="results-controls"
+              role="group"
+              aria-label="Benchmark scenario"
+            >
+              <button data-result="hotspot" class="active">
+                Crowded corner</button
+              ><button data-result="moving">Moving crowd</button
+              ><button data-result="oscillating">Oscillation</button
+              ><button data-result="uniform">Uniform</button
+              ><button data-result="indivisible">Indivisible</button>
+            </div>
+            <div id="result-headline" class="result-headline">
+              Loading the measured evidence…
+            </div>
+            <div id="result-bars" class="result-bars"></div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Placement policy</th>
+                    <th>p99 latency</th>
+                    <th>Handoffs</th>
+                    <th>Weighted cut × s</th>
+                    <th>Remote payload</th>
+                    <th>Replay audit</th>
+                  </tr>
+                </thead>
+                <tbody id="results-body">
+                  <tr>
+                    <td colspan="6">
+                      Loading the recorded benchmark results…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p id="result-interpretation" class="result-interpretation"></p>
+            <div class="ablation-panel">
+              <span class="overline">Mechanism ablations</span>
+              <h3>Which part earns its complexity?</h3>
+              <div id="ablation-results">
+                Loading the controlled comparisons…
+              </div>
+            </div>
+            <p class="aside-text" id="results-note">
+              No benchmark numbers are hard-coded into this article.
+            </p>
+            <div class="methodology">
+              <details>
+                <summary>Read the measurement contract <span>+</span></summary>
+                <p>
+                  One host, three independent Rust worker processes. Each
+                  presence command evaluates a synthetic potential field with
+                  32,000 iterations and stores the result. No sleep-based
+                  service budget. These fixed benchmark runs use a 900 ops/s
+                  target; per-worker calibration is recorded separately.
+                  Interactive sessions size their arrival rate from a short CPU
+                  calibration, so the rally flag remains useful on different
+                  machines.
+                </p>
+                <p>
+                  Latency runs from coordinator submission to receipt of the
+                  worker’s batch acknowledgment. It includes queueing, TCP,
+                  execution, buffering, and handoff. Workload generation is
+                  open-loop; producer scheduling delay is recorded. Startup and
+                  transition samples remain in the results. Missing migration
+                  samples are null, never zero.
+                </p>
+                <p>
+                  Proximity bytes count four routed application payloads per
+                  remote exchange; TCP framing and unrelated client traffic are
+                  excluded. Only one proximity round can be outstanding; skipped
+                  rounds are recorded, so a smaller byte count alone does not
+                  prove better locality. Weighted cut is a workload estimate
+                  independent of completed reads. Overload area integrates
+                  demand above the planner target and is not hardware CPU
+                  utilization or the DRV metric from the cited paper.
+                </p>
+                <p>
+                  The replay audit verifies sequence count, effects, ordered
+                  digest, dedup history, presence values, and exactly one
+                  current writer. Cross-region observations are eventually
+                  consistent and excluded from a global transaction oracle.
+                </p>
+                <p>
+                  Inspect the committed raw per-command latencies, handoff
+                  events, environment, workload hashes, and configuration. Short
+                  experiments on one machine support this demo’s comparisons,
+                  not internet-scale capacity claims.
+                </p>
+              </details>
+              <a href="./benchmarks/results.json" download
+                >Download measurements <span>↓</span></a
+              >
+            </div>
+          </section>
+          <section id="database" class="prose-section">
+            <h2>Transactions and recovery</h2>
+            <p>
+              A regional bank holds 100 coins. Alice and Bob each read that
+              balance and try to withdraw 60. With blind writes, both set the
+              bank to 40 and credit their own account. The world now contains
+              160 coins. Each write succeeded; the combined result is wrong.
+            </p>
+            <p>
+              The worker’s versioned store gives both players the same snapshot.
+              Under snapshot isolation, the first write set commits atomically.
+              The second finds that the bank changed after its read version and
+              receives <code>WRITE_CONFLICT</code>. Older readers still see 100.
+            </p>
+            <div class="database-lab">
+              <div class="widget-heading"><span>Regional balances</span>
+                <span id="database-source">RECORDED RUST EXPERIMENT</span></div>
+
+              <p id="database-status" role="status" aria-live="polite">Loading the recorded transaction and recovery experiment.</p>
+              <div class="database-table-scroll">
+                <table class="database-table">
+                  <caption>Two withdrawals from the same snapshot</caption>
+                  <thead><tr><th>Write policy</th><th>Bank</th><th>Alice</th><th>Bob</th><th>Total coins</th></tr></thead>
+                  <tbody id="database-races"></tbody>
+                </table>
+              </div>
+              <div id="database-snapshot" class="database-observation"></div>
+              <div id="database-skew" class="database-observation"></div>
+              <div id="database-recovery" class="database-recovery" aria-live="polite">
+                Recovery results will appear here.
+              </div>
+              <p class="aside-text">The experiment paused and drained arrivals before each transaction race.
+                These recorded results came from real worker RPCs.</p>
+            </div>
+            <p>
+              Snapshot isolation has a limit. Two guards each see the other on
+              duty and update different keys to go off duty. Both commit, leaving
+              zero guards. This <em>write skew</em> passes write/write conflict
+              detection. Serializable execution would need stronger validation
+              or locking; this engine deliberately does not claim it.
+            </p>
+            <h3>What makes an acknowledgment survive?</h3>
+            <p>
+              Each worker appends a complete transaction write set to a framed,
+              checksummed redo log. It holds the reply until <code>sync_all</code>
+              succeeds. Group commit lets several writes share that sync. Reads
+              and migration controls are barriers: no response exposes an
+              unsynced change, and a source’s frozen state reaches disk before
+              the destination receives authority.
+            </p>
+            <ol class="database-steps">
+              <li><strong>Migrate the region.</strong> Transfer its versions,
+                committed transaction IDs, and ownership epoch.</li>
+              <li><strong>Checkpoint, then commit once more.</strong> Sync the
+                snapshot, atomically publish it, and leave a real log tail.</li>
+              <li><strong>Kill the destination process.</strong> Restart it from
+                its own files. Compare state, retry the winning withdrawal,
+                and confirm the old owner still rejects writes.</li>
+            </ol>
+            <p>
+              The restart uses a checkpoint plus log replay. An incomplete final
+              record is discarded as a unit; a complete record with a bad checksum
+              stops recovery. Checkpoints shorten replay without deleting the log
+              in this bounded teaching engine.
+            </p>
+            <div class="database-lab">
+              <div class="widget-heading"><span>The cost of durability</span><span>RECORDED MEASUREMENTS</span></div>
+              <div id="storage-results">Storage measurements are loading.</div>
+              <p id="storage-note" class="aside-text"></p>
+              <a href="./benchmarks/storage.json" download>Download raw storage measurements ↓</a>
+            </div>
+            <p class="aside-text">
+              Recovery here means a killed worker reopening intact local files
+              while the coordinator survives. It does not restore a lost disk,
+              reconstruct the coordinator, or finish an interrupted ownership
+              change. Transactions stay within one region. The placement numbers
+              above were measured separately with in-memory storage.
+            </p>
+          </section>
+          <section id="limits" class="prose-section">
+            <h2>Where redistribution stops helping</h2>
+            <p>
+              Put almost every player in one region. Move that region anywhere
+              you like: its CPU demand is still larger than one worker’s
+              capacity. The remaining machines cannot help until the unit of
+              ownership gets smaller.
+            </p>
+            <div class="limit-callout">
+              <div>
+                <h3>Compare “One indivisible region” in the measurements above.</h3>
+                <p>
+                  Redistribution changes the address of the bottleneck.
+                  Splitting or refining the region would change its size.
+                </p>
+              </div>
+            </div>
+            <p>
+              There are other limits. Rapidly changing traffic can make
+              migration lose to static ownership. A locality preference can
+              preserve an overloaded cluster of regions. Moving to an idle
+              worker still consumes destination CPU and transfer bandwidth.
+            </p>
+            <p>
+              A crash during handoff still stops writes for the affected region.
+              The protocol does not invent a new owner. The tests kill a source
+              during a handoff and verify that the destination never becomes a
+              second writer. The storage experiment recovers a worker after a
+              completed handoff, with the coordinator and local disk intact.
+            </p>
+            <p>
+              Durable replicated state, a consensus-backed directory, multi-host
+              deployment, adaptive region splitting, and atomic cross-region
+              interactions would be separate extensions with separate
+              guarantees.
+            </p>
+          </section>
+          <section id="research" class="prose-section">
+            <h2>References and implementation</h2>
+            <p>
+              The useful research question is not whether a colorful map looks
+              sophisticated. It is which mechanism addresses which cost. This
+              reading spans recent work through September 2026, with older
+              papers kept as foundations.
+            </p>
+            <div class="research-list">
+              <a
+                class="research-item"
+                href="https://onlinelibrary.wiley.com/doi/10.1002/cpe.70581"
+                target="_blank"
+                rel="noreferrer"
+                ><span class="research-year">2026</span>
+                <div>
+                  <h3>
+                    Stall-Free Asynchronous State Repartitioning <span>↗</span>
+                  </h3>
+                  <p>
+                    Luiz and Mendizabal examine asynchronous planning and graph
+                    staleness. Here, placement runs off the dispatch path and
+                    stale proposals are revalidated. I do not implement its
+                    proactive future-request window.
+                  </p>
+                  <small
+                    >Concurrency and Computation: Practice and Experience</small
+                  >
+                </div></a
+              ><a
+                class="research-item"
+                href="https://arxiv.org/abs/2608.09173"
+                target="_blank"
+                rel="noreferrer"
+                ><span class="research-year">2026</span>
+                <div>
+                  <h3>Resource-centric NoSQL optimization <span>↗</span></h3>
+                  <p>
+                    Verma et al. connect placement to user-facing resource
+                    distress. This demo records SLO misses and overload area
+                    alongside balance. Those are simpler measures, not a
+                    reproduction of DRV or Orbit.
+                  </p>
+                  <small>PVLDB 19(9) · Cosmos DB / LoadStar / Orbit</small>
+                </div></a
+              ><a
+                class="research-item"
+                href="https://arxiv.org/abs/2503.11320"
+                target="_blank"
+                rel="noreferrer"
+                ><span class="research-year">2025</span>
+                <div>
+                  <h3>Fine-grained scaling with DRRS <span>↗</span></h3>
+                  <p>
+                    Qing and Zheng study finer migration units and scheduling to
+                    reduce suspension. Per-region barriers and fair mailboxes
+                    here apply the related principle of preserving local order
+                    without stopping unrelated work.
+                  </p>
+                  <small>DRRS · stateful stream processing</small>
+                </div></a
+              ><a
+                class="research-item"
+                href="https://learn.microsoft.com/en-us/dotnet/orleans/grains/grain-placement#activation-repartitioning"
+                target="_blank"
+                rel="noreferrer"
+                ><span class="research-year">CURRENT</span>
+                <div>
+                  <h3>Orleans activation repartitioning <span>↗</span></h3>
+                  <p>
+                    A production runtime reference for communication graphs,
+                    locality, and recovery periods. This project’s bounded graph
+                    search and cooldowns are its own implementation.
+                  </p>
+                  <small>Microsoft Orleans documentation</small>
+                </div></a
+              >
+            </div>
+            <p class="aside-text">
+              Foundations:
+              <a
+                href="https://www.usenix.org/conference/osdi16/technical-sessions/presentation/adya"
+                >Slicer (OSDI 2016)</a
+              >
+              separates sharding control from request routing;
+              <a href="https://www.vldb.org/pvldb/vol3/R04.pdf"
+                >Schism (VLDB 2010)</a
+              >
+              makes workload interactions explicit in partitioning. None of the
+              benchmark bars above represent those systems.
+            </p>
+          </section>
+          <section class="closing">
+            <h2>What this demonstrates</h2>
+            <p>
+              A distributed system has to live between its old decision and its
+              new one. That interval is where ownership, ordering, queues, and
+              good intentions meet. This world is small enough to inspect that
+              interval—and real enough to measure it.
+            </p>
+            <a class="button-dark" href="#experiment"
+              >Back to the world <span>↑</span></a
+            >
+          </section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <a href="https://yllkryeziu.github.io/#work">← More work by Yll Kryeziu</a>
+      <a href="./benchmarks/results.json" download>Download measurements ↓</a>
+    </footer>
+  </body>
+</html>

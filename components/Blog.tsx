@@ -1,10 +1,10 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { POSTS, postSlugFromHash, type PostSlug } from './post/posts';
+import { POSTS, POST_BY_SLUG, postSlugFromHash, type PostSlug } from './post/posts';
 import { projectsData } from '../data';
 import './post/BlogDesign.css';
 
 type FeedItem =
-  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; preview: string; previewKind?: string }
+  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; preview: string; previewKind?: string; href?: string }
   | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; links: { name: string; url: string }[] };
 
 function parseSortDate(date: string): number {
@@ -28,6 +28,7 @@ const feed: FeedItem[] = [
     sortDate: post.sortDate,
     preview: post.preview,
     previewKind: post.previewKind,
+    href: post.href,
   })),
   ...projectsData.map<FeedItem>(project => ({
     kind: 'project',
@@ -83,9 +84,9 @@ const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }
     <div className="blog-list">
       {feed.map(item =>
         item.kind === 'post' ? (
-          <a key={item.id} href={`#work/${item.id}`} className="blog-row"
+          <a key={item.id} href={item.href ?? `#work/${item.id}`} className="blog-row"
             onClick={event => {
-              if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+              if (!item.href && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
                 event.preventDefault(); onSelect(item.id);
               }
             }}>
@@ -140,10 +141,18 @@ const Work: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selected) window.scrollTo(0, 0);
+    if (selected) {
+      const href = POST_BY_SLUG[selected].href;
+      if (href) window.location.replace(href);
+      else window.scrollTo(0, 0);
+    }
   }, [selected]);
 
   if (!selected) return <WorkFeed onSelect={handleSelect} />;
+
+  if (POST_BY_SLUG[selected].href) {
+    return <a href={POST_BY_SLUG[selected].href}>Open {POST_BY_SLUG[selected].title}</a>;
+  }
 
   return (
     <Suspense fallback={<PostFallback />}>

@@ -1,4 +1,4 @@
-export type PostSlug = 'thesis' | 'simd' | 'blj';
+export type PostSlug = 'thesis' | 'simd' | 'blj' | 'multiplayer';
 
 export interface PostMeta {
   slug: PostSlug;
@@ -8,12 +8,22 @@ export interface PostMeta {
   dek: string;
   date: string;
   sortDate: number;
+  href?: string;
   repo?: { label: string; url: string };
 }
 
 const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/projects';
 
 export const POSTS: PostMeta[] = [
+  {
+    slug: 'multiplayer',
+    href: '/multiplayer/',
+    preview: 'blog-previews/multiplayer.png',
+    title: 'A multiplayer world that redistributes itself',
+    dek: 'Moving regions between three Rust workers while players keep sending commands: safe ownership handoffs, placement tradeoffs, and transactions that survive a worker restart.',
+    date: 'September 2026',
+    sortDate: 202610,
+  },
   {
     slug: 'blj',
     preview: 'blog-previews/mario.jpg',

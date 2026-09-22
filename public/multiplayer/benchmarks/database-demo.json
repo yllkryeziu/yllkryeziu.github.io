@@ -1,0 +1,171 @@
+{
+  "audit": {
+    "accepted": 0,
+    "acknowledged": 0,
+    "errors": [],
+    "ok": true,
+    "regions": 96,
+    "transactions": 9
+  },
+  "ok": true,
+  "races": [
+    {
+      "after": {
+        "alice": 60,
+        "bank": 40,
+        "bob": 60,
+        "total": 160
+      },
+      "alice": {
+        "duplicate": false,
+        "status": "COMMIT",
+        "version": 2
+      },
+      "before": {
+        "alice": 0,
+        "bank": 100,
+        "bob": 0,
+        "total": 100
+      },
+      "bob": {
+        "duplicate": false,
+        "status": "COMMIT",
+        "version": 3
+      },
+      "finalVersion": 3,
+      "isolation": "blind",
+      "oldSnapshot": {
+        "alice": 0,
+        "bank": 100,
+        "bob": 0,
+        "total": 100
+      },
+      "readVersion": 1,
+      "verified": true
+    },
+    {
+      "after": {
+        "alice": 60,
+        "bank": 40,
+        "bob": 0,
+        "total": 100
+      },
+      "alice": {
+        "duplicate": false,
+        "status": "COMMIT",
+        "version": 5
+      },
+      "before": {
+        "alice": 0,
+        "bank": 100,
+        "bob": 0,
+        "total": 100
+      },
+      "bob": {
+        "status": "WRITE_CONFLICT"
+      },
+      "finalVersion": 5,
+      "isolation": "snapshot",
+      "oldSnapshot": {
+        "alice": 0,
+        "bank": 100,
+        "bob": 0,
+        "total": 100
+      },
+      "readVersion": 4,
+      "verified": true
+    }
+  ],
+  "recordedAt": "2026-09-22T16:39:15Z",
+  "recovery": {
+    "after": {
+      "alice": 60,
+      "bank": 40,
+      "bob": 0,
+      "total": 100
+    },
+    "audit": {
+      "accepted": 0,
+      "acknowledged": 0,
+      "errors": [],
+      "ok": true,
+      "regions": 96,
+      "transactions": 9
+    },
+    "before": {
+      "alice": 60,
+      "bank": 40,
+      "bob": 0,
+      "total": 100
+    },
+    "checkpoint": {
+      "appendedLsn": 3,
+      "checkpointBytes": 1938,
+      "checkpointLsn": 3,
+      "durableLsn": 3,
+      "mode": "group",
+      "recoveryBytes": 0,
+      "recoveryMs": 0.6073959999999999,
+      "replayedRecords": 0,
+      "syncedRecords": 3,
+      "syncs": 3,
+      "truncatedBytes": 0,
+      "walBytes": 1171
+    },
+    "crash": "SIGKILL",
+    "digest": "8e26415cb9be08a4",
+    "duplicateRetry": true,
+    "epoch": 2,
+    "from": 0,
+    "migration": {
+      "bytes": 881,
+      "durationMs": 1.254686,
+      "endedMs": 5.146065,
+      "epoch": 2,
+      "from": 0,
+      "mechanism": "live",
+      "pauseMs": 0.5375389999999998,
+      "region": 0,
+      "startedMs": 3.891379,
+      "tail": 0,
+      "to": 1
+    },
+    "newPid": 3766409,
+    "oldOwner": "NOT_WRITABLE",
+    "oldPid": 3766404,
+    "scope": "Arrivals paused and drained; coordinator survives. Worker reopens its own files; no state sent from coordinator.",
+    "storage": {
+      "appendedLsn": 4,
+      "checkpointBytes": 1938,
+      "checkpointLsn": 3,
+      "durableLsn": 4,
+      "mode": "group",
+      "recoveryBytes": 2074,
+      "recoveryMs": 0.275758,
+      "replayedRecords": 1,
+      "syncedRecords": 0,
+      "syncs": 0,
+      "truncatedBytes": 0,
+      "walBytes": 1307
+    },
+    "to": 1,
+    "verified": true,
+    "version": 9
+  },
+  "region": 0,
+  "source": "live Rust worker RPCs",
+  "writeSkew": {
+    "alice": {
+      "duplicate": false,
+      "status": "COMMIT",
+      "version": 7
+    },
+    "bob": {
+      "duplicate": false,
+      "status": "COMMIT",
+      "version": 8
+    },
+    "guardsOnDuty": 0,
+    "serializable": false
+  }
+}
