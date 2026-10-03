@@ -1,4 +1,4 @@
-export type PostSlug = 'thesis' | 'simd' | 'blj' | 'multiplayer';
+export type PostSlug = 'thesis' | 'simd' | 'blj' | 'ferret';
 
 export interface PostMeta {
   slug: PostSlug;
@@ -16,12 +16,11 @@ const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/
 
 export const POSTS: PostMeta[] = [
   {
-    slug: 'multiplayer',
-    href: '/multiplayer/',
-    preview: 'blog-previews/multiplayer.png',
-    title: 'A multiplayer world that redistributes itself',
-    dek: 'Moving regions between three Rust workers while players keep sending commands: safe ownership handoffs, placement tradeoffs, and transactions that survive a worker restart.',
-    date: 'September 2026',
+    slug: 'ferret',
+    preview: 'blog-previews/ferret.png',
+    title: 'How code search works, and what coding agents need from it',
+    dek: 'Coding agents search a repository about ten times per task, often four at once in separate worktrees. I built a trigram search engine for them and explain its parts with interactive figures: posting lists, regex plans, an exact early stop for the top 20 files, one index shared by every worktree, and searches that see the edit made a moment ago.',
+    date: 'October 2026',
     sortDate: 202610,
   },
   {

@@ -1,0 +1,161 @@
+/* Interactive figures of the Ferret post. Controls follow SpeedEvolution.css; colors come from the
+   post's series tokens, so both themes work without overrides here. */
+.ferret-fig { font: 13px/1.5 var(--font-sans); color: var(--color-text-subtle); }
+.ferret-fig button { font: inherit; color: var(--color-text-subtle); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+.ferret-fig button:hover:not(:disabled) { color: var(--color-text); border-color: var(--color-text-muted); }
+.ferret-fig button:disabled { opacity: .4; cursor: default; }
+.ferret-fig button[aria-pressed='true'] { color: var(--color-text); border-color: var(--color-text-subtle); }
+.ferret-fig :is(button, input):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.ferret-fig .mono { font-family: var(--font-mono); font-size: 12px; }
+.ferret-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; }
+.ferret-controls .spacer { flex: 1; }
+.ferret-fig .hint { color: var(--color-text-muted); font-size: 12px; }
+.ferret-fig input[type='text'] { font: 13px var(--font-mono); color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 4px; padding: 5px 9px; width: 13rem; max-width: 100%; }
+.ferret-fig input[type='range'] { width: 100%; min-width: 0; accent-color: var(--color-accent); cursor: pointer; }
+.ferret-readout { margin-top: 14px; color: var(--color-text-subtle); }
+.ferret-readout strong { color: var(--color-text); font-weight: 600; }
+
+/* Figure 1: posting matrix and chunks */
+.ferret-tri { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 900px) { .ferret-tri { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); } }
+.ferret-matrix-wrap { overflow-x: auto; }
+.ferret-matrix { border-collapse: collapse; font: 11.5px var(--font-mono); }
+.ferret-matrix th { font-weight: 500; color: var(--color-text-muted); padding: 2px 3px; text-align: center; }
+.ferret-matrix td { padding: 2px; text-align: center; }
+.ferret-matrix td.tri { text-align: right; padding-right: 8px; color: var(--color-text); white-space: pre; }
+.ferret-matrix tr.total td.tri { font-family: var(--font-sans); font-weight: 600; font-size: 11.5px; }
+.ferret-matrix .more { text-align: left; color: var(--color-text-muted); font-family: var(--font-sans); }
+.ferret-cell { display: block; width: 20px; height: 16px; border-radius: 2px; background: var(--color-border); }
+.ferret-cell.on { background: var(--series-1); }
+.ferret-cell.all { background: var(--series-3); }
+.ferret-chunks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.ferret-chunk { border: 1px solid var(--color-border); border-radius: 4px; padding: 7px 9px; min-width: 0; transition: opacity var(--transition-fast); }
+.ferret-chunk.dim { opacity: .4; }
+.ferret-chunk.match { border-color: var(--series-3); box-shadow: inset 3px 0 0 var(--series-3); }
+.ferret-chunk.false { border-color: var(--series-2); box-shadow: inset 3px 0 0 var(--series-2); }
+.ferret-chunk .path { display: flex; justify-content: space-between; gap: 8px; font: 11px var(--font-mono); color: var(--color-text-muted); }
+.ferret-chunk pre { margin: 5px 0 0; font: 11.5px/1.45 var(--font-mono); white-space: pre-wrap; word-break: break-word; color: var(--color-text); }
+.ferret-chunk mark { background: color-mix(in srgb, var(--series-4) 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+.ferret-tag { font: 600 10.5px var(--font-sans); letter-spacing: .03em; white-space: nowrap; }
+.ferret-tag.match { color: var(--series-3); }
+.ferret-tag.false { color: var(--series-2); }
+.ferret-tag.none { color: var(--color-text-muted); font-weight: 500; }
+
+/* Figure 2: AND/OR plans */
+.ferret-plan-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; margin: 0 0 12px; }
+.ferret-plan-meta dt { color: var(--color-text-muted); }
+.ferret-plan-meta dd { margin: 0; font: 12.5px var(--font-mono); color: var(--color-text); word-break: break-all; }
+.ferret-node { border-radius: 4px; padding: 6px 8px; margin: 4px 0; }
+.ferret-node.and { border: 1px solid var(--color-border); }
+.ferret-node.or { border: 1px dashed var(--series-2); }
+.ferret-node-label { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 4px; }
+.ferret-node.or > .ferret-node-label { color: var(--series-2); }
+.ferret-node-kids { display: flex; flex-wrap: wrap; gap: 4px; align-items: flex-start; }
+.ferret-node-kids > .ferret-node { flex: 1 1 100%; }
+.ferret-chip { font: 12px var(--font-mono); background: var(--color-border-light); border: 1px solid var(--color-border); border-radius: 3px; padding: 0 5px; white-space: pre; color: var(--color-text); }
+.ferret-plan-note { margin-top: 12px; max-width: 40rem; }
+
+/* Figure 3: early stop */
+.ferret-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.ferret-stat { border-top: 2px solid var(--color-border); padding-top: 5px; }
+.ferret-stat .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--color-text-muted); }
+.ferret-stat .v { font-size: 21px; font-weight: 600; color: var(--color-text); font-variant-numeric: tabular-nums; }
+.ferret-stat.ver { border-color: var(--series-1); }
+.ferret-stat.cnt { border-color: var(--series-4); }
+.ferret-stat.skp { border-color: var(--series-mute); }
+.ferret-stat.top { border-color: var(--series-3); }
+.ferret-rows { display: grid; gap: 3px; }
+.ferret-row, .ferret-axis { display: grid; grid-template-columns: minmax(0, 14.5rem) minmax(0, 1fr) 5.4rem; gap: 10px; align-items: center; }
+.ferret-row { padding: 2px 4px; border-radius: 3px; }
+.ferret-row.next { outline: 1px solid var(--color-accent); }
+.ferret-row .lbl { font: 11.5px var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ferret-row .flags { color: var(--color-text-muted); }
+.ferret-row.top3 .lbl { color: var(--color-text); font-weight: 600; }
+.ferret-row.skipped :is(.lbl, .track) { opacity: .4; }
+.ferret-track { position: relative; height: 16px; background: linear-gradient(to right, var(--series-grid) 1px, transparent 1px) 0 0 / 20% 100%; }
+.ferret-prior { position: absolute; top: 4px; height: 8px; left: 0; background: var(--series-mute); }
+.ferret-ceil { position: absolute; top: 4px; height: 8px; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--series-1) 30%, transparent) 0 3px, transparent 3px 6px); border: 1px solid color-mix(in srgb, var(--series-1) 35%, transparent); border-left: 0; }
+.ferret-dot { position: absolute; top: 2px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--series-1); border: 2px solid var(--color-bg); }
+.ferret-row.top3 .ferret-dot { background: var(--series-3); }
+.ferret-worst { position: absolute; top: -2px; bottom: -2px; border-left: 2px dashed var(--series-2); }
+.ferret-state { font-size: 11px; font-weight: 600; text-align: right; }
+.ferret-state.verified { color: var(--series-1); }
+.ferret-state.counted { color: var(--series-4); }
+.ferret-state.skipped { color: var(--color-text-muted); font-weight: 500; }
+.ferret-state.top { color: var(--series-3); }
+.ferret-ticks { position: relative; height: 16px; font-size: 10.5px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ferret-ticks span { position: absolute; transform: translateX(-50%); }
+.ferret-ticks span:first-child { transform: none; }
+.ferret-ticks span:last-child { transform: translateX(-100%); }
+.ferret-log { margin-top: 14px; min-height: 3em; color: var(--color-text-subtle); }
+.ferret-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 12px; }
+.ferret-legend i { display: inline-block; width: 16px; height: 8px; vertical-align: middle; margin-right: 6px; }
+@media (max-width: 640px) {
+  .ferret-row, .ferret-axis { grid-template-columns: minmax(0, 1fr) 4.6rem; }
+  .ferret-row .lbl { grid-column: 1 / -1; }
+  .ferret-axis > div:first-child { display: none; }
+}
+
+/* Figure 4: worktrees */
+.ferret-step-text { min-height: 4.6em; margin-bottom: 14px; }
+.ferret-step-text strong { display: block; color: var(--color-text); font-weight: 600; margin-bottom: 2px; }
+.ferret-wt { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (min-width: 900px) { .ferret-wt { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); } }
+.ferret-panel { border: 1px solid var(--color-border); border-radius: 4px; padding: 8px 10px; min-width: 0; }
+.ferret-panel h4 { display: flex; justify-content: space-between; margin: 0 0 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); }
+.ferret-views { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.ferret-seg { border: 1px solid var(--color-border); border-radius: 3px; padding: 5px; margin-bottom: 6px; }
+.ferret-seg.mem { border-style: dashed; }
+.ferret-seg-name { font: 10.5px var(--font-mono); color: var(--color-text-muted); margin-bottom: 4px; }
+.ferret-blobs { display: flex; flex-wrap: wrap; gap: 4px; min-height: 24px; }
+.ferret-blob { display: inline-flex; align-items: center; gap: 5px; font: 11.5px var(--font-mono); color: #fff; border-radius: 3px; padding: 1px 6px; }
+.ferret-blob .rc { font: 10px var(--font-sans); background: rgba(0, 0, 0, .22); border-radius: 999px; padding: 0 5px; }
+.ferret-blob.dead { opacity: .45; outline: 1px dashed var(--color-text-muted); }
+.ferret-blob.fresh { box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent); }
+.ferret-wt-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; font: 11.5px var(--font-mono); padding: 2px 3px; border-radius: 3px; }
+.ferret-wt-row.changed { background: color-mix(in srgb, var(--series-4) 25%, transparent); }
+.ferret-meter { margin-top: 8px; font-size: 12px; }
+.ferret-meter .bar { height: 5px; background: var(--color-border-light); margin-top: 4px; overflow: hidden; }
+.ferret-meter .bar span { display: block; height: 100%; background: var(--color-accent); transition: width .25s ease; }
+
+/* Figure 5: read-your-writes timeline */
+.post .ferret-fig ol.ferret-tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.post .ferret-fig ol.ferret-tl li { margin: 0; display: grid; grid-template-columns: 4.4rem 5.4rem minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 6px 8px; border-bottom: 1px solid var(--color-border); }
+.ferret-tl .t { font: 12px var(--font-mono); color: var(--color-text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+.ferret-tl .lane { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.ferret-tl .lane.agent { color: var(--series-1); }
+.ferret-tl .lane.fsevents { color: var(--series-4); }
+.ferret-tl .lane.ferret { color: var(--series-3); }
+.ferret-tl .what { min-width: 0; color: var(--color-text); }
+.post .ferret-fig ol.ferret-tl li.bad { box-shadow: inset 3px 0 0 var(--series-2); }
+.post .ferret-fig ol.ferret-tl li.good { box-shadow: inset 3px 0 0 var(--series-3); }
+.ferret-outcome { margin-top: 12px; }
+.ferret-outcome .bad { color: var(--series-2); font-weight: 600; }
+.ferret-outcome .good { color: var(--series-3); font-weight: 600; }
+@media (max-width: 560px) {
+  .post .ferret-fig ol.ferret-tl li { grid-template-columns: 4rem minmax(0, 1fr); }
+  .ferret-tl .what { grid-column: 1 / -1; }
+}
+
+/* Figures 6 and 7: charts in two columns on wide screens */
+.ferret-charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (min-width: 900px) { .ferret-charts.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Figure 8: break-even calculator */
+.ferret-calc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+@media (min-width: 900px) { .ferret-calc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ferret-slider { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; margin-bottom: 12px; align-items: center; }
+.ferret-slider label { color: var(--color-text); }
+.ferret-slider output { font: 12.5px var(--font-mono); font-variant-numeric: tabular-nums; }
+.ferret-slider input { grid-column: 1 / -1; }
+.ferret-big { font-size: 34px; font-weight: 600; line-height: 1.1; color: var(--color-text); font-variant-numeric: tabular-nums; }
+
+/* Tool output samples */
+.ferret-out { margin: 28px 0; border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; }
+.ferret-out pre { margin: 0; padding: 1rem 1.2rem; font: 12px/1.55 var(--font-mono); color: var(--color-text-subtle); overflow-x: auto; white-space: pre; }
+.ferret-out .call { color: var(--color-accent); }
+.ferret-out .hit { color: var(--color-text); font-weight: 600; }
+.ferret-out .more { color: var(--color-text-muted); }
+
+/* Long inline code in the text may wrap on phones. */
+.post code.ferret-wrap { white-space: normal; overflow-wrap: anywhere; }

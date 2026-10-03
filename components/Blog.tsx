@@ -44,6 +44,7 @@ const feed: FeedItem[] = [
 const BlogSimdjson = lazy(() => import('./BlogSimdjson'));
 const BlogThesis = lazy(() => import('./BlogThesis'));
 const BlogMario = lazy(() => import('./BlogMario'));
+const BlogFerret = lazy(() => import('./BlogFerret'));
 
 const PostFallback: React.FC = () => (
   <div style={{ padding: '3rem 0', color: 'var(--color-text-muted)', fontSize: '13px' }}>Loading…</div>
@@ -156,6 +157,7 @@ const Work: React.FC = () => {
 
   return (
     <Suspense fallback={<PostFallback />}>
+      {selected === 'ferret' && <BlogFerret onBack={handleBack} />}
       {selected === 'blj' && <BlogMario onBack={handleBack} />}
       {selected === 'thesis' && <BlogThesis onBack={handleBack} />}
       {selected === 'simd' && <BlogSimdjson onBack={handleBack} />}
