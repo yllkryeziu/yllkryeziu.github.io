@@ -698,8 +698,8 @@ export const TeamFigure: React.FC = () => (
 /* ---------- Figure 8: when an index pays for itself ---------- */
 
 const CALC_PRESETS = {
-  linux: { B: 29, rg: 3.0, idx: 10, W: 1, searches: 8.4, name: 'Linux' },
-  chromium: { B: 60, rg: 10.0, idx: 10, W: 1, searches: 11.9, name: 'Chromium' },
+  linux: { B: 30, rg: 2.2, idx: 16, W: 1, searches: 8.4, name: 'Linux' },
+  chromium: { B: 117, rg: 10.0, idx: 10, W: 1, searches: 11.9, name: 'Chromium' },
 };
 type PresetKey = keyof typeof CALC_PRESETS;
 const rgFromSlider = (v: number) => +(0.1 * Math.pow(150, v / 100)).toFixed(2);

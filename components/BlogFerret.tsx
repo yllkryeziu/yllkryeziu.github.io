@@ -56,6 +56,23 @@ const HintResult: React.FC = () => (
   </div>
 );
 
+// A real call from the fourth pilot (section 8), trimmed after one file.
+const WidenResult: React.FC = () => (
+  <div className="ferret-out" aria-label="A Ferret search that widened its scope">
+    <pre>
+      <span className="call">{'search {"pattern": "MediaStreamTrackProcessor",\n        "path_glob": "third_party/blink/renderer/modules/mediastream/**"}'}</span>{'\n'}
+      {'No matches under path_glob "third_party/blink/renderer/modules/mediastream/**";\n'}
+      {'these are the matches under "third_party/blink/renderer/modules" instead.\n'}
+      {'82 matching lines in 5 files\n\n'}
+      {'third_party/blink/renderer/modules/breakout_box/media_stream_track_processor.h\n'}
+      {'19-class MediaStreamTrack;\n'}
+      <span className="hit">{'20:class MediaStreamTrackProcessorInit;'}</span>{'\n'}
+      {'21-class ReadableStream;\n'}
+      <span className="more">…</span>
+    </pre>
+  </div>
+);
+
 const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <Article onBack={onBack} title={meta.title} date={meta.date} repo={meta.repo} toc={TOC}>
     <H2 id="workload">Why agents search</H2>
@@ -80,8 +97,8 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </p>
     <p>
       Most agents search with grep or ripgrep. ripgrep is very good at reading files quickly, but it keeps
-      nothing between searches, so every search reads the tree again: about 3 seconds for Linux and 10 for
-      Chromium on my MacBook Air M3. Agents also work in parallel more and more. Each gets its own git
+      nothing between searches, so every search reads the tree again: a median of 2.2 seconds for Linux over
+      1,000 benchmark queries, and about 10 for Chromium, on my MacBook Air M3. Agents also work in parallel more and more. Each gets its own git
       worktree, a separate checkout of the same repository, and they all search at the same time. In the experiment of section 8, an agent with
       ripgrep waited a median of 10 seconds per task for search when it worked alone, and 30 seconds when four
       agents worked at once.
@@ -97,7 +114,7 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <Note label="About the numbers">
       The figures run on small example data so you can step through each mechanism. Numbers from real
       repositories name their source. Those marked preliminary come from development runs on a busy laptop;
-      the final benchmark on a quiet machine will replace them.
+      the final benchmark, now running on a quiet machine, will replace them.
     </Note>
 
     <H2 id="trigrams">An index for substrings</H2>
@@ -360,12 +377,13 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     </Figure>
 
     <p>
-      On Linux (95,924 files), the first worktree took 33.6 s to register, about as long as building a fresh
-      index, including the symbol table that <code>find_symbol</code> uses. The second and third worktrees at
-      the same commit took 1.9 and 1.3 s, all of it the scan of the directory tree, and added no index bytes. A
-      worktree on another branch costs work in proportion to its diff. Zoekt also stores shared files once
-      across branches, but in my smoke test it rebuilt the whole index, about 100 s, to add each branch
-      (preliminary).
+      On Linux (about 96,000 files), the first worktree took 30.0 s to register, about as long as building a
+      fresh index, including the symbol table that <code>find_symbol</code> uses. The second and third
+      worktrees at the same commit took 2.2 and 4.4 s, all of it the scan of the directory tree, and added no
+      index bytes. A worktree on another branch costs work in proportion to its diff: with 479 changed files,
+      about 3 s and 10 MiB of new segments. Zoekt also stores shared files once across branches, but it
+      rebuilds the whole index to add one, 93 to 97 s per branch. The scan is the part that grows with the
+      tree: on Chromium the first worktree took 117 s and each further one 44 s, nearly all of it the scan.
     </p>
 
     <H2 id="fresh">Seeing your own edits</H2>
@@ -406,9 +424,9 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <p>
       The barrier costs the delivery delay itself. fseventsd delivered no notice in under 10 to 12 ms, and no
-      stream setting moved that floor, so a synced search pays about that much. An edit is searchable through
-      the watcher 11.4 ms after it is written at the median and 15.1 ms at the 99th percentile. For Zoekt it
-      takes a commit, a delta build and a reload: 242 ms at the median in my smoke test (preliminary). If the
+      stream setting moved that floor, so a synced search pays about that much. On Linux, an edit is searchable
+      through the watcher 12.3 ms after it is written at the median and 12.6 ms at the 99th percentile. For
+      Zoekt it takes a commit, a delta build and a reload: 256 ms at the median and 319 ms at the 99th. If the
       cookie does not come back within a second, the search runs anyway and marks its result{' '}
       <code>stale</code>, so the agent knows not to trust it.
     </p>
@@ -584,10 +602,34 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       It did not make the agents better or cheaper. F agents found the right files about as often in the team
       setting (−4 points, −12 to +5) and somewhat less often alone (−12 points, −25 to 0). Neither difference is
       significant, but neither is a gain. They also used more tokens: 1.35 times R’s in the team setting (1.18
-      to 1.55) and 1.56 times alone (1.29 to 1.90). Table 3 shows why. With search nearly free, F agents
-      searched about 8 more times per episode, and every call is a turn that re-reads the conversation. The
-      hints of section 7 cut searches in the pilot, but on the test tasks F agents still searched far more often
-      than R agents. Teaching agents to spend fast search on fewer, better searches is the next step.
+      to 1.55) and 1.56 times alone (1.29 to 1.90). Table 3 shows why: F agents searched about 8 more times
+      per episode, and every call is a turn that re-reads the conversation.
+    </p>
+    <p>
+      The logs show where the extra calls came from. Two thirds of R’s ripgrep commands tried several names
+      at once, against 38% of F’s calls. F agents limited 85% of their searches to a path, 44% of those to a
+      single file, and searched inside one named file 6.9 times per episode, where R agents did so
+      4.0 times. And 18% of F’s searches came back empty, against 2% of R’s. Every one of the 235 empty
+      searches under a path had matches elsewhere in the repository, yet the agent’s next call widened or
+      dropped the path only 23% of the time. Mostly it tried a new name, in the same path or another narrow
+      one.
+    </p>
+
+    <H3>Fewer, better searches</H3>
+    <p>
+      So after the main run I changed the tool once more. A call takes a list of <code>patterns</code> and
+      searches them all in one pass. An empty search under a path is rerun in the nearest parent directories,
+      then in the whole worktree, and the first scope with matches becomes the reply. The description now says
+      to read a file already found instead of searching inside it, and to filter by directory rather than
+      file. Here the agent looked in the wrong directory, and the reply found the class one directory over:
+    </p>
+    <WidenResult />
+    <p>
+      On the 8 pilot tasks, F agents’ searches per task fell from 13.6 to 7.1, below R’s 8.1. Searches limited
+      to a single file fell from 42 to 4, and empty results from 13 to 0. The agents read files twice as often
+      instead. Tokens did not fall: F used 1.38 times R’s. But 8 tasks cannot settle tokens. R, which did not
+      change at all, moved by 0.71 times between the two pilots. Whether fewer calls also means fewer tokens
+      needs a run the size of the main one.
     </p>
     <p>
       Of Ferret’s 2,213 answers, 40 (1.8%) came back marked stale: the freshness wait of section 6 ran out after
@@ -616,9 +658,10 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       caption={
         <>
           Move the sliders; the chart shows how sharing one index across worktrees divides the break-even point.
-          Illustrative until the replay runs. Presets: full-tree ripgrep times (about 3 s on Linux and 10 s on
-          Chromium, MacBook Air M3), preliminary whole-index build times (Linux 28.7 s, Chromium about 60 s),
-          and 10 ms per indexed search. Agents mostly scope searches with a path filter, which makes ripgrep
+          Illustrative until the replay runs. Linux presets come from the final benchmark: 30.0 s to register
+          the first worktree, and medians over 1,000 queries of 2.2 s for ripgrep and 16 ms for the index.
+          Chromium’s registration time, 117 s, is final; its 10 s for ripgrep and 10 ms per indexed search are
+          preliminary. MacBook Air M3. Agents mostly scope searches with a path filter, which makes ripgrep
           faster, so the replay of their real searches will give the honest numbers. Searches per task are
           means over the search arms of the experiment.
         </>
@@ -644,8 +687,8 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       </li>
       <li>Ferret runs on macOS only: it watches files with FSEvents and its kernels use NEON.</li>
       <li>
-        Latency numbers here are preliminary. The quiet-machine run on the frozen 1,000-query sets for Chromium
-        and Linux replaces them.
+        The Chromium latency table and the index size are preliminary. The quiet-machine run on the frozen
+        1,000-query sets for Chromium and Linux replaces them.
       </li>
     </ul>
 
