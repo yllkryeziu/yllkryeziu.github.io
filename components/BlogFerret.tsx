@@ -82,9 +82,9 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       Most agents search with grep or ripgrep. ripgrep is very good at reading files quickly, but it keeps
       nothing between searches, so every search reads the tree again: about 3 seconds for Linux and 10 for
       Chromium on my MacBook Air M3. Agents also work in parallel more and more. Each gets its own git
-      worktree, a separate checkout of the same repository, and they all search at the same time. With four
-      Codex agents working on Chromium, one ripgrep search over the whole tree took 30 to 42 seconds, and the
-      slowest search command took 144.
+      worktree, a separate checkout of the same repository, and they all search at the same time. In the experiment of section 8, an agent with
+      ripgrep waited a median of 10 seconds per task for search when it worked alone, and 30 seconds when four
+      agents worked at once.
     </p>
     <p>
       An index does the reading once, ahead of time, and answers each search from a structure built for it.
@@ -97,7 +97,7 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <Note label="About the numbers">
       The figures run on small example data so you can step through each mechanism. Numbers from real
       repositories name their source. Those marked preliminary come from development runs on a busy laptop;
-      the final benchmark on a quiet machine and the main agent run will replace them.
+      the final benchmark on a quiet machine will replace them.
     </Note>
 
     <H2 id="trigrams">An index for substrings</H2>
@@ -500,8 +500,8 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
     <H3>The description is part of the interface</H3>
     <p>
-      The first pilot of section 8 showed what fewer calls means in practice. Agents with Ferret used 27% more
-      tokens than agents with ripgrep, and made more than twice as many searches. With ripgrep they joined names
+      The first pilot of the experiment in section 8 showed what fewer calls means in practice. Agents with
+      Ferret used 27% more tokens than agents with ripgrep, and made more than twice as many searches. With ripgrep they joined names
       into one call, as in <code>{"rg 'FooBar|foo_bar'"}</code>. With Ferret they searched one name at a time,
       and 49 of their 188 searches came back empty, mostly a single name under a path filter that missed. Every
       empty result costs a turn, and every turn re-reads the whole conversation.
@@ -515,21 +515,20 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
     <p>
       On the same 8 tasks, the agents’ searches per task fell from 23.5 to 13.6, searches joining several names
       rose from 6 to 57, empty results fell from 49 to 13, and tokens fell by 22% (geometric mean), with the
-      same tasks solved.
+      same tasks solved. Section 8 shows how much of that carried over to the test tasks.
     </p>
 
     <H2 id="team">Four agents at once</H2>
     <p>
-      The last question is the one Ferret was built for: does it help a team of real agents? I ran Codex CLI,
-      OpenAI’s coding agent, headless with gpt-6-luna <Cite ids={[9]} />. Four agents work at a time, each on a
-      different bug in its own worktree of the same repository. In arm R, Codex runs as it ships and searches
-      with ripgrep through its shell. Arm F adds Ferret’s MCP server and one sentence in the prompt saying to use
-      it for search; the shell stays available. Both arms run the same batch back to back, so they see the same
-      API latency.
-    </p>
-    <p>
-      This is the pilot that checks the setup before the pre-registered run on 80 test tasks: 8 development
-      tasks, 4 from Linux and 4 from Chromium, with the changes from section 7.
+      The last question is the one Ferret was built for: does it help real agents, alone and in a team? I ran
+      Codex CLI, OpenAI’s coding agent, headless with gpt-6-luna <Cite ids={[9]} /> on the Linux and Chromium
+      test tasks of section 7. In arm R, Codex runs as it ships and searches with ripgrep through its shell. Arm
+      F adds Ferret’s MCP server and one sentence in the prompt saying to use it for search; the shell stays
+      available. In the team setting, four agents work at once on 80 tasks, each on a different bug in its own
+      worktree of the same repository, and the four F agents share one Ferret daemon. In the solo setting, one
+      agent works at a time on 40 of the same tasks. Both arms run the same batch back to back, so they see the
+      same API latency. I pre-registered two endpoints, the time an episode spends waiting for search and its
+      wall time, with Holm’s correction across the four comparisons.
     </p>
 
     <Figure
@@ -537,25 +536,63 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
       plain
       caption={
         <>
-          Pilot, 8 tasks, four agents at a time. Each row is one task, with both arms’ episodes joined by a line.
-          On Chromium, an agent with ripgrep spent 27 to 210 seconds waiting for search, and one with Ferret 1
-          to 2.5 seconds. On Linux, scoped ripgrep searches are often fast, and two Ferret episodes took longer
-          overall. Search time is the wall time inside search calls as Codex reports them: Ferret’s MCP calls,
-          plus shell commands that run rg, grep, git grep, ag or ack, including through pipes. Codex CLI 0.160.0,
-          gpt-6-luna at medium effort, one episode per task and arm.
+          Ferret against ripgrep, task by task. Each grey dot is one task’s F/R ratio, the blue point is the
+          ratio of geometric means with its paired bootstrap 95% interval, and the line at 1× means no
+          difference. Search time is the wall time inside search calls as Codex reports them: Ferret’s MCP calls,
+          plus shell commands that run rg, grep, git grep, ag or ack, including through pipes. It is compared as
+          1 + seconds, so an episode without searches still counts. The rows per repository are descriptive.
+          Codex CLI 0.160.0, gpt-6-luna at medium effort, one episode per task and arm.
         </>
       }
     >
       <TeamFigure />
     </Figure>
 
+    <Table
+      n={3}
+      caption="Medians per episode, and means for searches. Success means every file of the real fix is among the agent’s first five answers."
+      columns={[
+        { key: 'arm', label: 'Setting and arm' },
+        { key: 'wait', label: 'Search wait', numeric: true },
+        { key: 'wall', label: 'Wall time', numeric: true },
+        { key: 'searches', label: 'Searches', numeric: true },
+        { key: 'tokens', label: 'Tokens', numeric: true },
+        { key: 'success', label: 'Success', numeric: true },
+      ]}
+      rows={[
+        { arm: 'Four at once, ripgrep', wait: '18.8 s', wall: '94 s', searches: '11.4', tokens: '641k', success: '60.0%' },
+        { arm: 'Four at once, Ferret', wait: '0.9 s', wall: '80 s', searches: '19.2', tokens: '841k', success: '56.2%', highlight: true },
+        { arm: 'One at a time, ripgrep', wait: '9.7 s', wall: '76 s', searches: '9.2', tokens: '563k', success: '70.0%' },
+        { arm: 'One at a time, Ferret', wait: '1.4 s', wall: '77 s', searches: '17.2', tokens: '736k', success: '57.5%' },
+      ]}
+    />
+
     <p>
-      Over the 8 tasks, F’s search time was 0.08 times R’s (95% CI 0.03 to 0.24) and its wall time 0.58 times
-      (0.41 to 0.83). Its tokens were 0.87 times R’s, but the interval runs from 0.56 to 1.40, so 8 tasks cannot
-      tell the arms apart on tokens. Both arms found the right files for the same tasks, except one Linux task
-      that R solved this time and had failed in the previous pilot, with nothing changed on its side. Eight
-      tasks set expectations and nothing more. The main run, 80 tasks with four agents at a time and 40 with
-      one, replaces these numbers.
+      With four agents at once, F agents waited 0.14 times as long for search as R agents (95% CI 0.11 to 0.19)
+      and finished their episodes in 0.85 times the wall time (0.76 to 0.95). Both pass Holm’s correction
+      (adjusted p below 0.001 and 0.007). Alone, F agents waited 0.30 times as long (0.21 to 0.43), but their
+      wall time did not change (0.96, 0.83 to 1.11). A single agent waits about 10 seconds per episode for
+      ripgrep, too small a share of a 76-second episode to show.
+    </p>
+    <p>
+      The difference between the settings is concurrency. On the 40 tasks that ran in both, R’s search time grew
+      3.9 times when four agents ran at once (2.6 to 6.0), from a median of 9.7 to 29.8 seconds per episode:
+      four ripgrep processes reading the same tree compete for the same cores and disk. F’s did not change
+      (0.99 times, 0.86 to 1.14). That is the case Ferret was built for, and it is where it saves time.
+    </p>
+    <p>
+      It did not make the agents better or cheaper. F agents found the right files about as often in the team
+      setting (−4 points, −12 to +5) and somewhat less often alone (−12 points, −25 to 0). Neither difference is
+      significant, but neither is a gain. They also used more tokens: 1.35 times R’s in the team setting (1.18
+      to 1.55) and 1.56 times alone (1.29 to 1.90). Table 3 shows why. With search nearly free, F agents
+      searched about 8 more times per episode, and every call is a turn that re-reads the conversation. The
+      hints of section 7 cut searches in the pilot, but on the test tasks F agents still searched far more often
+      than R agents. Teaching agents to spend fast search on fewer, better searches is the next step.
+    </p>
+    <p>
+      Of Ferret’s 2,213 answers, 40 (1.8%) came back marked stale: the freshness wait of section 6 ran out after
+      a second, most often on a solo agent’s first search. The success gap is about the same on tasks with and
+      without a stale answer.
     </p>
 
     <H2 id="breakeven">When an index pays for itself</H2>
@@ -597,7 +634,14 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         differ for other models and harnesses.
       </li>
       <li>The task is localization: finding the files to change, not writing the fix.</li>
-      <li>The team result in section 8 is a pilot of 8 tasks. The pre-registered main run replaces it.</li>
+      <li>
+        Section 8 compares Ferret with ripgrep, the search tool Codex ships with. Zoekt has no MCP server in
+        this setup, so it enters only through the replay in section 9.
+      </li>
+      <li>
+        One episode per task and arm. The intervals cover variation between tasks, not between repeated runs
+        of the same task.
+      </li>
       <li>Ferret runs on macOS only: it watches files with FSEvents and its kernels use NEON.</li>
       <li>
         Latency numbers here are preliminary. The quiet-machine run on the frozen 1,000-query sets for Chromium

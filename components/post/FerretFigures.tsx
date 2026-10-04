@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { M6_DATA } from './m6Data';
 import { usePlotWidth } from './Charts';
 import './FerretFigures.css';
 
@@ -609,31 +610,36 @@ export const ExperimentFigure: React.FC = () => (
   </div>
 );
 
-/* ---------- Figure 7: four Codex agents at once (pilot) ---------- */
+/* ---------- Figure 7: Codex agents with and without Ferret ---------- */
 
-const TEAM = [
-  { label: 'Chromium 1', R: [26.96, 76.8], F: [0.96, 34.4] },
-  { label: 'Chromium 2', R: [84.13, 312.3], F: [1.28, 140.8] },
-  { label: 'Chromium 3', R: [148.95, 163.4], F: [2.53, 110.7] },
-  { label: 'Chromium 4', R: [210.21, 217.1], F: [1.01, 49.5] },
-  { label: 'Linux 1', R: [0.49, 86.2], F: [0.83, 47.7] },
-  { label: 'Linux 2', R: [1.61, 42.5], F: [0.83, 22.9] },
-  { label: 'Linux 3', R: [23.5, 110.3], F: [0.74, 113.0] },
-  { label: 'Linux 4', R: [25.99, 59.1], F: [0.31, 80.7] },
-];
+interface RatioCi { v: number; lo: number; hi: number; dots: number[] }
+interface TeamRow { setting: 'team' | 'solo'; label: string; n: number; search: RatioCi; wall: RatioCi; tokens: RatioCi }
 
-const Dumbbell: React.FC<{ title: string; sub: string; k: 0 | 1; log: boolean; min: number; max: number; ticks: number[] }> = ({
-  title, sub, k, log, min, max, ticks,
+// Generated from the M6 run by m6_fig.py: per-task F/R ratios, and the ratio of
+// geometric means with its paired bootstrap 95% interval (search time as 1 + s).
+const M6: TeamRow[] = M6_DATA as TeamRow[];
+
+const RatioStrip: React.FC<{ title: string; sub: string; k: 'search' | 'wall'; min: number; max: number; ticks: number[] }> = ({
+  title, sub, k, min, max, ticks,
 }) => {
   const { ref, width } = usePlotWidth();
-  const left = 82;
-  const right = 14;
+  const left = 92;
+  const right = 50;
   const top = 8;
-  const rowH = 28;
+  const rowH = 30;
+  const headH = 22;
   const bottom = 26;
-  const height = top + TEAM.length * rowH + bottom;
-  const f = log ? Math.log10 : (v: number) => v;
-  const x = (v: number) => left + ((f(v) - f(min)) / (f(max) - f(min))) * (width - left - right);
+  const lines: ({ head: string } | TeamRow)[] = [];
+  for (const setting of ['team', 'solo'] as const) {
+    const rows = M6.filter(r => r.setting === setting);
+    if (rows.length) lines.push({ head: setting === 'team' ? 'Four agents at once' : 'One agent' }, ...rows);
+  }
+  let y = top;
+  const ys = lines.map(l => { const at = y; y += 'head' in l ? headH : rowH; return at; });
+  const height = y + bottom;
+  const x = (v: number) => left + ((Math.log10(v) - Math.log10(min)) / (Math.log10(max) - Math.log10(min))) * (width - left - right);
+  const clamp = (v: number) => Math.min(max, Math.max(min, v));
+  const fmtRatio = (v: number) => `${v < 0.1 ? v.toFixed(2) : v.toFixed(2).replace(/0$/, '')}×`;
   return (
     <div className="chart">
       <div className="chart-title">{title}</div>
@@ -642,23 +648,31 @@ const Dumbbell: React.FC<{ title: string; sub: string; k: 0 | 1; log: boolean; m
         <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
           {ticks.map(t => (
             <g key={t}>
-              <line x1={x(t)} x2={x(t)} y1={top - 4} y2={height - bottom + 4} stroke="var(--series-grid)" strokeDasharray="2 3" />
-              <text className="chart-axis" x={x(t)} y={height - 8} textAnchor="middle">{t} s</text>
+              <line x1={x(t)} x2={x(t)} y1={top} y2={height - bottom + 4}
+                stroke={t === 1 ? 'var(--color-text-subtle)' : 'var(--series-grid)'} strokeWidth={t === 1 ? 0.8 : 1} strokeDasharray={t === 1 ? undefined : '2 3'} />
+              <text className="chart-axis" x={x(t)} y={height - 8} textAnchor="middle">{`${t}×`}</text>
             </g>
           ))}
-          <line x1={0} x2={width - right} y1={top + 4 * rowH} y2={top + 4 * rowH} stroke="var(--series-grid)" />
-          {TEAM.map((r, i) => {
-            const y = top + i * rowH + rowH / 2;
+          {lines.map((l, i) => {
+            if ('head' in l) {
+              return <text key={l.head} className="chart-axis" x={0} y={ys[i] + 15} style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>{l.head}</text>;
+            }
+            const c = l[k];
+            const cy = ys[i] + rowH / 2;
+            const all = l.label === 'All';
             return (
-              <g key={r.label}>
-                <text className="chart-label" x={0} y={y + 4}>{r.label}</text>
-                <line x1={x(r.R[k])} x2={x(r.F[k])} y1={y} y2={y} stroke="var(--series-mute)" strokeWidth="2" />
-                <circle cx={x(r.R[k])} cy={y} r="5" fill="var(--series-2)" stroke="var(--color-bg)" strokeWidth="1.5">
-                  <title>{`ripgrep: ${r.R[k]} s`}</title>
+              <g key={`${l.setting}-${l.label}`}>
+                <text className="chart-label" x={0} y={cy + 4} style={all ? { fontWeight: 600 } : undefined}>
+                  {all ? `All, ${l.n} tasks` : `${l.label}, ${l.n}`}
+                </text>
+                {c.dots.map((d, j) => (
+                  <circle key={j} cx={x(clamp(d))} cy={cy + ((j % 5) - 2) * 2.2} r="2.4" fill="var(--series-mute)" opacity="0.55" />
+                ))}
+                <line x1={x(clamp(c.lo))} x2={x(clamp(c.hi))} y1={cy} y2={cy} stroke="var(--series-1)" strokeWidth="2.5" strokeLinecap="round" />
+                <circle cx={x(clamp(c.v))} cy={cy} r={all ? 5.5 : 4.5} fill="var(--series-1)" stroke="var(--color-bg)" strokeWidth="1.5">
+                  <title>{`${fmtRatio(c.v)} (95% CI ${fmtRatio(c.lo)} to ${fmtRatio(c.hi)})`}</title>
                 </circle>
-                <circle cx={x(r.F[k])} cy={y} r="5" fill="var(--series-1)" stroke="var(--color-bg)" strokeWidth="1.5">
-                  <title>{`Ferret: ${r.F[k]} s`}</title>
-                </circle>
+                <text className="chart-value" x={width - right + 8} y={cy + 4}>{fmtRatio(c.v)}</text>
               </g>
             );
           })}
@@ -671,12 +685,12 @@ const Dumbbell: React.FC<{ title: string; sub: string; k: 0 | 1; log: boolean; m
 export const TeamFigure: React.FC = () => (
   <div>
     <div className="ferret-charts two">
-      <Dumbbell title="Time spent waiting for search" sub="Seconds per episode, log scale" k={0} log min={0.2} max={300} ticks={[1, 10, 100]} />
-      <Dumbbell title="Episode wall time" sub="Seconds per episode" k={1} log={false} min={0} max={320} ticks={[0, 100, 200, 300]} />
+      <RatioStrip title="Time spent waiting for search" sub="Ferret against ripgrep, F / R per task, log scale" k="search" min={0.004} max={4} ticks={[0.01, 0.1, 1]} />
+      <RatioStrip title="Episode wall time" sub="Ferret against ripgrep, F / R per task, log scale" k="wall" min={0.25} max={4} ticks={[0.25, 0.5, 1, 2, 4]} />
     </div>
     <div className="chart-legend">
-      <span><i style={{ background: 'var(--series-2)' }} />R: Codex with ripgrep</span>
-      <span><i style={{ background: 'var(--series-1)' }} />F: Codex with Ferret</span>
+      <span><i style={{ background: 'var(--series-mute)' }} />one task</span>
+      <span><i style={{ background: 'var(--series-1)' }} />geometric mean, 95% CI</span>
     </div>
   </div>
 );
