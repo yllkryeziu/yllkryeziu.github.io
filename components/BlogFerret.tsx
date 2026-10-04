@@ -685,6 +685,12 @@ const BlogFerret: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         One episode per task and arm. The intervals cover variation between tasks, not between repeated runs
         of the same task.
       </li>
+      <li>
+        The agents could reach the internet. In 11 of the 240 episodes of section 8, 9 of them with ripgrep, an
+        agent downloaded upstream source or searched the project’s commits, which can reveal the fix. Without
+        those tasks every estimate moves by at most 0.01 times for search and wall time, and the team’s wall
+        time still passes Holm’s correction.
+      </li>
       <li>Ferret runs on macOS only: it watches files with FSEvents and its kernels use NEON.</li>
       <li>
         The Chromium latency table and the index size are preliminary. The quiet-machine run on the frozen
