@@ -1,5 +1,5 @@
 name: "Yll Kryeziu"
-bio: "Software Engineer and CS graduate from TUM. Currently Founding Engineer at p(doom)."
+bio: "M.Sc. Informatics student at TUM and Co-Founder of p(doom)."
 avatarUrl: "/profile.jpg"
 email: "mailto:yllkry@gmail.com"
 linkedinUrl: "https://www.linkedin.com/in/yll-kryeziu/"
@@ -8,14 +8,16 @@ xUrl: "https://x.com/yllkry"
 
 about:
   paragraphs:
-    - "Computer Science graduate from TUM and Founding Engineer at p(doom). Working on adaptive compute in reasoning LLMs and building embodied AI systems."
+    - "M.Sc. Informatics student at TUM and Co-Founder of p(doom). Working on RL infrastructure and post-training for computer-use agents."
     - "Background spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
 
 highlights:
   - year: "[2026]"
-    description: "Joined <b>[p(doom)](https://pdoom.org)</b>"
+    description: "Started the <b>M.Sc. in Informatics</b> at <b>Technical University of Munich</b>, with an exchange semester at <b>KTH Royal Institute of Technology</b>"
   - year: "[2026]"
     description: "Graduated with a <b>Bachelor of Science in Computer Science</b> from <b>Technical University of Munich</b>"
+  - year: "[2025]"
+    description: "Co-founded <b>[p(doom)](https://pdoom.org)</b>"
   - year: "[2025]"
     description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
   - year: "[2023-24]"
@@ -29,12 +31,12 @@ cv:
   experience:
     title: "Experience"
     items:
-      - period: "Apr 2026 - Present"
-        role: "Founding Engineer"
+      - period: "Aug 2025 - Present"
+        role: "Co-Founder"
         company: "p(doom)"
         companyUrl: "https://pdoom.org"
-        details: "Building core infrastructure and research tooling as a Founding Engineer. Working on adaptive compute in reasoning LLMs and embodied AI systems."
-      - period: "Oct 2022 - Apr 2026"
+        details: "Co-founded p(doom), funded by a SPRIND validation contract. Working on RL infrastructure and post-training for computer-use agents: sandboxed RL training in Firecracker microVMs, retraining Qwen3.5 to act with relative mouse movements, and turning screen recordings into long-horizon trajectories for behaviour cloning."
+      - period: "Nov 2022 - Apr 2026"
         role: "Software Engineer Working Student"
         company: "Porsche Informatik"
         companyUrl: "https://www.porscheinformatik.com/"
@@ -57,21 +59,15 @@ cv:
   education:
     title: "Education"
     items:
-      - period: "Oct 2022 - Apr 2026"
+      - period: "Apr 2026 - Apr 2028 (expected)"
+        degree: "Master of Science, Informatics"
+        institution: "Technical University of Munich"
+        institutionUrl: "https://www.tum.de/"
+        details: "Focus on high-performance computing and scalable machine learning. Exchange semester at KTH Royal Institute of Technology, Stockholm (Aug 2026 - Jan 2027)."
+      - period: "Oct 2022 - Mar 2026"
         degree: "Bachelor of Science, Computer Science"
         institution: "Technical University of Munich"
         institutionUrl: "https://www.tum.de/"
         details: "Focus on Software Engineering, Databases, and Machine Learning"
 
-projects:
-  - id: 3
-    title: "AULA AI-powered Educational Platform"
-    date: "Anthropic Hackathon 2025"
-    description: "Built an AI-powered educational platform using FastAPI, SQLAlchemy, ChromaDB, and Claude-4 that transforms PDF course materials into interactive video lessons through a 6-stage AI pipeline with mathematical animations and ElevenLabs text-to-speech integration. Implemented hybrid RAG (Retrieval-Augmented Generation) system combining vector embeddings, BM25 sparse retrieval, and cross-encoder reranking."
-    imageUrl: ""
-    tags: ["#fastapi", "#rag", "#claude-4", "#chromadb", "#sqlalchemy", "#elevenlabs"]
-    links:
-      - name: "Demo"
-        url: "https://youtu.be/FFNIY6vhThM"
-      - name: "Results"
-        url: "https://www.youtube.com/@yllias/videos"
+projects: []
