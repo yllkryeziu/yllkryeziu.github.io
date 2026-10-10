@@ -123,7 +123,7 @@ gController.stickY = 64.0f * inputs->stickY;`;
 
 // Media. Every clip is the game's own renderer drawing measured state; the cut points come from
 // results.escape, so re-recording the episode moves the prose and the cuts together. Stems are
-// stable, so a re-render replaces a file rather than adding one. See components/post/blj-media.md.
+// stable, so a re-render replaces a file rather than adding one. See media/README.md.
 const SWARM_STEPS = ['1M', '5M', '10M', '20M'];
 const MEDIA = {
   untrained: 'untrained.mp4',
