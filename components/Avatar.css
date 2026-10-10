@@ -22,3 +22,39 @@
   stroke-linejoin: round;
   paint-order: stroke;
 }
+.avatar-paper { fill: var(--avatar-paper); }
+/* The yawning mouth and the dropped lower lip cut a paper gap through the beard below them. */
+.avatar-gap {
+  fill: var(--avatar-paper);
+  stroke: var(--avatar-paper);
+  stroke-width: 12;
+  stroke-linejoin: round;
+}
+/* The hand is drawn in outline like the face, on a sleeve the black of the hoodie with a
+   paper edge, so the arm reads in front of the body. */
+.avatar-rim .avatar-fist-rim { stroke-width: 24; }
+.avatar-hand {
+  fill: var(--avatar-paper);
+  stroke: var(--avatar-ink);
+  stroke-width: 13;
+  stroke-linejoin: round;
+}
+.avatar-hand-lines {
+  fill: none;
+  stroke: var(--avatar-ink);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.avatar-sleeve {
+  fill: var(--avatar-ink);
+  stroke: var(--avatar-paper);
+  stroke-width: 12;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.avatar-cuff {
+  fill: none;
+  stroke: var(--avatar-paper);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
