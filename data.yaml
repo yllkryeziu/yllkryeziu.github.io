@@ -1,5 +1,5 @@
 name: "Yll Kryeziu"
-bio: "M.Sc. Informatics student at TUM and Co-Founder of p(doom)."
+bio: "M.Sc. Informatics student at TUM and part of p(doom)."
 avatarUrl: "/profile.jpg"
 email: "mailto:yllkry@gmail.com"
 linkedinUrl: "https://www.linkedin.com/in/yll-kryeziu/"
@@ -8,7 +8,7 @@ xUrl: "https://x.com/yllkry"
 
 about:
   paragraphs:
-    - "M.Sc. Informatics student at TUM and Co-Founder of p(doom). Working on RL infrastructure and post-training for computer-use agents."
+    - "M.Sc. Informatics student at TUM and part of p(doom). Working on RL infrastructure and post-training for computer-use agents."
     - "Background spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
 
 highlights:
@@ -17,7 +17,7 @@ highlights:
   - year: "[2026]"
     description: "Graduated with a <b>Bachelor of Science in Computer Science</b> from <b>Technical University of Munich</b>"
   - year: "[2025]"
-    description: "Co-founded <b>[p(doom)](https://pdoom.org)</b>"
+    description: "Joined <b>[p(doom)](https://pdoom.org)</b>"
   - year: "[2025]"
     description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
   - year: "[2023-24]"
