@@ -1,0 +1,15 @@
+/* The drawing sits on paper the colour of the page. In dark mode the paper turns cream and
+   its rim outlines the figure like a sticker, so the black cap and hoodie stay visible. */
+.avatar {
+  --avatar-ink: #1A1915;
+  --avatar-paper: var(--color-bg);
+  overflow: visible;
+}
+.dark .avatar { --avatar-paper: #F2EEE3; }
+.avatar-ink { fill: var(--avatar-ink); }
+.avatar-rim path {
+  fill: var(--avatar-paper);
+  stroke: var(--avatar-paper);
+  stroke-width: 36;
+  stroke-linejoin: round;
+}

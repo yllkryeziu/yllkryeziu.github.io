@@ -3,7 +3,8 @@ export type PostSlug = 'thesis' | 'simd' | 'blj' | 'ferret';
 export interface PostMeta {
   slug: PostSlug;
   preview: string;
-  previewKind?: 'game' | 'diagram';
+  // Short lowercase name for the card on the home page.
+  label: string;
   title: string;
   dek: string;
   date: string;
@@ -17,7 +18,8 @@ const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/
 export const POSTS: PostMeta[] = [
   {
     slug: 'ferret',
-    preview: 'blog-previews/ferret.png',
+    preview: 'work/ferret.jpg',
+    label: 'code search for coding agents',
     title: 'How code search works, and what coding agents need from it',
     dek: 'Coding agents search a repository about ten times per task, often four at once in separate worktrees. I built a trigram search engine for them and explain its parts with interactive figures: posting lists, regex plans, an exact early stop for the top 20 files, one index shared by every worktree, and searches that see the edit made a moment ago.',
     date: 'October 2026',
@@ -25,8 +27,8 @@ export const POSTS: PostMeta[] = [
   },
   {
     slug: 'blj',
-    preview: 'blog-previews/mario.jpg',
-    previewKind: 'game',
+    preview: 'work/mario.jpg',
+    label: 'breaking super mario 64 with rl',
     title: 'How much help does reinforcement learning need to break Super Mario 64?',
     dek: "I trained 24 PPO agents to climb Mario's endless stairs using four different rewards. All six agents rewarded for backward speed reached the landing; none rewarded for height did. One found the backwards long jump with only a reward for finishing. Here is what the runs reveal about reward design and what the policies learned.",
     date: 'September 2026',
@@ -35,7 +37,8 @@ export const POSTS: PostMeta[] = [
   },
   {
     slug: 'thesis',
-    preview: 'blog-previews/distillation.png',
+    preview: 'work/distillation.jpg',
+    label: 'models teaching themselves to reason adaptively',
     title: 'On-policy self-distillation for adaptive compute',
     dek: 'Reasoning models overthink. I let a model rewrite its own reasoning to a length that matches the problem, then distilled that behaviour back into the weights, using no reward model, no difficulty labels and no ground-truth answers.',
     date: 'February 2026',
@@ -43,7 +46,8 @@ export const POSTS: PostMeta[] = [
   },
   {
     slug: 'simd',
-    preview: 'blog-previews/jni.png',
+    preview: 'work/jni.jpg',
+    label: 'what crossing jni actually costs',
     title: 'What crossing the JNI boundary actually costs',
     dek: 'A SIMD JSON parser reached from Java runs 5.2x faster than the best JVM parser and allocates about a million times less heap. One crossing of the JNI boundary costs 10 nanoseconds, so what matters is not the boundary itself but how many times a design makes you cross it.',
     date: 'October 2025',

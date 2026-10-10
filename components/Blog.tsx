@@ -1,45 +1,6 @@
-import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { POSTS, POST_BY_SLUG, postSlugFromHash, type PostSlug } from './post/posts';
-import { projectsData } from '../data';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { POST_BY_SLUG, type PostSlug } from './post/posts';
 import './post/BlogDesign.css';
-
-type FeedItem =
-  | { kind: 'post'; id: PostSlug; title: string; date: string; sortDate: number; preview: string; previewKind?: string; href?: string }
-  | { kind: 'project'; id: number; title: string; date: string; sortDate: number; description: string; links: { name: string; url: string }[] };
-
-function parseSortDate(date: string): number {
-  const lower = date.toLowerCase();
-  const yearMatch = lower.match(/\d{4}/g);
-  const year = yearMatch ? parseInt(yearMatch[yearMatch.length - 1]) : 2025;
-  const months = [
-    'january', 'february', 'march', 'april', 'may', 'june',
-    'july', 'august', 'september', 'october', 'november', 'december',
-  ];
-  const month = months.findIndex(name => lower.includes(name));
-  return year * 100 + (month >= 0 ? month + 1 : 0);
-}
-
-const feed: FeedItem[] = [
-  ...POSTS.map<FeedItem>(post => ({
-    kind: 'post',
-    id: post.slug,
-    title: post.title,
-    date: post.date,
-    sortDate: post.sortDate,
-    preview: post.preview,
-    previewKind: post.previewKind,
-    href: post.href,
-  })),
-  ...projectsData.map<FeedItem>(project => ({
-    kind: 'project',
-    id: project.id,
-    title: project.title,
-    date: project.date,
-    sortDate: parseSortDate(project.date),
-    description: project.description,
-    links: project.links ?? [],
-  })),
-].sort((a, b) => b.sortDate - a.sortDate);
 
 const BlogSimdjson = lazy(() => import('./BlogSimdjson'));
 const BlogThesis = lazy(() => import('./BlogThesis'));
@@ -50,119 +11,24 @@ const PostFallback: React.FC = () => (
   <div style={{ padding: '3rem 0', color: 'var(--color-text-muted)', fontSize: '13px' }}>Loading…</div>
 );
 
-const itemStyle: React.CSSProperties = {
-  borderBottom: '1px solid var(--color-border)',
-  padding: '1.4rem 0',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '16px',
-  fontWeight: 600,
-  letterSpacing: '-0.02em',
-  color: 'var(--color-text)',
-  lineHeight: 1.25,
-  marginBottom: '0.5rem',
-};
-
-const descStyle: React.CSSProperties = {
-  fontSize: '13.5px',
-  color: 'var(--color-text-subtle)',
-  lineHeight: 1.55,
-  margin: '0 0 0.6rem',
-};
-
-const metaStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  fontFamily: 'var(--font-mono)',
-  fontSize: '11.5px',
-  color: 'var(--color-text-muted)',
-};
-
-const WorkFeed: React.FC<{ onSelect: (slug: PostSlug) => void }> = ({ onSelect }) => (
-  <section aria-label="Blog posts and projects">
-    <div className="blog-list">
-      {feed.map(item =>
-        item.kind === 'post' ? (
-          <a key={item.id} href={item.href ?? `#work/${item.id}`} className="blog-row"
-            onClick={event => {
-              if (!item.href && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-                event.preventDefault(); onSelect(item.id);
-              }
-            }}>
-            <span className={`blog-thumbnail ${item.previewKind ?? ''}`}>
-              <img src={item.preview} alt="" loading="lazy" width={960} height={640} />
-            </span>
-            <div><h3>{item.title}</h3><span className="blog-date">{item.date}</span></div>
-          </a>
-        ) : (
-          <div key={item.id} style={itemStyle}>
-            <div style={titleStyle}>{item.title}</div>
-            <p style={descStyle} dangerouslySetInnerHTML={{ __html: item.description }} />
-            <div style={metaStyle}>
-              <span>{item.date}</span>
-              {item.links.map(link => (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline"
-                  style={{ color: 'var(--color-text-subtle)' }}
-                >
-                  {link.name} ↗
-                </a>
-              ))}
-            </div>
-          </div>
-        )
-      )}
-    </div>
-  </section>
-);
-
-const Work: React.FC = () => {
-  const [selected, setSelected] = useState<PostSlug | null>(() => postSlugFromHash(window.location.hash));
-
-  const handleSelect = (slug: PostSlug) => {
-    window.location.hash = `work/${slug}`;
-    setSelected(slug);
-  };
-
-  const handleBack = () => {
-    window.location.hash = 'work';
-    setSelected(null);
-  };
+const Post: React.FC<{ slug: PostSlug; onBack: () => void }> = ({ slug, onBack }) => {
+  const href = POST_BY_SLUG[slug].href;
 
   useEffect(() => {
-    const onHashChange = () => setSelected(postSlugFromHash(window.location.hash));
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
+    if (href) window.location.replace(href);
+    else window.scrollTo(0, 0);
+  }, [slug, href]);
 
-  useEffect(() => {
-    if (selected) {
-      const href = POST_BY_SLUG[selected].href;
-      if (href) window.location.replace(href);
-      else window.scrollTo(0, 0);
-    }
-  }, [selected]);
-
-  if (!selected) return <WorkFeed onSelect={handleSelect} />;
-
-  if (POST_BY_SLUG[selected].href) {
-    return <a href={POST_BY_SLUG[selected].href}>Open {POST_BY_SLUG[selected].title}</a>;
-  }
+  if (href) return <a href={href}>Open {POST_BY_SLUG[slug].title}</a>;
 
   return (
     <Suspense fallback={<PostFallback />}>
-      {selected === 'ferret' && <BlogFerret onBack={handleBack} />}
-      {selected === 'blj' && <BlogMario onBack={handleBack} />}
-      {selected === 'thesis' && <BlogThesis onBack={handleBack} />}
-      {selected === 'simd' && <BlogSimdjson onBack={handleBack} />}
+      {slug === 'ferret' && <BlogFerret onBack={onBack} />}
+      {slug === 'blj' && <BlogMario onBack={onBack} />}
+      {slug === 'thesis' && <BlogThesis onBack={onBack} />}
+      {slug === 'simd' && <BlogSimdjson onBack={onBack} />}
     </Suspense>
   );
 };
 
-export default Work;
+export default Post;

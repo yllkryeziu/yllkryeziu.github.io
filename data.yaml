@@ -1,70 +1,35 @@
-name: "Yll Kryeziu"
-bio: "M.Sc. Informatics student at TUM and part of p(doom)."
-avatarUrl: "/profile.jpg"
-email: "mailto:yllkry@gmail.com"
-linkedinUrl: "https://www.linkedin.com/in/yll-kryeziu/"
-githubUrl: "https://github.com/yllkryeziu"
-xUrl: "https://x.com/yllkry"
+name: "yll kryeziu"
+role: "engineer"
 
+# Markdown links work in about and timeline. Links starting with # stay on the site.
 about:
-  paragraphs:
-    - "M.Sc. Informatics student at TUM and part of p(doom). Working on RL infrastructure and post-training for computer-use agents."
-    - "Background spans enterprise software engineering, deep learning research, and teaching. Active in building student communities and initiatives at the intersection of AI, robotics, and system resilience."
+  - "i'm doing a master's in informatics at [tum](https://www.tum.de/en/) in munich, and i'm part of [p(doom)](https://pdoom.org), an open-source ai research lab, where i work on training long-horizon models."
+  - "i also spent three and a half years as a working student at [porsche informatik](https://www.porscheinformatik.com/), working on sales software for volkswagen group brands."
 
-highlights:
-  - year: "[2026]"
-    description: "Started the <b>M.Sc. in Informatics</b> at <b>Technical University of Munich</b>, with an exchange semester at <b>KTH Royal Institute of Technology</b>"
-  - year: "[2026]"
-    description: "Graduated with a <b>Bachelor of Science in Computer Science</b> from <b>Technical University of Munich</b>"
-  - year: "[2025]"
-    description: "Joined <b>[p(doom)](https://pdoom.org)</b>"
-  - year: "[2025]"
-    description: "Founded <b>TUM Albanian Student Society</b> to foster academic exchange and cultural integration"
-  - year: "[2023-24]"
-    description: "Teaching Assistant at <b>TUM</b> for Software Engineering and Computer Architecture courses"
-  - year: "[2022]"
-    description: "Working at <b>Porsche Informatik</b> as Software Engineer Working Student"
-  - year: "[2022]"
-    description: "Started Computer Science studies at <b>Technical University of Munich</b>"
+links:
+  - label: "X"
+    url: "https://x.com/yllkry"
+  - label: "github"
+    url: "https://github.com/yllkryeziu"
+  - label: "linkedin"
+    url: "https://www.linkedin.com/in/yll-kryeziu/"
+  - label: "email"
+    url: "mailto:yllkry@gmail.com"
 
-cv:
-  experience:
-    title: "Experience"
-    items:
-      - period: "Aug 2025 - Present"
-        role: "Co-Founder"
-        company: "p(doom)"
-        companyUrl: "https://pdoom.org"
-      - period: "Nov 2022 - Apr 2026"
-        role: "Software Engineer Working Student"
-        company: "Porsche Informatik"
-        companyUrl: "https://www.porscheinformatik.com/"
-      - period: "Oct 2023 - Oct 2024"
-        role: "Teaching Assistant"
-        company: "Technical University of Munich"
-        companyUrl: "https://www.tum.de/"
-
-  initiatives:
-    title: "Initiatives & Leadership"
-    items:
-      - period: "Jan 2025 - Present"
-        role: "Founder & President"
-        company: "TUM Albanian Student Society"
-        companyUrl: "https://tum-albanian-students.github.io/#/"
-        details: "Established and led student community to foster academic exchange and cultural integration at TU Munich."
-
-  education:
-    title: "Education"
-    items:
-      - period: "Apr 2026 - Apr 2028 (expected)"
-        degree: "Master of Science, Informatics"
-        institution: "Technical University of Munich"
-        institutionUrl: "https://www.tum.de/"
-        details: "Focus on high-performance computing and scalable machine learning. Exchange semester at KTH Royal Institute of Technology, Stockholm (Aug 2026 - Jan 2027)."
-      - period: "Oct 2022 - Mar 2026"
-        degree: "Bachelor of Science, Computer Science"
-        institution: "Technical University of Munich"
-        institutionUrl: "https://www.tum.de/"
-        details: "Focus on Software Engineering, Databases, and Machine Learning"
-
-projects: []
+timeline:
+  - year: "2026"
+    text: "exchange semester at [kth](https://www.kth.se/en), stockholm"
+  - year: "2026"
+    text: "started my m.sc. in informatics at [tum](https://www.tum.de/en/)"
+  - year: "2026"
+    text: "graduated with a b.sc. in informatics from tum"
+  - year: "2025"
+    text: "joined [p(doom)](https://pdoom.org)"
+  - year: "2025"
+    text: "founded the [tum albanian student society](https://tum-albanian-students.github.io/#/)"
+  - year: "2023"
+    text: "teaching assistant at tum for software engineering and computer architecture"
+  - year: "2022"
+    text: "working student at [porsche informatik](https://www.porscheinformatik.com/)"
+  - year: "2022"
+    text: "started informatics at tum"

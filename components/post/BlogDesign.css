@@ -1,14 +1,4 @@
-/* Scoped to the Work feed and articles; portfolio chrome keeps its existing styles. */
-.blog-list { border-top: 1px solid var(--color-border); }
-.blog-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text); text-decoration: none; }
-.blog-row h3 { font: 600 16px/1.4 var(--font-sans); letter-spacing: -.02em; margin: 0 0 10px; }
-.blog-date { font: 400 12px/1.5 var(--font-sans); color: var(--color-text-muted); }
-.blog-row:hover h3 { color: var(--color-accent); }
-.blog-thumbnail { display: block; width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #eee9df; border-radius: 4px; }
-.blog-thumbnail img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.blog-thumbnail.game img { object-fit: contain; }
-.blog-thumbnail.diagram { padding: 8px; background: #f2efe7; }
-.blog-thumbnail.diagram img { object-fit: contain; }
+/* Scoped to the articles; the home page has its own styles. */
 .post {
   --measure: 41.25rem;
   --rail: 12rem;
@@ -70,7 +60,7 @@
 .post .benchmark-value { text-align: right; font-variant-numeric: tabular-nums; }
 .post .reliability-plot { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
 .post .reliability-plot > svg { width: 360px; max-width: 100%; height: auto; }
-.blog-row:focus-visible, .post-rail :is(button, a):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+.post-rail :is(button, a):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
 @media (min-width: 1201px) and (max-width: 1350px) {
   .post { --rail: 10rem; --gutter: 3rem; }
 }
@@ -81,9 +71,6 @@
   .post { max-width: var(--measure); }
 }
 @media (max-width: 639px) {
-  .blog-row { gap: 14px; padding-block: 24px; }
-  .blog-row h3 { font-size: 15px; margin-bottom: 8px; }
-  .blog-date { font-size: 11.5px; }
   .post .post-head { margin: 16px 0 48px; }
   .post .post-title { font-size: 28px; line-height: 1.35; }
   .post .post-meta { font-size: 13px; margin-top: 22px; }

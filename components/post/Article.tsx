@@ -70,7 +70,7 @@ const Rail: React.FC<{ entries: TocEntry[]; onBack: () => void }> = ({ entries, 
   const active = useActiveSection(entries.map(entry => entry.id));
   return (
     <aside className="post-rail">
-      <button type="button" onClick={onBack} className="post-rail-back">← Work</button>
+      <button type="button" onClick={onBack} className="post-rail-back">← Home</button>
       <nav className="post-rail-toc" aria-label="Table of contents">
         <div className="post-rail-label">Contents</div>
         <ol>
