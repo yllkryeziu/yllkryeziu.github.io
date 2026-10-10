@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { BODY_INK, BODY_PAPER, BROW, EYE_CLIP, FEATURES, HEAD_INK, HEAD_PAPER, LIP, PIVOT, PUPILS, VIEWBOX } from './avatarArt';
-import { CUFF, FIST, FIST_LINES, FOREARM } from './avatarHand';
+import { CUFF, FIST, FIST_LINES, SLEEVE } from './avatarHand';
 import './Avatar.css';
 
 // Idle looks use sixteen directions clockwise from twelve o'clock; null looks straight ahead.
@@ -54,11 +54,11 @@ const RUB_LOOK = { x: 0, y: 0.4 };
 // The bowed head drops and tips forward around the neck (drawing pixels and degrees).
 const BOW_DROP = 90;
 const BOW_TILT = -5;
-// For each hand: where its wrist sits on the face, how the fist and the forearm lean from it
+// For each hand: where its wrist sits on the face, how the fist and the arm lean from it
 // (degrees), and the fist's size; the far hand is a little smaller. The left one is mirrored.
 const HANDS = [
-  { wrist: [628, 690], fistTilt: 8, armTilt: 26, size: 0.85, mirror: false },
-  { wrist: [810, 700], fistTilt: -8, armTilt: -26, size: 0.92, mirror: true },
+  { wrist: [628, 690], fistTilt: 8, armTilt: 20, size: 0.85, mirror: false },
+  { wrist: [810, 700], fistTilt: -8, armTilt: -20, size: 0.92, mirror: true },
 ];
 // How far a hand travels straight up to come into view from below the frame.
 const HAND_TRAVEL = 850;
@@ -315,12 +315,12 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
         <g data-part="features">
           {HANDS.map(({ fistTilt, armTilt, size, mirror }, index) => {
             const fist = `rotate(${fistTilt}) scale(${mirror ? -size : size} ${size})`;
-            const forearm = `rotate(${armTilt})${mirror ? ' scale(-1 1)' : ''}`;
+            const arm = `rotate(${armTilt})${mirror ? ' scale(-1 1)' : ''}`;
             return (
               <g key={index} data-part="hand" data-hand={index}>
                 {rim ? (
                   <g className="avatar-rim">
-                    <path transform={forearm} d={FOREARM} />
+                    <path transform={arm} d={SLEEVE} />
                     <path className="avatar-fist-rim" transform={fist} d={FIST} />
                   </g>
                 ) : (
@@ -329,8 +329,8 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
                       <path className="avatar-hand" d={FIST} />
                       <path className="avatar-hand-lines" d={FIST_LINES} />
                     </g>
-                    <g transform={forearm}>
-                      <path className="avatar-sleeve" d={FOREARM} />
+                    <g transform={arm}>
+                      <path className="avatar-sleeve" d={SLEEVE} />
                       <path className="avatar-cuff" d={CUFF} />
                     </g>
                   </>
