@@ -35,17 +35,14 @@ cv:
         role: "Co-Founder"
         company: "p(doom)"
         companyUrl: "https://pdoom.org"
-        details: "Co-founded p(doom), funded by a SPRIND validation contract. Working on RL infrastructure and post-training for computer-use agents: sandboxed RL training in Firecracker microVMs, retraining Qwen3.5 to act with relative mouse movements, and turning screen recordings into long-horizon trajectories for behaviour cloning."
       - period: "Nov 2022 - Apr 2026"
         role: "Software Engineer Working Student"
         company: "Porsche Informatik"
         companyUrl: "https://www.porscheinformatik.com/"
-        details: "Collaborated on engineering of Java enterprise sales platform used across Volkswagen Group brands. Developed high-performance native C++ module to optimize critical vehicle data processing pipelines, integrating via JNI."
       - period: "Oct 2023 - Oct 2024"
         role: "Teaching Assistant"
         company: "Technical University of Munich"
         companyUrl: "https://www.tum.de/"
-        details: "Held weekly tutorial sessions for Software Engineering and Computer Architecture courses. Taught concepts from object-oriented design and cloud-native architectures to RISC-V assembly and memory hierarchies."
 
   initiatives:
     title: "Initiatives & Leadership"
