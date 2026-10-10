@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { BODY_INK, BODY_PAPER, BROW, EYE_CLIP, FEATURES, HEAD_INK, HEAD_PAPER, LIP, PIVOT, PUPILS, VIEWBOX } from './avatarArt';
-import { CUFF, FIST, FIST_LINES, SLEEVE } from './avatarHand';
+import { CUFF, FIST, FIST_LINES, FOREARM } from './avatarHand';
 import './Avatar.css';
 
 // Idle looks use sixteen directions clockwise from twelve o'clock; null looks straight ahead.
@@ -42,20 +42,26 @@ const YAWN_LOOK = { x: 0.1, y: -0.8 };
 // grows as it opens, and the lower lip drops to close it off (drawing pixels).
 const MOUTH = [716, 730];
 const LIP_DROP = 40;
-// An eye rub: the hand comes up from below the frame, rubs a few small circles, and goes back.
+// An eye rub: both hands come up from below the frame as the head bows into them, rub a few
+// small circles, and go back down.
 const RUB_RISE = 450;
 const RUB_CIRCLES = 4;
 const RUB_CIRCLE = 375;
 const RUB_FALL = 500;
 const RUB_SIZE = [12, 8];
 const RUB_SWAY = 2;
-const RUB_LOOK = { x: -0.1, y: 0.25 };
-// Where the wrist sits during the rub, how the fist and the sleeve lean from it (degrees), and
-// how far along the sleeve the hand travels to come into view.
-const WRIST = [628, 690];
-const FIST_TILT = 8;
-const SLEEVE_TILT = 20;
-const HAND_TRAVEL = 900;
+const RUB_LOOK = { x: 0, y: 0.4 };
+// The bowed head drops and tips forward around the neck (drawing pixels and degrees).
+const BOW_DROP = 90;
+const BOW_TILT = -5;
+// For each hand: where its wrist sits on the face, how the fist and the forearm lean from it
+// (degrees), and the fist's size; the far hand is a little smaller. The left one is mirrored.
+const HANDS = [
+  { wrist: [628, 690], fistTilt: 8, armTilt: 26, size: 0.85, mirror: false },
+  { wrist: [810, 700], fistTilt: -8, armTilt: -26, size: 0.92, mirror: true },
+];
+// How far a hand travels straight up to come into view from below the frame.
+const HAND_TRAVEL = 850;
 // How far each part travels at a full look, in pixels of the drawing (about a sixth of a
 // CSS pixel each). Parts nearer the front travel further, which reads as the head turning.
 const HEAD_TILT = 2.2;
@@ -68,6 +74,7 @@ const [VIEW_X, VIEW_Y, VIEW_WIDTH, VIEW_HEIGHT] = VIEWBOX.split(' ').map(Number)
 // The hoodie ends 20 pixels above the bottom of the view box, and its rim 18 below that.
 const FRAME_BOTTOM = VIEW_Y + VIEW_HEIGHT - 20;
 const RIM_BOTTOM = FRAME_BOTTOM + 18;
+const easeIn = (t: number) => t ** 3;
 const easeOut = (t: number) => 1 - (1 - t) ** 3;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 const between = ([low, high]: number[]) => low + Math.random() * (high - low);
@@ -87,7 +94,7 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
     const mouthOpenings = all('mouth-opening');
     const tongue = all('tongue')[0];
     const lips = all('lip');
-    const arm = all('arm')[0];
+    const arms = all('arms')[0];
     const hands = all('hand');
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -115,7 +122,8 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
       const key = [x, y, open, raise, yawn, hand, rub].map(value => value.toFixed(3)).join(':');
       if (key === lastPose) return;
       lastPose = key;
-      const head = `rotate(${(HEAD_TILT * x).toFixed(2)} ${PIVOT[0]} ${PIVOT[1]}) translate(${(HEAD_SHIFT[0] * x).toFixed(2)} ${(HEAD_SHIFT[1] * y).toFixed(2)})`;
+      // The hands bring the head down with them.
+      const head = `rotate(${(HEAD_TILT * x + BOW_TILT * hand).toFixed(2)} ${PIVOT[0]} ${PIVOT[1]}) translate(${(HEAD_SHIFT[0] * x).toFixed(2)} ${(HEAD_SHIFT[1] * y + BOW_DROP * hand).toFixed(2)})`;
       heads.forEach(part => part.setAttribute('transform', head));
       const feature = `translate(${(FEATURE_SHIFT[0] * x).toFixed(2)} ${(FEATURE_SHIFT[1] * y).toFixed(2)})`;
       features.forEach(part => part.setAttribute('transform', feature));
@@ -139,12 +147,15 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
       tongue.setAttribute('d', `M ${(mx - side).toFixed(1)} ${floor.toFixed(1)} C ${(mx - 0.5 * rx).toFixed(1)} ${crest.toFixed(1)},${(mx + 0.5 * rx).toFixed(1)} ${crest.toFixed(1)},${(mx + side).toFixed(1)} ${floor.toFixed(1)} Z`);
       lips.forEach(lip => lip.setAttribute('transform', `translate(0 ${(LIP_DROP * yawn).toFixed(2)})`));
 
-      // The hand comes up along the sleeve and rubs in small circles around the wrist position.
-      arm.setAttribute('visibility', hand > 0 ? 'visible' : 'hidden');
-      const away = HAND_TRAVEL * (1 - hand), lean = SLEEVE_TILT * Math.PI / 180, turn = 2 * Math.PI * rub;
-      const hx = WRIST[0] - away * Math.sin(lean) + RUB_SIZE[0] * (Math.cos(turn) - 1);
-      const hy = WRIST[1] + away * Math.cos(lean) + RUB_SIZE[1] * Math.sin(turn);
-      hands.forEach(part => part.setAttribute('transform', `translate(${hx.toFixed(2)} ${hy.toFixed(2)}) rotate(${(RUB_SWAY * Math.sin(turn)).toFixed(2)})`));
+      // Each hand comes up from below and rubs in small circles, half a turn from the other.
+      arms.setAttribute('visibility', hand > 0 ? 'visible' : 'hidden');
+      hands.forEach(part => {
+        const index = Number(part.dataset.hand), { wrist, mirror } = HANDS[index];
+        const turn = 2 * Math.PI * (rub + index / 2), side = mirror ? -1 : 1;
+        const hx = wrist[0] + side * RUB_SIZE[0] * (Math.cos(turn) - 1);
+        const hy = wrist[1] + HAND_TRAVEL * (1 - hand) + RUB_SIZE[1] * Math.sin(turn);
+        part.setAttribute('transform', `translate(${hx.toFixed(2)} ${hy.toFixed(2)}) rotate(${(side * RUB_SWAY * Math.sin(turn)).toFixed(2)})`);
+      });
     };
 
     const resetToIdle = () => {
@@ -203,8 +214,8 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
         else if (sinceFidget < RUB_RISE + rubbing) {
           hand = 1;
           rub = (sinceFidget - RUB_RISE) / RUB_CIRCLE;
-        } else hand = 1 - easeInOut(Math.min((sinceFidget - RUB_RISE - rubbing) / RUB_FALL, 1));
-        // The eyes close as the fist arrives, and open again as it leaves.
+        } else hand = 1 - easeIn(Math.min((sinceFidget - RUB_RISE - rubbing) / RUB_FALL, 1));
+        // The eyes close as the fists arrive, and open again as they leave.
         shut = Math.min(Math.max((hand - 0.4) / 0.4, 0), 1);
         target = { x: target.x + (RUB_LOOK.x - target.x) * hand, y: target.y + (RUB_LOOK.y - target.y) * hand };
       }
@@ -296,31 +307,37 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
     };
   }, []);
 
-  // The arm is drawn twice, rim then ink, each inside its own copy of the head and face
-  // groups so it moves with the eye it rubs; the rim reaches as far down as the hoodie's.
+  // The arms are drawn twice, rims then ink, each inside its own copy of the head and face
+  // groups so they move with the eyes they rub; the rims reach as far down as the hoodie's.
   const armLayer = (rim: boolean) => (
     <g clipPath={`url(#avatar-${rim ? 'rim' : 'frame'})`}>
       <g data-part="head">
         <g data-part="features">
-          <g data-part="hand">
-            {rim ? (
-              <g className="avatar-rim">
-                <path transform={`rotate(${SLEEVE_TILT})`} d={SLEEVE} />
-                <path className="avatar-fist-rim" transform={`rotate(${FIST_TILT})`} d={FIST} />
+          {HANDS.map(({ fistTilt, armTilt, size, mirror }, index) => {
+            const fist = `rotate(${fistTilt}) scale(${mirror ? -size : size} ${size})`;
+            const forearm = `rotate(${armTilt})${mirror ? ' scale(-1 1)' : ''}`;
+            return (
+              <g key={index} data-part="hand" data-hand={index}>
+                {rim ? (
+                  <g className="avatar-rim">
+                    <path transform={forearm} d={FOREARM} />
+                    <path className="avatar-fist-rim" transform={fist} d={FIST} />
+                  </g>
+                ) : (
+                  <>
+                    <g transform={fist}>
+                      <path className="avatar-hand" d={FIST} />
+                      <path className="avatar-hand-lines" d={FIST_LINES} />
+                    </g>
+                    <g transform={forearm}>
+                      <path className="avatar-sleeve" d={FOREARM} />
+                      <path className="avatar-cuff" d={CUFF} />
+                    </g>
+                  </>
+                )}
               </g>
-            ) : (
-              <>
-                <g transform={`rotate(${FIST_TILT})`}>
-                  <path className="avatar-hand" d={FIST} />
-                  <path className="avatar-hand-lines" d={FIST_LINES} />
-                </g>
-                <g transform={`rotate(${SLEEVE_TILT})`}>
-                  <path className="avatar-sleeve" d={SLEEVE} />
-                  <path className="avatar-cuff" d={CUFF} />
-                </g>
-              </>
-            )}
-          </g>
+            );
+          })}
         </g>
       </g>
     </g>
@@ -328,7 +345,7 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
 
   // Layers, bottom to top: a paper backing (with a rim that shows in dark mode), the head
   // with its face and pupils, then the hoodie, drawn over the neck so the head can move, and
-  // last the arm, hidden until he rubs an eye.
+  // last the arms, hidden until he rubs his eyes.
   return (
     <svg
       ref={svgRef}
@@ -374,7 +391,7 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
         </g>
       </g>
       <path className="avatar-ink" d={BODY_INK} fillRule="evenodd" />
-      <g data-part="arm" visibility="hidden">
+      <g data-part="arms" visibility="hidden">
         {armLayer(true)}
         {armLayer(false)}
       </g>
