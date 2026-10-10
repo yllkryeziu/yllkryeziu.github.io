@@ -13,8 +13,6 @@ export interface PostMeta {
   repo?: { label: string; url: string };
 }
 
-const REPO_ROOT = 'https://github.com/yllkryeziu/yllkryeziu.github.io/tree/main/projects';
-
 export const POSTS: PostMeta[] = [
   {
     slug: 'ferret',
@@ -24,6 +22,7 @@ export const POSTS: PostMeta[] = [
     dek: 'Coding agents search a repository about ten times per task, often four at once in separate worktrees. I built a trigram search engine for them and explain its parts with interactive figures: posting lists, regex plans, an exact early stop for the top 20 files, one index shared by every worktree, and searches that see the edit made a moment ago.',
     date: 'October 2026',
     sortDate: 202610,
+    repo: { label: 'ferret', url: 'https://github.com/yllkryeziu/ferret' },
   },
   {
     slug: 'blj',
@@ -52,7 +51,7 @@ export const POSTS: PostMeta[] = [
     dek: 'A SIMD JSON parser reached from Java runs 5.2x faster than the best JVM parser and allocates about a million times less heap. One crossing of the JNI boundary costs 10 nanoseconds, so what matters is not the boundary itself but how many times a design makes you cross it.',
     date: 'October 2025',
     sortDate: 202510,
-    repo: { label: 'simdjson-jni', url: `${REPO_ROOT}/simdjson-jni` },
+    repo: { label: 'simdjson-jni', url: 'https://github.com/yllkryeziu/simdjson-jni' },
   },
 ];
 
