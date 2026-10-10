@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { BODY_INK, BODY_PAPER, EYE_CLIP, FEATURES, HEAD_INK, HEAD_PAPER, PIVOT, PUPILS, VIEWBOX } from './avatarArt';
+import { BODY_INK, BODY_PAPER, BROW, EYE_CLIP, FEATURES, HEAD_INK, HEAD_PAPER, PIVOT, PUPILS, VIEWBOX } from './avatarArt';
 import './Avatar.css';
 
 // Idle looks use sixteen directions clockwise from twelve o'clock; null looks straight ahead.
@@ -20,6 +20,14 @@ const IDLE_LOOKS: { direction: Direction; duration: number }[] = [
 ];
 const CURSOR_HOLD = 1600;
 const BLINK = 150;
+// Now and then one eyebrow goes up: it rises, holds, and settles back (milliseconds).
+const BROW_RISE = 140;
+const BROW_HOLD = 750;
+const BROW_FALL = 260;
+// The raised brow lifts and tilts up at its outer end, pivoting near the nose.
+const BROW_LIFT = 14;
+const BROW_TILT = -2;
+const BROW_PIVOT = [737, 500];
 // How far each part travels at a full look, in pixels of the drawing (about a sixth of a
 // CSS pixel each). Parts nearer the front travel further, which reads as the head turning.
 const HEAD_TILT = 2.2;
@@ -29,6 +37,8 @@ const PUPIL_SHIFT = [8, 7];
 // Between the eyes, in drawing pixels; looks are measured from here.
 const EYES = [731, 540];
 const [VIEW_X, VIEW_Y, VIEW_WIDTH] = VIEWBOX.split(' ').map(Number);
+const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 
 const Avatar: React.FC<{ className?: string }> = ({ className }) => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -39,6 +49,7 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
     const heads = Array.from<SVGElement>(svg.querySelectorAll('[data-part="head"]'));
     const features = svg.querySelector<SVGElement>('[data-part="features"]')!;
     const pupils = Array.from<SVGElement>(svg.querySelectorAll('[data-part="pupil"]'));
+    const brow = svg.querySelector<SVGElement>('[data-part="brow"]')!;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let gaze = { x: 0, y: 0 };
@@ -49,18 +60,21 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
     let idleStarted = performance.now();
     let blinkStarted = -Infinity;
     let nextBlink = performance.now() + 2500;
+    let browStarted = -Infinity;
+    let nextBrow = performance.now() + 6000 + Math.random() * 6000;
     let lastTime = performance.now();
     let frameRequest = 0;
     let lastPose = '';
     let bounds = svg.getBoundingClientRect();
 
-    const pose = (x: number, y: number, open: number) => {
-      const key = `${x.toFixed(3)}:${y.toFixed(3)}:${open.toFixed(2)}`;
+    const pose = (x: number, y: number, open: number, raise: number) => {
+      const key = `${x.toFixed(3)}:${y.toFixed(3)}:${open.toFixed(2)}:${raise.toFixed(3)}`;
       if (key === lastPose) return;
       lastPose = key;
       const head = `rotate(${(HEAD_TILT * x).toFixed(2)} ${PIVOT[0]} ${PIVOT[1]}) translate(${(HEAD_SHIFT[0] * x).toFixed(2)} ${(HEAD_SHIFT[1] * y).toFixed(2)})`;
       heads.forEach(part => part.setAttribute('transform', head));
       features.setAttribute('transform', `translate(${(FEATURE_SHIFT[0] * x).toFixed(2)} ${(FEATURE_SHIFT[1] * y).toFixed(2)})`);
+      brow.setAttribute('transform', `translate(0 ${(-BROW_LIFT * raise).toFixed(2)}) rotate(${(BROW_TILT * raise).toFixed(2)} ${BROW_PIVOT[0]} ${BROW_PIVOT[1]})`);
       // A blink squashes each pupil up into its lid, leaving the closed-eye line.
       pupils.forEach((pupil, index) => {
         const lid = PUPILS[index].cy;
@@ -114,7 +128,18 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
         nextBlink = now + (Math.random() < 0.15 ? BLINK + 90 : 2500 + Math.random() * 3500);
       }
       const blinking = now - blinkStarted < BLINK;
-      pose(gaze.x, gaze.y, blinking ? Math.abs(Math.cos(Math.PI * (now - blinkStarted) / BLINK)) : 1);
+
+      if (now >= nextBrow) {
+        browStarted = now;
+        nextBrow = now + 9000 + Math.random() * 9000;
+      }
+      const sinceBrow = now - browStarted;
+      let raise = 0;
+      if (sinceBrow < BROW_RISE) raise = easeOut(sinceBrow / BROW_RISE);
+      else if (sinceBrow < BROW_RISE + BROW_HOLD) raise = 1;
+      else if (sinceBrow < BROW_RISE + BROW_HOLD + BROW_FALL) raise = 1 - easeInOut((sinceBrow - BROW_RISE - BROW_HOLD) / BROW_FALL);
+
+      pose(gaze.x, gaze.y, blinking ? Math.abs(Math.cos(Math.PI * (now - blinkStarted) / BLINK)) : 1, raise);
       frameRequest = requestAnimationFrame(animate);
     };
 
@@ -124,7 +149,8 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
       gaze = { x: 0, y: 0 };
       idleIndex = 0;
       idleStarted = lastTime = performance.now();
-      pose(0, 0, 1);
+      browStarted = -Infinity;
+      pose(0, 0, 1, 0);
       if (!reducedMotion.matches && !document.hidden) frameRequest = requestAnimationFrame(animate);
     };
 
@@ -195,6 +221,7 @@ const Avatar: React.FC<{ className?: string }> = ({ className }) => {
             ))}
           </g>
           <path className="avatar-ink" d={FEATURES} fillRule="evenodd" />
+          <path data-part="brow" className="avatar-brow" d={BROW} />
         </g>
       </g>
       <path className="avatar-ink" d={BODY_INK} fillRule="evenodd" />

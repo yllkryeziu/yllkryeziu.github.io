@@ -13,3 +13,12 @@
   stroke-width: 36;
   stroke-linejoin: round;
 }
+/* The movable brow has a paper outline, so when it rises into the hairline it stays
+   readable in front of the hair instead of merging with it. */
+.avatar-brow {
+  fill: var(--avatar-ink);
+  stroke: var(--avatar-paper);
+  stroke-width: 10;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
